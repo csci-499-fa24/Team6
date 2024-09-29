@@ -16,7 +16,9 @@ const Navbar = () => {
         </div>
         <div className={styles.navLinksWrapper}>
             <Link href="/login">Log in</Link>
-            <Link href="/register">Get Started</Link>
+            <Link className={styles.navGetStarted} href="/register">
+                <div className={styles.navGetStartedText}>Get Started</div>
+            </Link>
         </div>
       </div>
     );
