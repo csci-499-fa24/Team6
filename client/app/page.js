@@ -1,30 +1,18 @@
-'use client'
+import Link from 'next/link';
 
-import styles from "./page.module.css";
-import React, {useEffect, useState} from 'react'
-
-export default function Home() {
-  
-  const [message, setMessage] = useState("Loading")
-
-  console.log(process.env.NEXT_PUBLIC_SERVER_URL + "/api/home")
-  useEffect(() => {
-    fetch(process.env.NEXT_PUBLIC_SERVER_URL + "/api/home").then(
-      response => response.json()
-    ).then(
-      data => {
-        console.log(data)
-        setMessage(data.message)
-      }
-    )
-  }, [])
-  
+const LandingPage = () => {
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <div>Return message from server</div>
-        <div>{message}</div>
-      </main>
+    <div>
+      <h1>Landing Page</h1>
+      <nav>
+        <Link href="/home">Home</Link>
+        <Link href="/login">Login</Link>
+        <Link href="/pantry">Pantry</Link>
+        <Link href="/recipe">Recipe</Link>
+        <Link href="/register">Register</Link>
+      </nav>
     </div>
   );
-}
+};
+
+export default LandingPage;
