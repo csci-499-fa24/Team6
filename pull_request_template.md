@@ -1,10 +1,11 @@
-**Description:
+**Issue / Feature:**
 
-What's in this change?:
+**Description:**
 
-Whats left to do?:
+**What's in this change?:**
 
-Testing changes:
+**Whats left to do?:**
 
-Supplemental material (optional, screenshots of frontend changes, api testing, notifications):
-**
+**Testing changes:**
+
+**Supplemental material (optional, screenshots of frontend changes, api testing, notifications):**

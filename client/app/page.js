@@ -1,8 +1,11 @@
 import Link from 'next/link';
+import styles from './styles/LandingPage.module.css'; 
+import Navbar from './components/navbar'
 
 const LandingPage = () => {
   return (
     <div>
+      <Navbar/>
       <h1>Landing Page</h1>
       <nav>
         <Link href="/home">Home</Link>

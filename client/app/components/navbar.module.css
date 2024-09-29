@@ -1,0 +1,32 @@
+.navWrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 25px;
+    font-weight: 700;
+    padding: 30px 60px 30px 60px ;
+    border-bottom: 1px solid black;
+}
+
+.navLogo {
+    height: 80px;
+    width: 80px;
+    padding-right: 10px;
+}
+
+.navTitle {
+    display: flex;
+    align-items: center;
+    font-size: 30px;
+    font-weight: 900;
+}
+
+.palText {
+    color: #EC4A27;
+}
+
+.navLinksWrapper *{
+    text-decoration: none;
+    color: black !important;
+    padding: 0px 10px 0px 10px;
+}
