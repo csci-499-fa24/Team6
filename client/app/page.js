@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import styles from './styles/landingPage.module.css'; 
+import styles from './landingPage.module.css'; 
 import Navbar from './components/navbar'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 
