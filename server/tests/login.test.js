@@ -1,6 +1,7 @@
 const request = require('supertest');
 const app = require('../server'); 
 
+// Tests
 describe('Login Route', () => {
   // Test for invalid login
   it('should return 400 for invalid login', async () => {
