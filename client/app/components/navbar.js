@@ -29,6 +29,9 @@ const Navbar = () => {
             <Link href="/discover" className={isActiveLink("/discover") ? styles.activeLink : ""}>
               Discover
             </Link>
+            <Link href="/inventory" className={isActiveLink("/inventory") ? styles.activeLink : ""}>
+                Inventory
+            </Link>
           </div>
           <div className={styles.navLinksWrapper}>
             <Link href="/login">Log in</Link>
