@@ -1,12 +1,12 @@
 import Navbar from "../components/navbar";
 
-const Register = () => {
+const Discover = () => {
     return (
       <div>
         <Navbar/>
-        <h1>Register</h1>
+        <h1>Discover</h1>
       </div>
     );
   };
   
-  export default Register;
+  export default Discover;

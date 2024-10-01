@@ -1,6 +1,6 @@
 "use client";
-
 import React, { useState } from 'react';
+import Navbar from "../components/navbar";
 
 const Home = () => {
   const [notification, setNotification] = useState('');
@@ -45,6 +45,7 @@ const Home = () => {
 
   return (
     <div>
+      <Navbar/>
       <h1>User personalized home page</h1>
       <button onClick={handleSendEmail}>Send Email</button>
       <button onClick={handleNotificationClick}>Show Notification</button>
