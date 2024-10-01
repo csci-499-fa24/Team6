@@ -77,6 +77,8 @@ async function checkAndSendEmail() {
     }
 }
 
+
+
 //Test case to see if its print out correct log-in info
 // console.log('EMAIL_USER:', process.env.EMAIL_USER);
 // console.log('EMAIL_PASS:', process.env.EMAIL_PASS);
