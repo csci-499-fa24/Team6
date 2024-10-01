@@ -2,12 +2,14 @@ const express = require("express");
 const cors = require('cors');
 const db = require('./db');
 const { checkAndSendEmail } = require('./email');
-
+const ingredientRoutes = require('./ingredient/ingredient');
 const app = express();
 app.use(cors());
 app.use(express.json()); // Add this line to parse JSON bodies
 
 // Existing routes
+app.use(express.json());
+app.use(ingredientRoutes);
 app.get("/api/home", (req, res) => {
     res.json({ message: "Hello World!" });
 });
