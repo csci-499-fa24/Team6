@@ -22,17 +22,6 @@ app.get('/user-profiles', async (req, res) => {
     }
 });
 
-// Define the new endpoint for sending email
-app.get('/send-email', async (req, res) => {
-    try {
-        await checkAndSendEmail(); // Call the email function
-        res.status(200).json({ message: 'Email sent successfully' });
-    } catch (error) {
-        console.error('Error sending email:', error);
-        res.status(500).json({ message: 'Failed to send email', error: error.message });
-    }
-});
-
 // New endpoint to get low ingredients
 app.get('/get-low-ingredients', async (req, res) => {
     try {

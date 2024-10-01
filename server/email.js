@@ -12,7 +12,6 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-// Verify transporter connection and login success
 transporter.verify(function (error, success) {
     if (error) {
         console.log('Error during email sign-in:', error);
@@ -21,8 +20,6 @@ transporter.verify(function (error, success) {
     }
 });
 
-
-// Function to check for low ingredients and send reminder
 async function checkAndSendEmail() {
     try {
         // Query to get user profile and ingredients below amount of 30 for user_id = 5
@@ -39,12 +36,10 @@ async function checkAndSendEmail() {
         if (users.length > 0) {
             let lowIngredients = [];
 
-            // Collect low ingredient details
             for (let user of users) {
                 lowIngredients.push(`"${user.ingredient_name}", you currently have ${user.amount} units remaining`);
             }
 
-            // If there are low ingredients, send an email
             if (lowIngredients.length > 0) {
                 const message = `
                     Hi ${users[0].name},
@@ -53,7 +48,6 @@ async function checkAndSendEmail() {
                     ${lowIngredients.join('\n')}
                 `;
 
-                // Send email
                 const mailOptions = {
                     from: process.env.EMAIL_USER,
                     to: users[0].email,
