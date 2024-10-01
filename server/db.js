@@ -5,7 +5,7 @@ const { Pool } = require('pg');
 // Create a pool of connections to the database with SSL support
 const pool = new Pool({
     host: process.env.PGHOST,
-    user: process.env.PGUSER,
+    user: process.env.PGUSERNAME,
     password: process.env.PGPASSWORD,
     database: process.env.PGDATABASE,
     port: process.env.PGPORT,

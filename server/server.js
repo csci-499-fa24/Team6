@@ -6,6 +6,7 @@ const { checkAndSendEmail } = require('./email');
 const app = express();
 app.use(cors());
 app.use(express.json()); // Add this line to parse JSON bodies
+const signupRoute = require('./signup');
 
 // Existing routes
 app.get("/api/home", (req, res) => {
@@ -69,6 +70,8 @@ app.get('/get-low-ingredients', async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 });
+
+app.use('/api/signup', signupRoute);
 
 const port = process.env.PORT || 8080;
 app.listen(port, () => {
