@@ -1,0 +1,34 @@
+name: Node.js CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository content
+      uses: actions/checkout@v2
+
+    - name: Setup Node.js environment
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Run tests
+      run: npm test -- --coverage
+
+    - name: Upload Jest Coverage Report
+      uses: actions/upload-artifact@v2
+      with:
+        name: coverage-report
+        path: ./coverage
