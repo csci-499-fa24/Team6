@@ -69,8 +69,16 @@ const handleSubmit = (e) => {
             // Handle successful signup
         })
         .catch(error => {
-            console.error('There was an error signing up:', error);
-            // Handle error
+            if (error.response) {
+                // Server responded with a status outside the 2xx range
+                console.error('Server error:', error.response.data);
+            } else if (error.request) {
+                // No response was received
+                console.error('Network error or no response:', error.request);
+            } else {
+                // Other errors
+                console.error('Error during signup:', error.message);
+            }
         });
 };
 

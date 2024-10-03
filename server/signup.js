@@ -54,10 +54,13 @@ router.post('/', async (req, res) => {
 
                     // Insert into 'user_ingredients' table
                     const insertUserIngredientQuery = `
-                        INSERT INTO user_ingredients (user_id, ingredient_id, amount)
+                        INSERT INTO user_ingredient (user_id, ingredient_id, amount)
                         VALUES ($1, $2, $3)
                     `;
                     await db.query(insertUserIngredientQuery, [userId, ingredientId, quantity]);
+                }
+                else {
+                    console.error(`Ingredient not found for name: ${ingredientName}`);
                 }
             }
         }
