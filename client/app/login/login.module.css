@@ -1,0 +1,74 @@
+.loginPageWrapper {
+    height: 90vh;
+    background-image: url('/assets/ingredients.png');
+    background-position: bottom;
+    background-repeat: no-repeat;
+    background-size: 100vw auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.loginWrapper {
+    background-color: rgba(253, 243, 243, 0.9);
+    box-shadow: 2px 4px 10px 2px rgba(0, 0, 0, 0.25);
+    border-radius: 20px;
+    max-width: 750px;
+    min-height: 800px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.loginImage {
+    margin-top: 5vh;
+    height: 15%;
+    width: 17%;
+}
+
+.loginTitle {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-top: 2vh;
+}
+
+.titleOrange {
+    color: #EC4A27;
+}
+
+.loginEmail {
+    margin-top: 2.5rem;
+    width: 25rem;
+}
+
+.loginPassword {
+    margin-top: 2.5rem;
+    width: 25rem;
+}
+
+.loginButton {
+    background-color: #EC4A27;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: white;
+    width: 25rem;
+    text-align: center;
+    border-radius: 10px;
+    padding: .7rem 0;
+    margin-top: 2.5rem;
+
+    &:hover {
+        background-color: rgb(233, 69, 15);
+        cursor: pointer;
+    }
+}
+
+.loginNoAcc {
+    margin-top: 2.5rem;
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+.loginRegister {
+    color:#EC4A27;
+}
