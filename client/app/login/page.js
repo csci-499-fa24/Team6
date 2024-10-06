@@ -12,14 +12,15 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 const CustomTextField = styled(TextField)({
   '& label': {
-    color: '#506264',
+    color: '#8C8A8A',
+    fontFamily: "Inter",
   },
   '& label.Mui-focused': {
     color: '#EC4A27',
   },
   '& .MuiOutlinedInput-root': {
     '& fieldset': {
-      border: '2px solid #A9B0B2',
+      border: '2px solid #E0E0E0',
       borderRadius: '10px',
     },    
     '&:hover fieldset': {
@@ -27,6 +28,9 @@ const CustomTextField = styled(TextField)({
     },
     '&.Mui-focused fieldset': {
       borderColor: '#EC4A27',
+    },
+    '& input': {
+      fontFamily: 'Inter', 
     },
   },
 });
