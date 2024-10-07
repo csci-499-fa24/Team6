@@ -1,4 +1,4 @@
-.loginPageWrapper {
+.regPageWrapper {
     height: 90vh;
     background-image: url('/assets/ingredients.png');
     background-position: bottom;
@@ -9,24 +9,31 @@
     align-items: center;
 }
 
-.loginWrapper {
+.regWrapper {
     background-color: rgba(253, 243, 243, 0.9);
     box-shadow: 2px 4px 10px 2px rgba(0, 0, 0, 0.25);
     border-radius: 20px;
-    width: 750px;
-    height: 800px;
+    width: 1000px;
+    height: 950px;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-.loginImage {
-    padding-top: 7rem;
-    height: 15%;
-    width: 17%;
+.regImage {
+    padding-top: 5rem;
+    height: 13%;
+    width: 13%;
 }
 
-.loginTitle {
+.step1 {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.regTitle {
     font-size: 2rem;
     font-weight: 600;
     margin-top: 2vh;
@@ -36,22 +43,32 @@
     color: #EC4A27;
 }
 
-.loginEmail {
-    margin-top: 2.5rem;
-    width: 25rem;
+.regInput {
+    display: flex;
+    flex-direction: column;
+    width: 45%;
 }
 
-.loginPassword {
-    margin-top: 2.5rem;
-    width: 25rem;
+.regName {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2rem;
 }
 
-.loginButton {
+.regNameField {
+    width: 48%;
+}
+
+.regTextField {
+    margin-top: 1.5rem;
+}
+
+.regButton {
     background-color: #EC4A27;
     font-size: 1.5rem;
     font-weight: 600;
     color: white;
-    width: 25rem;
+    width: 45%;
     text-align: center;
     border-radius: 10px;
     padding: .7rem 0;
@@ -63,12 +80,42 @@
     }
 }
 
-.loginNoAcc {
+.regHaveAcc {
     margin-top: 2.5rem;
     font-size: 1.3rem;
     font-weight: 600;
 }
 
-.loginRegister {
+.regLogin {
     color:#EC4A27;
+}
+
+.progressBar {
+    width: 47%;
+    margin-top: .5rem;
+}
+
+.addIngredient {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 65%;
+    margin-top: 2rem;
+}
+
+.quantity, .unit, .ingredient{
+    display: flex;
+    flex-direction: column;
+}
+
+.quantity {
+    width: 17%;
+}
+
+.unit {
+    width: 25%;
+}
+
+.ingredient {
+    width: 45%;
 }
