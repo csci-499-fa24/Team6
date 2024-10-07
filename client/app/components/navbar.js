@@ -6,8 +6,8 @@ import { usePathname } from "next/navigation";
 
 const Navbar = () => {
     const pathname = usePathname();
-    const isLoginPage = pathname === "/login"
-    const isRegisterPage = pathname === "/register"
+    const isLoginPage = pathname === "/login";
+    const isRegisterPage = pathname === "/register";
 
     const isActiveLink = (linkPath) => pathname === linkPath;
 
@@ -29,6 +29,9 @@ const Navbar = () => {
             <Link href="/discover" className={isActiveLink("/discover") ? styles.activeLink : ""}>
               Discover
             </Link>
+            <Link href="/recipe" className={isActiveLink("/recipe") ? styles.activeLink : ""}>
+              Recipes
+            </Link> {/* Added Recipes tab */}
           </div>
           <div className={styles.navLinksWrapper}>
             <Link href="/login">Log in</Link>
@@ -41,5 +44,5 @@ const Navbar = () => {
     </div>
   );
 };
-  
-  export default Navbar;
+
+export default Navbar;
