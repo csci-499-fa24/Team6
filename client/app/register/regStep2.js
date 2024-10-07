@@ -94,7 +94,7 @@ const RegistrationStep2 = ({ currentStep, handleNextStep, handlePrevStep }) => {
                         onKeyDown={handleKeyDown}
                     />
                 </div>
-                <AddCircleOutlineRounded onClick={handleAddIngredient} />
+                <AddCircleOutlineRounded onClick={handleAddIngredient} className={styles.addButton}/>
             </div>
             <div className={styles.ingredientList}>
                 {pantry.length > 0 && (
