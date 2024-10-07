@@ -1,12 +1,14 @@
-import Navbar from "../components/navbar";
+"use client";
 
-const Recipe = () => {
+import React from 'react';
+import RecipePage from './recipe'; // Import the RecipePage component
+
+const Page = () => {
     return (
-      <div>
-        <Navbar/>
-        <h1>Recipe</h1>
-      </div>
+        <div>
+            <RecipePage /> {/* Render the RecipePage component */}
+        </div>
     );
-  };
-  
-  export default Recipe;
+};
+
+export default Page;
