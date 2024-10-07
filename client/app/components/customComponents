@@ -1,0 +1,57 @@
+import { styled, TextField, Select, LinearProgress, linearProgressClasses} from '@mui/material';
+
+export const CustomTextField = styled(TextField)({
+  '& label': {
+    color: '#8C8A8A',
+    fontFamily: "Inter",
+  },
+  '& label.Mui-focused': {
+    color: '#EC4A27',
+  },
+  '& .MuiOutlinedInput-root': {
+    '& fieldset': {
+      border: '2px solid #E0E0E0',
+      borderRadius: '10px',
+    },    
+    '&:hover fieldset': {
+      borderColor: '#C4CCCF',
+    },
+    '&.Mui-focused fieldset': {
+      borderColor: '#EC4A27',
+    },
+    '& input': {
+      fontFamily: 'Inter', 
+    },
+  },
+});
+
+export const CustomDropdown = styled(Select)({
+    '& .MuiOutlinedInput-notchedOutline': {
+      border: '2px solid #E0E0E0',
+      borderRadius: '10px',
+    },
+  
+    '&:hover .MuiOutlinedInput-notchedOutline': {
+      borderColor: '#C4CCCF', 
+    },
+  
+    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor: '#EC4A27', 
+    },
+  
+    '&.MuiInputBase-root': {
+      fontFamily: 'Inter',
+    },
+});
+
+export const CustomLinearProgress = styled(LinearProgress)(({ theme }) => ({
+    height: 5,
+    borderRadius: 5,
+    [`&.${linearProgressClasses.colorPrimary}`]: {
+      backgroundColor: '#909192',
+    },
+    [`& .${linearProgressClasses.bar}`]: {
+      borderRadius: 5,
+      backgroundColor: '#EC4A27',
+    },
+  }));

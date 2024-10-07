@@ -1,39 +1,11 @@
 'use client';
 import * as React from 'react';
 import Navbar from "../components/navbar";
+import { CustomTextField } from "../components/customComponents"
 import styles from './login.module.css'; 
-import TextField from '@mui/material/TextField';
-import IconButton from '@mui/material/IconButton';
 import Link from "next/link"; 
-import { styled } from '@mui/material/styles';
-import InputAdornment from '@mui/material/InputAdornment';
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
-
-const CustomTextField = styled(TextField)({
-  '& label': {
-    color: '#8C8A8A',
-    fontFamily: "Inter",
-  },
-  '& label.Mui-focused': {
-    color: '#EC4A27',
-  },
-  '& .MuiOutlinedInput-root': {
-    '& fieldset': {
-      border: '2px solid #E0E0E0',
-      borderRadius: '10px',
-    },    
-    '&:hover fieldset': {
-      borderColor: '#C4CCCF',
-    },
-    '&.Mui-focused fieldset': {
-      borderColor: '#EC4A27',
-    },
-    '& input': {
-      fontFamily: 'Inter', 
-    },
-  },
-});
+import { IconButton, InputAdornment } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 const Login = () => {
   const [showPassword, setShowPassword] = React.useState(false);

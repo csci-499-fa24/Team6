@@ -94,3 +94,28 @@
     width: 47%;
     margin-top: .5rem;
 }
+
+.addIngredient {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 65%;
+    margin-top: 2rem;
+}
+
+.quantity, .unit, .ingredient{
+    display: flex;
+    flex-direction: column;
+}
+
+.quantity {
+    width: 17%;
+}
+
+.unit {
+    width: 25%;
+}
+
+.ingredient {
+    width: 45%;
+}

@@ -1,72 +1,67 @@
 'use client';
 import * as React from 'react';
 import Navbar from "../components/navbar";
+import { CustomTextField, CustomDropdown, CustomLinearProgress } from "../components/customComponents"
 import styles from './register.module.css'; 
-import { styled } from '@mui/material/styles';
-import TextField from '@mui/material/TextField';
-import InputAdornment from '@mui/material/InputAdornment';
-import IconButton from '@mui/material/IconButton';
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import { styled, TextField, InputAdornment, IconButton, LinearProgress, linearProgressClasses, Select, MenuItem } from '@mui/material';
+import { Visibility, VisibilityOff, AddCircleOutlineRounded } from '@mui/icons-material';
 import Link from "next/link"; 
-import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgress';
 import { useState } from 'react';
-import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRounded';
 
-const CustomTextField = styled(TextField)({
-  '& label': {
-    color: '#8C8A8A',
-    fontFamily: "Inter",
-  },
-  '& label.Mui-focused': {
-    color: '#EC4A27',
-  },
-  '& .MuiOutlinedInput-root': {
-    '& fieldset': {
-      border: '2px solid #E0E0E0',
-      borderRadius: '10px',
-    },    
-    '&:hover fieldset': {
-      borderColor: '#C4CCCF',
-    },
-    '&.Mui-focused fieldset': {
-      borderColor: '#EC4A27',
-    },
-    '& input': {
-      fontFamily: 'Inter', 
-    },
-  },
-});
-
-const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
-  height: 5,
-  borderRadius: 5,
-  [`&.${linearProgressClasses.colorPrimary}`]: {
-    backgroundColor: '#909192',
-  },
-  [`& .${linearProgressClasses.bar}`]: {
-    borderRadius: 5,
-    backgroundColor: '#EC4A27',
-  },
-}));
+const Units = [
+  {value: "g", label: "Gram(s)"},  
+  {value: "oz", label: "Ounce(s)"},
+  {value: "lb", label: "Pound(s)"},  
+  {value: "C", label: "Cup(s)"},
+  {value: "pt", label: "Pint(s)"},
+  {value: "qt", label: "Quart(s)"},
+  {value: "gal", label: "Gallon(s)"},
+  {value: "mL", label: "Milliliter(s)"},
+  {value: "L", label: "Liter(s)"},
+  {value: "tsp", label: "Teaspoon(s)"},
+  {value: "tbsp", label: "Tablespoon(s)"},
+]
 
 const Register = () => {
   const [showPassword, setShowPassword] = React.useState(false);
   const [currentStep, setCurrentStep] = useState(1);
+  const [unit, setUnit] = React.useState('');
+  const [pantry, setPantry] = useState([]);
+  const [quantity, setQuantity] = useState(0);
+  const [ingredient, setIngredient] = useState('');
+
+  const handleUnitSelection = (event) => {
+    setUnit(event.target.value);
+  };
 
   const handleNextStep = () => {
     setCurrentStep((prevStep) => prevStep + 1);
   };
+
   const handlePreviousStep = () => {
     setCurrentStep((prevStep) => prevStep - 1);
   };
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
+
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
+
   const handleMouseUpPassword = (event) => {
     event.preventDefault();
+  };
+
+  const handleAddIngredient = () => {
+    if (quantity > 0 && unit && ingredient) {
+      setPantry((prev) => [
+        ...prev, 
+        { quantity, unit, ingredient }
+      ]);
+      setQuantity(0);
+      setUnit('');
+      setIngredient('');
+    }
   };
 
     return (
@@ -78,7 +73,7 @@ const Register = () => {
               {currentStep === 1 && (
                 <div className={styles.step1}>
                   <div className={styles.regTitle}>Register for a Pantry<span className={styles.titleOrange}>Pal</span> account</div>
-                  <BorderLinearProgress 
+                  <CustomLinearProgress 
                     variant="determinate" 
                     value={(currentStep/4) * 100} 
                     className={styles.progressBar}
@@ -156,47 +151,58 @@ const Register = () => {
               {currentStep === 2 && (
                 <div className={styles.step1}>
                   <div className={styles.regTitle}>Add any ingredients that you own</div>
-                  <BorderLinearProgress 
+                  <CustomLinearProgress 
                     variant="determinate" 
                     value={(currentStep/4) * 100} 
                     className={styles.progressBar}
                   />
                   <div className={styles.addIngredient}>
-                    <div className={styles.Quantity}>
+                    <div className={styles.quantity}>
                       Quantity
                       <CustomTextField
                         type="number"
-                        onChange={(event) =>
-                          event.target.value < 0
-                              ? (event.target.value = 0)
-                              : event.target.value
-                        }
+                        onChange={(event) => {
+                          const value = event.target.value < 0 ? 0 : event.target.value;
+                          setQuantity(value);
+                        }}
                       />
                     </div>
-                    <div className={styles.Quantity}>
+                    <div className={styles.unit}>
                       Unit
-                      <CustomTextField
-                        type="number"
-                        onChange={(event) =>
-                          event.target.value < 0
-                              ? (event.target.value = 0)
-                              : event.target.value
-                        }
-                      />
+                      <CustomDropdown
+                        value={unit}
+                        onChange={handleUnitSelection}
+                      >
+                        {Units.map((unit) => (
+                          <MenuItem 
+                            key={unit.value} 
+                            value={unit.value}
+                            sx={{'&.MuiMenuItem-root': { fontFamily: 'Inter'}}}
+                          >
+                            {unit.label}
+                          </MenuItem>
+                        ))}
+                      </CustomDropdown>
                     </div>
-                    <div className={styles.Quantity}>
+                    <div className={styles.ingredient}>
                       Ingredients
                       <CustomTextField
-                        type="number"
-                        onChange={(event) =>
-                          event.target.value < 0
-                              ? (event.target.value = 0)
-                              : event.target.value
-                        }
+                        onChange={(event) => setIngredient(event.target.value)}
                       />
                     </div>
-                    <AddCircleOutlineRoundedIcon/>
+                    <AddCircleOutlineRounded onClick={handleAddIngredient}/>
                   </div>
+                  <div className={styles.ingredientList}>
+                  {pantry.length > 0 && (
+                    <ul>
+                      {pantry.map((item, index) => (
+                        <li key={index}>
+                          {item.quantity} {item.unit} of {item.ingredient}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
                   <div className={styles.regButton} onClick={handleNextStep}>Register</div>
                   <div className={styles.regHaveAcc}>Have an account? <Link className={styles.regLogin} href="/login">Login</Link></div>
                 </div>
