@@ -4,21 +4,21 @@ const db = require('./db');
 require('dotenv').config();
 
 // Create email transporter
-// const transporter = nodemailer.createTransport({
-//     service: 'gmail',
-//     auth: {
-//         user: process.env.EMAIL_USER,
-//         pass: process.env.EMAIL_PASS
-//     }
-// });
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+    }
+});
 
-// transporter.verify(function (error, success) {
-//     if (error) {
-//         console.log('Error during email sign-in:', error);
-//     } else {
-//         console.log('Sign-in successful, ready to send emails');
-//     }
-// });
+transporter.verify(function (error, success) {
+    if (error) {
+        console.log('Error during email sign-in:', error);
+    } else {
+        console.log('Sign-in successful, ready to send emails');
+    }
+});
 
 async function checkAndSendEmail() {
     try {
@@ -48,20 +48,20 @@ async function checkAndSendEmail() {
                     ${lowIngredients.join('\n')}
                 `;
 
-                // const mailOptions = {
-                //     from: process.env.EMAIL_USER,
-                //     to: users[0].email,
-                //     subject: 'Low Ingredient Alert',
-                //     text: message
-                // };
+                const mailOptions = {
+                    from: process.env.EMAIL_USER,
+                    to: users[0].email,
+                    subject: 'Low Ingredient Alert',
+                    text: message
+                };
 
-                // transporter.sendMail(mailOptions, function (error, info) {
-                //     if (error) {
-                //         console.log('Error sending email:', error);
-                //     } else {
-                //         console.log('Email sent: ' + info.response);
-                //     }
-                // });
+                transporter.sendMail(mailOptions, function (error, info) {
+                    if (error) {
+                        console.log('Error sending email:', error);
+                    } else {
+                        console.log('Email sent: ' + info.response);
+                    }
+                });
             }
         } else {
             console.log('No low ingredients found for user_id = 5');
