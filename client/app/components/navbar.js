@@ -1,15 +1,31 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link"; 
 import styles from "./navbar.module.css"; 
-import { usePathname } from "next/navigation"; 
+import { usePathname, useRouter } from "next/navigation"; 
 
 const Navbar = () => {
+    const router = useRouter();
     const pathname = usePathname();
     const isLoginPage = pathname === "/login";
     const isRegisterPage = pathname === "/register";
 
+    const [authenticated, setAuthenticated] = useState(false);
+
     const isActiveLink = (linkPath) => pathname === linkPath;
+
+    const handleLogout = () => {
+      localStorage.removeItem("token");
+      setAuthenticated(false);
+      router.push("/login");
+  };
+
+    useEffect(() => {
+      const token = localStorage.getItem("token");
+      if (token) {
+          setAuthenticated(true);
+      }
+  }, []);
 
     return (
       <div className={styles.navWrapper}>
@@ -31,13 +47,21 @@ const Navbar = () => {
             </Link>
             <Link href="/recipe" className={isActiveLink("/recipe") ? styles.activeLink : ""}>
               Recipes
-            </Link> {/* Added Recipes tab */}
+            </Link>
           </div>
           <div className={styles.navLinksWrapper}>
-            <Link href="/login">Log in</Link>
-            <Link className={styles.navGetStarted} href="/register">
-              <div className={styles.navGetStartedText}>Get Started</div>
-            </Link>
+            {authenticated ? (
+              <button onClick={handleLogout} className={styles.logoutButton}>
+                Logout
+              </button>
+            ) : (
+              <>
+                <Link href="/login">Log in</Link>
+                <Link className={styles.navGetStarted} href="/register">
+                  <div className={styles.navGetStartedText}>Get Started</div>
+                </Link>
+              </>
+            )}
           </div>
         </>
       )}

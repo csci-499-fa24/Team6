@@ -6,8 +6,9 @@ import { InputAdornment, IconButton } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import Link from "next/link"; 
 
-const RegistrationStep1 = ({ currentStep, handleNextStep }) => {
+const RegistrationStep1 = ({ currentStep, handleNextStep, email, setEmail, password, setPassword }) => {
     const [showPassword, setShowPassword] = React.useState(false);
+    const [confirmPassword, setConfirmPassword] = React.useState('');
 
     const handleClickShowPassword = () => setShowPassword((show) => !show);
 
@@ -44,6 +45,8 @@ const RegistrationStep1 = ({ currentStep, handleNextStep }) => {
                     required label="Email"
                     variant="outlined"
                     className={styles.regTextField}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                 />
                 <CustomTextField
                     required label="Phone Number"
@@ -55,6 +58,8 @@ const RegistrationStep1 = ({ currentStep, handleNextStep }) => {
                     variant="outlined"
                     type={showPassword ? 'text' : 'password'}
                     className={styles.regTextField}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     slotProps={{
                         input: {
                             endAdornment:
@@ -76,6 +81,8 @@ const RegistrationStep1 = ({ currentStep, handleNextStep }) => {
                     variant="outlined"
                     type={showPassword ? 'text' : 'password'}
                     className={styles.regTextField}
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
                     slotProps={{
                         input: {
                             endAdornment:

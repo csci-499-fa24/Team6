@@ -11,6 +11,11 @@ import { useState } from 'react';
 const Register = () => {
   const [currentStep, setCurrentStep] = useState(1);
 
+  const [email, setEmail] = useState('');        
+  const [password, setPassword] = useState('');  
+  const [error, setError] = useState('');        
+  const [success, setSuccess] = useState('');
+
   const handleNextStep = () => {
     setCurrentStep((prevStep) => prevStep + 1);
   };
@@ -31,16 +36,55 @@ const Register = () => {
     }
   };
 
+  //Register 
+  const handleSignup = async () => {
+    console.log("button clicked!")
+    setError('');
+    setSuccess('');
+    if (!email || !password) {
+      setError('Please fill in all fields');
+      return;
+    }
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setSuccess('Signup successful. Please log in.');
+        window.location.href = "/login"; // Redirect to login after success
+      } else {
+        setError(data.message || 'Signup failed');
+      }
+    } catch (err) {
+      setError('An error occurred. Please try again.');
+    }
+  };
+
   return (
     <div>
       <Navbar />
       <div className={styles.regPageWrapper}>
         <div className={styles.regWrapper}>
           <img src="../assets/logoTitle.png" className={styles.regImage} />
+
+          {error && <p style={{ color: 'red' }}>{error}</p>}
+          {success && <p style={{ color: 'green' }}>{success}</p>}
+
           {currentStep === 1 && (
             <RegistrationStep1
               currentStep={currentStep}
               handleNextStep={handleNextStep}
+              email={email}                   
+              setEmail={setEmail}              
+              password={password}              
+              setPassword={setPassword}
             />
           )}
           {currentStep === 2 && (
@@ -60,8 +104,8 @@ const Register = () => {
           {currentStep === 4 && (
             <RegistrationStep4
               currentStep={currentStep}
-              handleNextStep={handleNextStep}
               handlePrevStep={handlePrevStep}
+              handleFinish={handleSignup} 
             />
           )}
         </div>
