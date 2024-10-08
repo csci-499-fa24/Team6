@@ -3,12 +3,18 @@ const cors = require('cors');
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const db = require('./db');
-// const { checkAndSendEmail } = require('./email');
+const { checkAndSendEmail } = require('./email');
 const ingredientRoutes = require('./ingredient/ingredient');
 const { body, validationResult } = require('express-validator');
 const app = express();
 
-app.use(cors());
+const corsOptions = {
+    origin: 'https://team6-client.onrender.com', 
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],   
+    credentials: true,  
+};
+
+app.use(cors(corsOptions));
 app.use(express.json()); // Add this line to parse JSON bodies
 
 // Existing routes
