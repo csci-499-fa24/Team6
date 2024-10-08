@@ -12,7 +12,7 @@ const IngredientInput = () => {
     const fetchIngredients = async (query) => {
         try {
             const apiKey = process.env.NEXT_PUBLIC_SPOONACULAR_API_KEY;
-            const response = await fetch(`https://api.spoonacular.com/food/ingredients/autocomplete?query=${query}&number=5&apiKey=2e1bb03fd38a419c96486667908ec331`);
+            const response = await fetch(`https://api.spoonacular.com/food/ingredients/autocomplete?query=${query}&number=5&apiKey=${apiKey}`);
             const data = await response.json();
             setSuggestions(data); // Update suggestions with the fetched data
         } catch (error) {
@@ -40,10 +40,15 @@ const IngredientInput = () => {
     };
 
     const handleAdd = () => {
-        if (selectedIngredient) {
+        // Log the values for debugging
+        console.log('Selected Ingredient:', selectedIngredient);
+        console.log('Amount:', amount);
+
+        if (selectedIngredient && amount) { // Check if both ingredient and amount are provided
             const payload = {
                 ingredient_name: selectedIngredient.name, // Adjust based on your API
                 user_id: 1, // Replace with actual user ID
+                amount: parseInt(amount), // Ensure amount is an integer
             };
 
             // Send the ingredient and amount to the backend API
@@ -64,12 +69,14 @@ const IngredientInput = () => {
                     console.log('Ingredient added:', data);
                     // Optionally reset the form
                     setIngredient('');
-                    setAmount('');
+                    setAmount(''); // Reset amount as well
                     setSuggestions([]);
                 })
                 .catch((error) => {
                     console.error('Error adding ingredient:', error);
                 });
+        } else {
+            console.error('Please select an ingredient and specify an amount.');
         }
     };
 
@@ -87,7 +94,7 @@ const IngredientInput = () => {
                 <ul>
                     {suggestions.map((suggestion) => (
                         <li key={suggestion.id} onClick={() => handleSuggestionClick(suggestion)}>
-                            <img src={suggestion.image} alt={suggestion.name} width="50" height="50" />
+                            <img src={suggestion.image} alt={suggestion.name} width="50" height="50"/>
                             <div>
                                 <strong>{suggestion.name}</strong>
                                 <p>Aisle: {suggestion.aisle}</p>
@@ -100,7 +107,7 @@ const IngredientInput = () => {
             <input
                 type="number"
                 value={amount}
-                onChange={(e) => setAmount(e.target.value)}
+                onChange={(e) => setAmount(e.target.value)} // This should correctly set the amount
                 placeholder="Amount"
             />
             <button onClick={handleAdd}>Add</button>
