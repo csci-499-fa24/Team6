@@ -16,7 +16,8 @@ const Discover = () => {
                 router.push('/login');
             } else {
                 try {
-                    const response = await fetch('http://localhost:8080/api/protected', {
+                  //updated api route
+                    const response = await fetch('https://team6-backend.onrender.com/api/protected', {
                         method: 'GET',
                         headers: {
                             'Authorization': `Bearer ${token}`,  
