@@ -1,0 +1,37 @@
+.pageWrapper {
+    margin: 7vh 8vw;
+}
+
+.title {
+    font-size: 3rem;
+    font-weight: 600;
+    margin-bottom: 5rem;
+}
+
+.pantryContent {
+    display: flex;
+}
+
+.sidebar {
+    margin-right: 5rem;
+}
+
+.sidebar *{
+    font-size: 1.5rem;
+    margin-bottom: 3rem;
+    width: auto;
+    padding: 5px;
+    &:hover {
+        background-color: rgba(150, 202, 254, .23);
+    };
+}
+
+.seperator {
+    height: 65vh;
+    width: 1px;
+    background-color: black;
+}
+
+.ingredientInput {
+    margin-left: 5rem;
+}
