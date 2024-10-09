@@ -78,7 +78,7 @@ const IngredientInput = () => {
 
     return (
         <div>
-            <div className={styles.ingredientTitle}>Add an ingredient</div>
+            <div className={styles.header}>Add an ingredient</div>
             <input
                 type="text"
                 value={ingredient}

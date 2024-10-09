@@ -1,6 +1,7 @@
 'use client';
 import Navbar from "../components/navbar";
 import IngredientInput from './IngredientInput';
+import AllergenInput from "./AllergenInput";
 import React from "react";
 import styles from './pantry.module.css';
 import { useState } from 'react';
@@ -41,8 +42,8 @@ const Pantry = () => {
           <div className={styles.seperator}></div>
           <div className={styles.pantrySection}>
             {activeSection === 'Ingredients' && <IngredientInput />}
-            {activeSection === 'Allergens' && <div className={styles.ingredientTitle}>Add an allergen</div>}
-            {activeSection === 'Nutrition' && <div className={styles.ingredientTitle}>Modify your nutritional goals</div>}
+            {activeSection === 'Allergens' && <AllergenInput />}
+            {activeSection === 'Nutrition' && <div className={styles.header}>Modify your nutritional goals</div>}
           </div>
         </div>
       </div>

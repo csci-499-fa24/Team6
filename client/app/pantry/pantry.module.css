@@ -44,11 +44,22 @@
 
 .pantrySection {
     margin-left: 5rem;
+    width: 50%;
 }
 
-.ingredientTitle {
+.header {
     padding-top: 10px;
     padding-bottom: 2em;
     font-size: 1.2em;
     font-weight: 500;
+}
+
+.addAllergy {
+    display: flex;
+    align-items: center;
+}
+
+.allergyInput {
+    display: flex;
+    flex-direction: column;
 }
