@@ -1,11 +1,9 @@
 'use client';
 import * as React from 'react';
-import { CustomTextField, CustomDropdown, CustomLinearProgress } from "../components/customComponents"
+import { CustomTextField, CustomDropdown, CustomLinearProgress } from "../components/customComponents";
 import styles from './register.module.css';
 import { MenuItem } from '@mui/material';
 import { AddCircleOutlineRounded, RemoveCircleOutlineRounded } from '@mui/icons-material';
-import Link from "next/link";
-import { useState } from 'react';
 
 const Units = [
     { value: "g", label: "Gram(s)" },
@@ -19,13 +17,13 @@ const Units = [
     { value: "L", label: "Liter(s)" },
     { value: "tsp", label: "Teaspoon(s)" },
     { value: "tbsp", label: "Tablespoon(s)" },
-]
+];
 
-const RegistrationStep2 = ({ currentStep, handleNextStep, handlePrevStep }) => {
+const RegistrationStep2 = ({ currentStep, handleNextStep, handlePrevStep, formData, setFormData }) => {
     const [unit, setUnit] = React.useState('');
-    const [pantry, setPantry] = useState([]);
-    const [quantity, setQuantity] = useState('');
-    const [ingredient, setIngredient] = useState('');
+    const [ingredients, setIngredients] = React.useState(formData.ingredients);
+    const [quantity, setQuantity] = React.useState('');
+    const [ingredient, setIngredient] = React.useState('');
 
     const handleKeyDown = (event) => {
         if (event.key === 'Enter') {
@@ -35,18 +33,34 @@ const RegistrationStep2 = ({ currentStep, handleNextStep, handlePrevStep }) => {
 
     const handleAddIngredient = () => {
         if (quantity > 0 && unit && ingredient) {
-            setPantry((prev) => [
-                ...prev,
-                { quantity, unit, ingredient }
-            ]);
+            const newIngredient = { ingredient, quantity, unit }; // Use 'unit' instead of 'units'
+            setIngredients((prev) => [...prev, newIngredient]);
             setQuantity('');
             setUnit('');
             setIngredient('');
         }
     };
 
-    const handleRemoveIngredient = (indexToRemove) => {
-        setPantry((prev) => prev.filter((_, index) => index !== indexToRemove));
+    const handleRemoveIngredient = (index) => {
+        setIngredients((prev) => prev.filter((_, i) => i !== index));
+    };
+
+    const handleSaveAndNext = () => {
+        // Transform pantry items to match formData.ingredients structure
+        const formattedIngredients = ingredients.map(item => ({
+            ingredient: item.ingredient,
+            quantity: item.quantity,
+            units: item.unit // Use 'unit' instead of 'units'
+        }));
+
+        // Update formData with the current formatted ingredients
+        setFormData((prev) => ({
+            ...prev,
+            ingredients: formattedIngredients // Update the ingredients in formData
+        }));
+
+        // Proceed to the next step
+        handleNextStep();
     };
 
     return (
@@ -94,14 +108,14 @@ const RegistrationStep2 = ({ currentStep, handleNextStep, handlePrevStep }) => {
                         onKeyDown={handleKeyDown}
                     />
                 </div>
-                <AddCircleOutlineRounded onClick={handleAddIngredient} className={styles.addButton}/>
+                <AddCircleOutlineRounded onClick={handleAddIngredient} className={styles.addButton} />
             </div>
             <div className={styles.ingredientList}>
-                {pantry.length > 0 && (
+                {ingredients.length > 0 && (
                     <div className={styles.scrollableContainer}>
-                        {pantry.map((item, index) => (
+                        {ingredients.map((item, index) => (
                             <div key={index} className={styles.ingredientItem}>
-                                {item.quantity} {item.unit} of {item.ingredient}
+                                {item.quantity} {item.unit} {item.ingredient} {/* Simplified display */}
                                 <RemoveCircleOutlineRounded onClick={() => handleRemoveIngredient(index)} className={styles.removeButton} />
                             </div>
                         ))}
@@ -110,7 +124,7 @@ const RegistrationStep2 = ({ currentStep, handleNextStep, handlePrevStep }) => {
             </div>
             <div className={styles.navButtons}>
                 <div className={styles.navButton} onClick={handlePrevStep}>Back</div>
-                <div className={styles.navButton} onClick={handleNextStep}>Next</div>
+                <div className={styles.navButton} onClick={handleSaveAndNext}>Next</div>
             </div>
         </div>
     );

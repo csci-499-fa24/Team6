@@ -1,13 +1,18 @@
 'use client';
 import * as React from 'react';
-import { CustomTextField, CustomDropdown, CustomLinearProgress } from "../components/customComponents"
+import { CustomTextField, CustomLinearProgress } from "../components/customComponents";
 import styles from './register.module.css';
-import { MenuItem } from '@mui/material';
-import { AddCircleOutlineRounded, RemoveCircleOutlineRounded } from '@mui/icons-material';
-import Link from "next/link";
-import { useState } from 'react';
 
-const RegistrationStep3 = ({ currentStep, handlePrevStep, handleFinish}) => {
+const RegistrationStep4 = ({ currentStep, handlePrevStep, handleFinish, setFormData }) => {
+    const [nutritionGoals, setNutritionGoals] = React.useState({
+        protein: '',
+        carbohydrates: '',
+        total_fat: '',
+        saturated_fat: '',
+        fiber: '',
+        sodium: '',
+        sugar: ''
+    });
 
     const NutritionList = [
         "Protein",
@@ -17,7 +22,26 @@ const RegistrationStep3 = ({ currentStep, handlePrevStep, handleFinish}) => {
         "Fiber",
         "Sodium",
         "Sugar",
-    ]
+    ];
+
+    const handleInputChange = (event) => {
+        const { name, value } = event.target;
+        setNutritionGoals((prevGoals) => ({
+            ...prevGoals,
+            [name]: value
+        }));
+    };
+
+    const handleFinishClick = () => {
+        // Save nutritional goals to formData
+        setFormData((prevFormData) => ({
+            ...prevFormData,
+            ...nutritionGoals // Merging nutritional goals into formData
+        }));
+
+        // Call the finish function
+        handleFinish();
+    };
 
     return (
         <div className={styles.step1}>
@@ -33,7 +57,10 @@ const RegistrationStep3 = ({ currentStep, handlePrevStep, handleFinish}) => {
                         <div className={styles.nutritionName}>{nutrition}</div>
                         <CustomTextField
                             type="number"
-                            className= {styles.nutritionInput}
+                            name={nutrition.toLowerCase().replace(" ", "_")} // Set the name based on nutrition
+                            className={styles.nutritionInput}
+                            value={nutritionGoals[nutrition.toLowerCase().replace(" ", "_")]} // Set the value from state
+                            onChange={handleInputChange} // Handle input change
                         />
                         grams
                     </div>
@@ -41,10 +68,10 @@ const RegistrationStep3 = ({ currentStep, handlePrevStep, handleFinish}) => {
             </div>
             <div className={styles.navButtons}>
                 <div className={styles.navButton} onClick={handlePrevStep}>Back</div>
-                <div className={styles.navButton} onClick={handleFinish}>Finish</div>
+                <div className={styles.navButton} onClick={handleFinishClick}>Finish</div>
             </div>
         </div>
     );
 };
 
-export default RegistrationStep3;
+export default RegistrationStep4;

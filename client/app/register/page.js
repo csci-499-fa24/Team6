@@ -16,6 +16,25 @@ const Register = () => {
   const [error, setError] = useState('');        
   const [success, setSuccess] = useState('');
 
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    phoneNumber: '',
+    amount: '',
+    unit: '',
+    ingredients: [{ ingredient: '', quantity: '', units: '' }],
+    allergy: [{allergen: ''}],
+    protein: '',
+    carbohydrates: '',
+    total_fat: '',
+    saturated_fat: '',
+    fiber: '',
+    sodium: '',
+    sugar: ''
+  });
+
   const handleNextStep = () => {
     setCurrentStep((prevStep) => prevStep + 1);
   };
@@ -24,34 +43,49 @@ const Register = () => {
     setCurrentStep((prevStep) => (prevStep > 1 ? prevStep - 1 : prevStep));
   };
 
-  const handleAddIngredient = () => {
-    if (quantity > 0 && unit && ingredient) {
-      setPantry((prev) => [
-        ...prev,
-        { quantity, unit, ingredient }
-      ]);
-      setQuantity('');
-      setUnit('');
-      setIngredient('');
-    }
-  };
-
   //Register 
+  // const handleSignup = async () => {
+  //   console.log("button clicked!")
+  //   setError('');
+  //   setSuccess('');
+  //   if (!email || !password) {
+  //     setError('Please fill in all fields');
+  //     return;
+  //   }
+  //   try {
+  //     const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/register`, {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify({ email, password }),
+  //     });
+
+  //     const data = await response.json();
+
+  //     if (response.ok) {
+  //       setSuccess('Signup successful. Please log in.');
+  //       window.location.href = "/login"; // Redirect to login after success
+  //     } else {
+  //       setError(data.message || 'Signup failed');
+  //     }
+  //   } catch (err) {
+  //     setError('An error occurred. Please try again.');
+  //   }
+  // };
+
   const handleSignup = async () => {
-    console.log("button clicked!")
+    console.log("Submitting form data...");
     setError('');
     setSuccess('');
-    if (!email || !password) {
-      setError('Please fill in all fields');
-      return;
-    }
+
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/register`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL_LOCAL}/api/signup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify(formData), // Send the complete formData
       });
 
       const data = await response.json();
@@ -81,6 +115,8 @@ const Register = () => {
             <RegistrationStep1
               currentStep={currentStep}
               handleNextStep={handleNextStep}
+              formData={formData}
+              setFormData={setFormData}
               email={email}                   
               setEmail={setEmail}              
               password={password}              
@@ -92,6 +128,8 @@ const Register = () => {
               currentStep={currentStep}
               handleNextStep={handleNextStep}
               handlePrevStep={handlePrevStep}
+              formData={formData}
+              setFormData={setFormData}
             />
           )}
           {currentStep === 3 && (
@@ -99,13 +137,15 @@ const Register = () => {
               currentStep={currentStep}
               handleNextStep={handleNextStep}
               handlePrevStep={handlePrevStep}
+              setFormData={setFormData}
             />
           )}
           {currentStep === 4 && (
             <RegistrationStep4
               currentStep={currentStep}
               handlePrevStep={handlePrevStep}
-              handleFinish={handleSignup} 
+              handleFinish={handleSignup}
+              setFormData={setFormData}
             />
           )}
         </div>
