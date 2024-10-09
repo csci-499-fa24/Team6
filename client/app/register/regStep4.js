@@ -7,8 +7,7 @@ import { AddCircleOutlineRounded, RemoveCircleOutlineRounded } from '@mui/icons-
 import Link from "next/link";
 import { useState } from 'react';
 
-const RegistrationStep3 = ({ currentStep, handleNextStep, handlePrevStep }) => {
-    const [quantity, setQuantity] = useState('');
+const RegistrationStep3 = ({ currentStep, handlePrevStep, handleFinish}) => {
 
     const NutritionList = [
         "Protein",
@@ -42,7 +41,7 @@ const RegistrationStep3 = ({ currentStep, handleNextStep, handlePrevStep }) => {
             </div>
             <div className={styles.navButtons}>
                 <div className={styles.navButton} onClick={handlePrevStep}>Back</div>
-                <div className={styles.navButton}>Finish</div>
+                <div className={styles.navButton} onClick={handleFinish}>Finish</div>
             </div>
         </div>
     );

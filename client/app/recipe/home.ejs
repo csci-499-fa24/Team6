@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recipe Finder</title>
+</head>
+<body>
+  <h1>Recipes Based on Your Ingredients</h1>
+
+  <% if (recipes && recipes.length > 0) { %>
+    <ul>
+      <% recipes.forEach(recipe => { %>
+        <li>
+          <h2><%= recipe.title %></h2>
+          <img src="<%= recipe.image %>" alt="<%= recipe.title %>" width="200">
+
+          <!-- Display Extended Ingredients -->
+          <h3>Ingredients:</h3>
+          <ul>
+            <% recipe.extendedIngredients.forEach(ingredient => { %>
+              <li><%= ingredient.original %></li>
+            <% }); %>
+          </ul>
+
+          <!-- Display Instructions -->
+          <h3>Instructions:</h3>
+          <% if (recipe.instructions) { %>
+            <%- recipe.instructions %> 
+          <% } else { %>
+            <p>No instructions available.</p>
+          <% } %>
+
+          <!-- Display Nutrition Information -->
+          <h3>Nutritional Information:</h3>
+          <% if (recipe.nutrition) { %>
+            <p>Calories: <%= recipe.nutrition.nutrients.find(n => n.name === 'Calories').amount %> kcal</p>
+            <p>Fat: <%= recipe.nutrition.nutrients.find(n => n.name === 'Fat').amount %> g</p>
+            <p>Carbohydrates: <%= recipe.nutrition.nutrients.find(n => n.name === 'Carbohydrates').amount %> g</p>
+            <p>Protein: <%= recipe.nutrition.nutrients.find(n => n.name === 'Protein').amount %> g</p>
+          <% } else { %>
+            <p>No nutrition data available.</p>
+          <% } %>
+        </li>
+      <% }); %>
+    </ul>
+  <% } else { %>
+    <p>No recipes found for your ingredients.</p>
+  <% } %>
+</body>
+</html>
