@@ -1,8 +1,8 @@
 "use client";
 import React from "react";
-import Link from "next/link"; 
-import styles from "./navbar.module.css"; 
-import { usePathname } from "next/navigation"; 
+import Link from "next/link";
+import styles from "./navbar.module.css";
+import { usePathname } from "next/navigation";
 
 const Navbar = () => {
     const pathname = usePathname();
@@ -20,7 +20,7 @@ const Navbar = () => {
         {!isLoginPage && !isRegisterPage && (
         <>
           <div className={styles.navLinksWrapper}>
-            <Link href="/" className={isActiveLink("/") ? styles.activeLink : ""}>
+            <Link href="/home" className={isActiveLink("/home") ? styles.activeLink : ""}>
               Home
             </Link>
             <Link href="/pantry" className={isActiveLink("/pantry") ? styles.activeLink : ""}>
@@ -41,5 +41,5 @@ const Navbar = () => {
     </div>
   );
 };
-  
+
   export default Navbar;

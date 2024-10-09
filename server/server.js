@@ -5,9 +5,8 @@ const { checkAndSendEmail } = require('./email');
 
 const app = express();
 app.use(cors());
-app.use(express.json()); // Add this line to parse JSON bodies
+app.use(express.json());
 
-// Existing routes
 app.get("/api/home", (req, res) => {
     res.json({ message: "Hello World!" });
 });
@@ -22,7 +21,7 @@ app.get('/user-profiles', async (req, res) => {
     }
 });
 
-// New endpoint to get low ingredients
+
 app.get('/get-low-ingredients', async (req, res) => {
     try {
         // Query to get user profile and ingredients below amount of 30 for user_id = 5
@@ -42,7 +41,6 @@ app.get('/get-low-ingredients', async (req, res) => {
                 amount: user.amount
             }));
 
-            // Send response with user name and low ingredients
             res.json({
                 name: users[0].name,
                 lowIngredients
@@ -58,6 +56,17 @@ app.get('/get-low-ingredients', async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 });
+
+app.get('/ingredients', async (req, res) => {
+    try {
+        const result = await db.query('SELECT name FROM ingredients');
+        res.json(result.rows.map(item => item.name));
+    } catch (error) {
+        console.error('Error fetching ingredients:', error);
+        res.status(500).send('Error fetching ingredients');
+    }
+});
+
 
 const port = process.env.PORT || 8080;
 app.listen(port, () => {
