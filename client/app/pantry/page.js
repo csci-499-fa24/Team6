@@ -1,9 +1,17 @@
+'use client';
 import Navbar from "../components/navbar";
 import IngredientInput from './IngredientInput';
 import React from "react";
 import styles from './pantry.module.css';
+import { useState } from 'react';
 
 const Pantry = () => {
+  const [activeSection, setActiveSection] = useState('Ingredients');
+
+  const handleSectionClick = (section) => {
+    setActiveSection(section);
+  };
+
   return (
     <div>
       <Navbar />
@@ -11,19 +19,30 @@ const Pantry = () => {
         <div className={styles.title}>Welcome to your pantry</div>
         <div className={styles.pantryContent}>
           <div className={styles.sidebar}>
-            <div>
+            <div
+              onClick={() => handleSectionClick('Ingredients')}
+              className={activeSection === 'Ingredients' ? styles.active : styles.notActive}
+            >
               Ingredients
             </div>
-            <div>
+            <div
+              onClick={() => handleSectionClick('Allergens')}
+              className={activeSection === 'Allergens' ? styles.active : styles.notActive}
+            >
               Allergens
             </div>
-            <div>
+            <div
+              onClick={() => handleSectionClick('Nutrition')}
+              className={activeSection === 'Nutrition' ? styles.active : styles.notActive}
+            >
               Nutrition
             </div>
           </div>
           <div className={styles.seperator}></div>
-          <div className={styles.ingredientInput}>
-            <IngredientInput />
+          <div className={styles.pantrySection}>
+            {activeSection === 'Ingredients' && <IngredientInput />}
+            {activeSection === 'Allergens' && <div className={styles.ingredientTitle}>Add an allergen</div>}
+            {activeSection === 'Nutrition' && <div className={styles.ingredientTitle}>Modify your nutritional goals</div>}
           </div>
         </div>
       </div>

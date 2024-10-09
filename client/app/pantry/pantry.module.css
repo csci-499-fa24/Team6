@@ -1,11 +1,11 @@
 .pageWrapper {
-    margin: 7vh 8vw;
+    margin: 7vh 10vw;
 }
 
 .title {
-    font-size: 3rem;
+    font-size: 2.5em;
     font-weight: 600;
-    margin-bottom: 5rem;
+    margin-bottom: 2em;
 }
 
 .pantryContent {
@@ -13,25 +13,42 @@
 }
 
 .sidebar {
-    margin-right: 5rem;
+    display: flex;
+    flex-direction: column;
+    color: #506264;
+    width: 12%;
 }
 
-.sidebar *{
-    font-size: 1.5rem;
-    margin-bottom: 3rem;
-    width: auto;
-    padding: 5px;
-    &:hover {
-        background-color: rgba(150, 202, 254, .23);
-    };
+.notActive {
+    font-size: 1.2em;
+    margin-bottom: 1.5em;
+    padding: .6em 1.5em;
+    cursor: pointer;
+}
+
+.active {
+    font-size: 1.2em;
+    margin-bottom: 1.5em;
+    padding: .6em 1.5em;
+    color: #EC4A27;
+    cursor: pointer;
 }
 
 .seperator {
-    height: 65vh;
+    height: 60vh;
     width: 1px;
-    background-color: black;
+    background-color: #506264;
+    border-radius: 5px;
+    margin-left: 4rem;
 }
 
-.ingredientInput {
+.pantrySection {
     margin-left: 5rem;
+}
+
+.ingredientTitle {
+    padding-top: 10px;
+    padding-bottom: 2em;
+    font-size: 1.2em;
+    font-weight: 500;
 }

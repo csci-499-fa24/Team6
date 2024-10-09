@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState } from 'react';
+import styles from './pantry.module.css';
+
 
 const IngredientInput = () => {
     const [ingredient, setIngredient] = useState('');
@@ -76,7 +78,7 @@ const IngredientInput = () => {
 
     return (
         <div>
-            <h2>Add Ingredient</h2>
+            <div className={styles.ingredientTitle}>Add an ingredient</div>
             <input
                 type="text"
                 value={ingredient}
