@@ -3,14 +3,10 @@ name: Jest Coverage Report
 on:
   pull_request:
     branches:
-      - '**'
+      - '**'  
   push:
     branches:
-      - '**'
-
-permissions:
-  contents: write
-  checks: write
+      - '**' 
 
 jobs:
   test:
@@ -23,7 +19,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20.17.0'
+          node-version: '20.17.0'  
 
       - name: Install dependencies
         run: npm install
@@ -34,11 +30,11 @@ jobs:
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
-          file: ./server/coverage/lcov.info
+          file: ./server/coverage/lcov.info  
           flags: unittests
           name: coverage-report
 
       - name: Comment coverage report on PR
         uses: ArtiomTr/jest-coverage-report-action@v2.3.1
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.MY_GITHUB_TOKEN }}  
