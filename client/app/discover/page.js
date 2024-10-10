@@ -16,6 +16,7 @@ const Discover = () => {
                 router.push('/login');
             } else {
                 try {
+                  //updated api route
                     const response = await fetch('http://localhost:8080/api/protected', {
                         method: 'GET',
                         headers: {
