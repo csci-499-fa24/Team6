@@ -67,8 +67,9 @@ const RecipeDetails = () => {
             const steps = instructions
                 .replace(/<\/?ol>/g, '')
                 .replace(/<\/?li>/g, '')
+                .replace(/&amp;/g, '&') // Decode &amp; to &
                 .split('.');
-
+    
             return (
                 <ol>
                     {steps.map((step, index) => (
@@ -80,6 +81,7 @@ const RecipeDetails = () => {
             return <p>No instructions available.</p>;
         }
     };
+    
 
     return (
         <div>
