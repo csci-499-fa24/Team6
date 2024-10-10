@@ -4,10 +4,7 @@ on: [push, pull_request]
 
 permissions:
   contents: read
-  checks: write
   pull-requests: write
-  issues: write
-  statuses: write
 
 jobs:
   test:
@@ -26,20 +23,27 @@ jobs:
       - name: Run tests and generate coverage
         run: npm test -- --coverage
 
-      - name: Check coverage directory
-        run: |
-          ls -R coverage
-          echo "Contents of lcov.info:"
-          cat coverage/lcov.info
-
       - name: Upload coverage report
         uses: actions/upload-artifact@v3
         with:
           name: coverage
           path: coverage/
 
-      - name: Post Coverage Report
-        uses: romeovs/lcov-reporter-action@v0.3.1
+      - name: Post Coverage Comment
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v6
         with:
-          lcov-file: ./coverage/lcov.info
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            const fs = require('fs');
+            const coverageSum = JSON.parse(fs.readFileSync('coverage/coverage-summary.json', 'utf8'));
+            const totalCoverage = coverageSum.total.lines.pct;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `Total code coverage: ${totalCoverage}%
+
+            [Detailed coverage report available in Actions artifacts]`
+            })
