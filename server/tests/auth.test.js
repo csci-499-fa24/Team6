@@ -12,7 +12,7 @@ jest.mock('jsonwebtoken');
 jest.mock('nodemailer'); // Mock Nodemailer
 
 describe('Auth Routes', () => {
-  
+
   beforeEach(() => {
     jest.clearAllMocks(); // Clear mocks before each test
 
