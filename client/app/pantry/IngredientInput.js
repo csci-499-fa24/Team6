@@ -1,9 +1,10 @@
 "use client";
 
 import React, { useState } from 'react';
-import { CustomTextField } from "../components/customComponents"
+import { CustomTextField, CustomDropdown } from "../components/customComponents"
 import { AddCircleOutlineRounded, RemoveCircleOutlineRounded } from '@mui/icons-material';
-import styles from './IngredientInput.module.css'; // Import the CSS module
+import styles from './pantry.module.css'
+import { MenuItem } from '@mui/material';
 
 const IngredientInput = ({ onAddIngredient }) => {
     const [ingredient, setIngredient] = useState('');
@@ -92,14 +93,15 @@ const IngredientInput = ({ onAddIngredient }) => {
     return (
         <div>
             <div className={styles.header}>Add an ingredient</div>
-            <div className={styles.container}>
-            <input
-                    type="text"
-                    value={ingredient}
-                    onChange={handleInputChange}
-                    placeholder="Type an ingredient"
-                    className={styles.input}
-                />
+            <div className={styles.ingredientInput}>
+                <div className={styles.ingredient}>
+                    <div className={styles.textfieldLabel}>Ingredient</div>
+                    <CustomTextField
+                        value={ingredient}
+                        onChange={handleInputChange}
+                        size="small"
+                    />
+                </div>
                 {suggestions.length > 0 && (
                     <ul className={styles.suggestions}>
                         {suggestions.map((suggestion) => (
@@ -113,30 +115,33 @@ const IngredientInput = ({ onAddIngredient }) => {
                         ))}
                     </ul>
                 )}
-                <div className={styles.amountContainer}>
+                <div className={styles.amount}>
+                    <div className={styles.textfieldLabel}>Quantity</div>
                     <CustomTextField
                         type="number"
                         value={amount}
-                        onChange={(e) => setAmount(e.target.value)}
-                        placeholder="Amount"
-                        className={styles.amountInput}
+                        onChange={(e) => setAmount(e.target.value)} // This should correctly set the amount
+                        size="small"
+                        className={styles.amountTextField}
                     />
                     {selectedIngredient && selectedIngredient.possibleUnits && (
-                        <select
+                        <CustomDropdown
                             value={unit}
                             onChange={(e) => setUnit(e.target.value)}
                             className={styles.unitSelect}
                         >
-                            <option value="">Select unit</option>
                             {selectedIngredient.possibleUnits.map((possibleUnit) => (
-                                <option key={possibleUnit} value={possibleUnit}>
+                                <MenuItem
+                                    key={possibleUnit}
+                                    value={possibleUnit}
+                                    sx={{ '&.MuiMenuItem-root': { fontFamily: 'Inter' } }}
+                                >
                                     {possibleUnit}
-                                </option>
+                                </MenuItem>
                             ))}
-                        </select>
+                        </CustomDropdown>
                     )}
                 </div>
-                <button onClick={handleAdd}>Add</button>
                 <AddCircleOutlineRounded onClick={handleAdd} className={styles.addButton} />
             </div>
         </div>
