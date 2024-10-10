@@ -27,15 +27,15 @@ app.get("/api/home", (req, res) => {
 
 const authenticateToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1]; 
+    const token = authHeader && authHeader.split(' ')[1];
 
-    if (!token) return res.sendStatus(401); 
+    if (!token) return res.sendStatus(401);
 
     jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
         if (err) {
-            return res.sendStatus(403); 
+            return res.sendStatus(403);
         }
-        req.user = user; 
+        req.user = user;
         next();
     });
 };
@@ -122,6 +122,69 @@ app.get('/get-low-ingredients', async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 });
+
+
+// New endpoint to get low ingredients
+app.get('/get-low-ingredients', async (req, res) => {
+    try {
+        const result = await db.query(`
+            SELECT up.user_id, up.first_name, up.last_name, up.phone, up.email,
+                   i.name AS ingredient_name, ui.amount, ui.unit
+            FROM user_profiles up
+            JOIN user_ingredient ui ON up.user_id = ui.user_id
+            JOIN ingredients i ON ui.ingredient_id = i.ingredient_id;
+        `);
+
+
+        const users = result.rows;
+
+
+        if (users.length > 0) {
+            const userMap = {};
+
+
+            users.forEach(user => {
+                if (!userMap[user.user_id]) {
+                    userMap[user.user_id] = {
+                        user_id: user.user_id,
+                        first_name: user.first_name,
+                        last_name: user.last_name,
+                        phone: user.phone,
+                        email: user.email,
+                        ingredients: []
+                    };
+                }
+
+
+                userMap[user.user_id].ingredients.push({
+                    name: user.ingredient_name,
+                    amount: user.amount,
+                    unit: user.unit
+                });
+            });
+
+
+            const userProfiles = Object.values(userMap);
+            res.json(userProfiles);
+        } else {
+            res.json([]);
+        }
+    } catch (err) {
+        console.error('Error querying database:', err);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+ });
+
+
+ app.get('/send-email', async (req, res) => {
+    try {
+        await checkAndSendEmail();
+        res.status(200).json({ message: 'Email sent successfully!' });
+    } catch (err) {
+        console.error('Error sending email:', err);
+        res.status(500).json({ message: 'Error sending email: ' + err.message });
+    }
+ });
 
 const port = process.env.PORT || 8080;
 app.listen(port, () => {
