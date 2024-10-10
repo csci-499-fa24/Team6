@@ -24,19 +24,19 @@ const Units = [
 
 const RegistrationStep2 = ({ currentStep, handleNextStep, handlePrevStep }) => {
    const [unit, setUnit] = useState('');
-   const [pantry, setPantry] = useState([]); // To store added ingredients
+   const [pantry, setPantry] = useState([]);
    const [quantity, setQuantity] = useState('');
-   const [temporaryIngredient, setTemporaryIngredient] = useState(''); // To store user input for ingredient
-   const [ingredientsList, setIngredientsList] = useState([]); // Available ingredients from API
-   const [suggestions, setSuggestions] = useState([]); // Filtered suggestions based on user input
+   const [temporaryIngredient, setTemporaryIngredient] = useState('');
+   const [ingredientsList, setIngredientsList] = useState([]);
+   const [suggestions, setSuggestions] = useState([]);
 
-   // Fetch ingredients from the server when component mounts
+
    useEffect(() => {
        const fetchIngredients = async () => {
            try {
-               const response = await axios.get('http://localhost:8080/ingredients'); // Adjust API URL as needed
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/ingredients`);
                console.log("Fetched Ingredients:", response.data);
-               setIngredientsList(response.data); // Store the fetched ingredients
+               setIngredientsList(response.data);
            } catch (error) {
                console.error('Error fetching ingredients:', error);
            }
@@ -44,7 +44,7 @@ const RegistrationStep2 = ({ currentStep, handleNextStep, handlePrevStep }) => {
        fetchIngredients();
    }, []);
 
-   // Update suggestions whenever the user types in the ingredient input
+
    useEffect(() => {
        if (temporaryIngredient) {
            const filteredSuggestions = ingredientsList.filter((item) =>
@@ -56,21 +56,20 @@ const RegistrationStep2 = ({ currentStep, handleNextStep, handlePrevStep }) => {
        }
    }, [temporaryIngredient, ingredientsList]);
 
-   // Add ingredient to pantry when user presses 'Enter'
+
    const handleKeyDown = (event) => {
        if (event.key === 'Enter') {
            handleAddIngredient();
        }
    };
 
-   // Add ingredient to pantry (if valid)
+
    const handleAddIngredient = () => {
        if (quantity > 0 && unit && temporaryIngredient) {
            setPantry((prev) => [
                ...prev,
-               { quantity, unit, ingredient: temporaryIngredient } // Add new ingredient to pantry
+               { quantity, unit, ingredient: temporaryIngredient }
            ]);
-           // Reset input fields
            setQuantity('');
            setUnit('');
            setTemporaryIngredient('');
@@ -78,15 +77,15 @@ const RegistrationStep2 = ({ currentStep, handleNextStep, handlePrevStep }) => {
        }
    };
 
-   // Remove an ingredient from the pantry
+
    const handleRemoveIngredient = (indexToRemove) => {
        setPantry((prev) => prev.filter((_, index) => index !== indexToRemove));
    };
 
-   // Handle suggestion selection (user clicks on a suggestion)
+
    const handleSuggestionClick = (suggestion) => {
        setTemporaryIngredient(suggestion);
-       setSuggestions([]); // Clear suggestions after selection
+       setSuggestions([]);
    };
 
    return (
@@ -104,7 +103,7 @@ const RegistrationStep2 = ({ currentStep, handleNextStep, handlePrevStep }) => {
                        type="number"
                        value={quantity}
                        onChange={(event) => {
-                           const value = event.target.value < 0 ? 0 : event.target.value; // Prevent negative values
+                           const value = event.target.value < 0 ? 0 : event.target.value;
                            setQuantity(value);
                        }}
                    />
@@ -113,7 +112,7 @@ const RegistrationStep2 = ({ currentStep, handleNextStep, handlePrevStep }) => {
                    Unit
                    <CustomDropdown
                        value={unit}
-                       onChange={(event) => setUnit(event.target.value)} // Update selected unit
+                       onChange={(event) => setUnit(event.target.value)}
                    >
                        {Units.map((unit) => (
                            <MenuItem
@@ -132,9 +131,9 @@ const RegistrationStep2 = ({ currentStep, handleNextStep, handlePrevStep }) => {
                        value={temporaryIngredient}
                        onChange={(event) => {
                            const value = event.target.value;
-                           setTemporaryIngredient(value); // Update ingredient input
+                           setTemporaryIngredient(value);
                        }}
-                       onKeyDown={handleKeyDown} // Handle 'Enter' key
+                       onKeyDown={handleKeyDown}
                    />
                    {suggestions.length > 0 && (
                        <div className={styles.suggestionList}>
@@ -142,7 +141,7 @@ const RegistrationStep2 = ({ currentStep, handleNextStep, handlePrevStep }) => {
                                <div
                                    key={index}
                                    className={styles.suggestionItem}
-                                   onClick={() => handleSuggestionClick(suggestion)} // Handle suggestion click
+                                   onClick={() => handleSuggestionClick(suggestion)}
                                >
                                    {suggestion}
                                </div>
