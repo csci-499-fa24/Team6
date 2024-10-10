@@ -9,11 +9,10 @@ const { body, validationResult } = require('express-validator');
 const app = express();
 const registerRoute = require('./register');
 
-//meheran update these links :)
 const corsOptions = {
-    origin: ['http://localhost:3000', 'http://your-backend-url.com'],
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],   
-    credentials: true,  
+    origin: process.env.NEXT_PUBLIC_SERVER_URL || 'https://team6-client.onrender.com',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true,
 };
 
 app.use(cors(corsOptions));
