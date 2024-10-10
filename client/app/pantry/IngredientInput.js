@@ -93,15 +93,15 @@ const IngredientInput = ({ onAddIngredient }) => {
     return (
         <div>
             <div className={styles.header}>Add an ingredient</div>
-            <div className={styles.ingredientInput}>
-                <div className={styles.ingredient}>
-                    <div className={styles.textfieldLabel}>Ingredient</div>
-                    <CustomTextField
-                        value={ingredient}
-                        onChange={handleInputChange}
-                        size="small"
-                    />
-                </div>
+            <div className={styles.container}>
+                <input
+                    type="text"
+                    value={ingredient}
+                    onChange={handleInputChange}
+                    placeholder="Type an ingredient"
+                    className={styles.input}
+                />
+
                 {suggestions.length > 0 && (
                     <ul className={styles.suggestions}>
                         {suggestions.map((suggestion) => (
