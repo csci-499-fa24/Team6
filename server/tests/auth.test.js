@@ -1,8 +1,6 @@
-// tests/auth.test.js
-
 const request = require('supertest');
-const app = require('../server'); // Import the app instance
-const db = require('../db'); // Mock the database connection
+const app = require('../server'); 
+const db = require('../db'); 
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 

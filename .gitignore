@@ -42,5 +42,17 @@
 # dependencies
 /server/node_modules
 
+# testing
+/server/coverage
+
 # local env files
 /server/.env
+
+# logs
+/server/npm-debug.log*
+/server/yarn-debug.log*
+/server/yarn-error.log*
+
+# lock files
+/yarn.lock
+/package-lock.json
