@@ -36,30 +36,28 @@ const AllergenInput = () => {
             <div className={styles.header}>Add an allergen</div>
             <div className={styles.addAllergy}>
                 <div className={styles.allergyInput}>
-                    Allergy
+                    <div className={styles.textfieldLabel}>Allergy</div>
                     <CustomTextField
                         value={allergy}
                         onChange={(event) => setAllergy(event.target.value)}
                         onKeyDown={handleKeyDown}
-                        className={styles.allergyTextField}
+                        size="small"
                     />
                 </div>
                 <AddCircleOutlineRounded onClick={handleAddAllergy} className={styles.addButton} />
             </div>
             <div className={styles.allergies}>
                 <div className={styles.header}>Your food allergies</div>
-                <div className={styles.allergyList}>
-                    {allergies.length > 0 && (
-                        <div className={styles.scrollableContainer}>
-                            {allergies.map((item, index) => (
-                                <div key={index} className={styles.ingredientItem}>
-                                    {item.allergy}
-                                    <RemoveCircleOutlineRounded onClick={() => handleRemoveAllergy(index)} className={styles.removeButton} />
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </div>
+                {allergies.length > 0 && (
+                    <div className={styles.scrollableContainer}>
+                        {allergies.map((item, index) => (
+                            <div key={index} className={styles.allergy}>
+                                {item.allergy}
+                                <RemoveCircleOutlineRounded fontSize="small" onClick={() => handleRemoveAllergy(index)} className={styles.removeButton} />
+                            </div>
+                        ))}
+                    </div>
+                )}
             </div>
         </div>
     );

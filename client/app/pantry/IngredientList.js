@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
+import styles from './pantry.module.css';
 
 const IngredientList = () => {
     const [userIngredients, setUserIngredients] = useState([]);
@@ -81,7 +82,7 @@ const IngredientList = () => {
 
     return (
         <div>
-            <h2>Your Ingredients</h2>
+            <div className={styles.header}>Your Ingredients</div>
             {error && <p style={{ color: 'red' }}>{error}</p>} {/* Display error message if any */}
             {userIngredients.length === 0 ? ( // Check if there are no ingredients
                 <p>No ingredients found. Please add some ingredients.</p>

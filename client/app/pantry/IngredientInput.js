@@ -2,6 +2,8 @@
 
 import React, { useState } from 'react';
 import styles from './pantry.module.css';
+import { CustomTextField } from "../components/customComponents"
+import { AddCircleOutlineRounded, RemoveCircleOutlineRounded } from '@mui/icons-material';
 
 
 const IngredientInput = () => {
@@ -86,33 +88,41 @@ const IngredientInput = () => {
     return (
         <div>
             <div className={styles.header}>Add an ingredient</div>
-            <input
-                type="text"
-                value={ingredient}
-                onChange={handleInputChange}
-                placeholder="Type an ingredient"
-            />
-            {suggestions.length > 0 && (
-                <ul>
-                    {suggestions.map((suggestion) => (
-                        <li key={suggestion.id} onClick={() => handleSuggestionClick(suggestion)}>
-                            <img src={suggestion.image} alt={suggestion.name} width="50" height="50"/>
-                            <div>
-                                <strong>{suggestion.name}</strong>
-                                <p>Aisle: {suggestion.aisle}</p>
+            <div className={styles.ingredientInput}>
+                <div className={styles.ingredient}>
+                    <div className={styles.textfieldLabel}>Ingredient</div>
+                    <CustomTextField
+                        value={ingredient}
+                        onChange={handleInputChange}
+                        size="small"
+                    />
+                </div>
+                {suggestions.length > 0 && (
+                    <ul>
+                        {suggestions.map((suggestion) => (
+                            <li key={suggestion.id} onClick={() => handleSuggestionClick(suggestion)}>
+                                <img src={suggestion.image} alt={suggestion.name} width="50" height="50" />
+                                <div>
+                                    <strong>{suggestion.name}</strong>
+                                    <p>Aisle: {suggestion.aisle}</p>
 
-                            </div>
-                        </li>
-                    ))}
-                </ul>
-            )}
-            <input
-                type="number"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)} // This should correctly set the amount
-                placeholder="Amount"
-            />
-            <button onClick={handleAdd}>Add</button>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                )}
+                <div className={styles.amount}>
+                    <div className={styles.textfieldLabel}>Quantity</div>
+                    <CustomTextField
+                        type="number"
+                        value={amount}
+                        onChange={(e) => setAmount(e.target.value)} // This should correctly set the amount
+                        size="small"
+                        className={styles.amountTextField}
+                    />
+                </div>
+                <AddCircleOutlineRounded onClick={handleAdd} className={styles.addButton} />
+            </div>
         </div>
     );
 };

@@ -2,6 +2,7 @@
 import Navbar from "../components/navbar";
 import IngredientInput from './IngredientInput';
 import IngredientList from './IngredientList'
+import NutritionInput from "./NutritionInput";
 import AllergenInput from "./AllergenInput";
 import React from "react";
 import styles from './pantry.module.css';
@@ -49,7 +50,7 @@ const Pantry = () => {
               </>
             )}
             {activeSection === 'Allergens' && <AllergenInput />}
-            {activeSection === 'Nutrition' && <div className={styles.header}>Modify your nutritional goals</div>}
+            {activeSection === 'Nutrition' && <NutritionInput/>}
           </div>
         </div>
       </div>
