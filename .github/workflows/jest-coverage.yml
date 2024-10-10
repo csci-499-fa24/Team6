@@ -1,17 +1,14 @@
 name: Run Jest Tests and Coverage
 
-# Trigger the workflow on push and pull requests to main
 on:
-  pull_request:
-    branches:
-      - main
-  push:
+  pull_request_target:
     branches:
       - main
 
 permissions:
   contents: read
   checks: write
+  pull-requests: write
 
 jobs:
   coverage:
@@ -35,7 +32,7 @@ jobs:
       - name: Run Jest tests with coverage
         run: npm test -- --coverage
 
-      # Use Jest coverage report action
+      # Use Jest coverage report action to publish coverage results
       - name: Report Coverage
         uses: ArtiomTr/jest-coverage-report-action@v2
         with:
