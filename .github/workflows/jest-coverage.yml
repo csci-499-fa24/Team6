@@ -2,10 +2,6 @@ name: Run Tests and Coverage
 
 on: [push, pull_request]
 
-permissions:
-  contents: read
-  pull-requests: write
-
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -21,47 +17,8 @@ jobs:
         run: npm ci
 
       - name: Run tests and generate coverage
-        run: npm test -- --coverage
-
-      - name: List coverage directory
-        run: |
-          ls -R coverage
-          echo "Contents of coverage directory:"
-          cat coverage/lcov.info
-
-      - name: Upload coverage report
-        uses: actions/upload-artifact@v3
+        uses: ArtiomTr/jest-coverage-report-action@v2
         with:
-          name: coverage
-          path: coverage/
-
-      - name: Post Coverage Comment
-        if: github.event_name == 'pull_request'
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
-          script: |
-            const fs = require('fs');
-            let coverageMessage = 'Unable to determine code coverage.';
-            
-            try {
-              if (fs.existsSync('coverage/lcov.info')) {
-                const lcovContent = fs.readFileSync('coverage/lcov.info', 'utf8');
-                const lines = lcovContent.split('\n');
-                const linesHit = lines.find(line => line.startsWith('LH:')).split(':')[1];
-                const linesFound = lines.find(line => line.startsWith('LF:')).split(':')[1];
-                const coverage = (linesHit / linesFound * 100).toFixed(2);
-                coverageMessage = `Total code coverage: ${coverage}%`;
-              }
-            } catch (error) {
-              console.error('Error reading coverage file:', error);
-            }
-            
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: `${coverageMessage}
-
-            [Detailed coverage report available in Actions artifacts]`
-            })
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          test-script: npm test
+          package-manager: npm
