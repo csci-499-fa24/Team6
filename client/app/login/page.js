@@ -82,6 +82,7 @@ const handleLogin = async () => {
               className={styles.loginEmail} 
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              style={{ marginTop: '2.5em' }}
             />
             <CustomTextField 
               required label="Password" 
@@ -89,6 +90,7 @@ const handleLogin = async () => {
               type={showPassword ? 'text' : 'password'}
               className={styles.loginPassword}
               value={password}
+              style={{ marginTop: '2.5em' }}
               onChange={(e) => setPassword(e.target.value)}
               slotProps={{
                 input: {

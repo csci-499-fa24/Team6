@@ -51,9 +51,9 @@ const Navbar = () => {
           </div>
           <div className={styles.navLinksWrapper}>
             {authenticated ? (
-              <button onClick={handleLogout} className={styles.logoutButton}>
+              <div onClick={handleLogout} className={styles.logoutButton}>
                 Logout
-              </button>
+              </div>
             ) : (
               <>
                 <Link href="/login">Log in</Link>

@@ -69,6 +69,7 @@ const RegistrationStep1 = ({ currentStep, handleNextStep, formData, setFormData 
                         className={styles.regNameField}
                         value={formData.firstName}
                         onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                        style={{ marginTop: '2em' }}
                     />
                     <CustomTextField
                         required label="Last Name"
@@ -76,6 +77,7 @@ const RegistrationStep1 = ({ currentStep, handleNextStep, formData, setFormData 
                         className={styles.regNameField}
                         value={formData.lastName}
                         onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                        style={{ marginTop: '2em' }}
                     />
                 </div>
                 <CustomTextField
@@ -84,6 +86,7 @@ const RegistrationStep1 = ({ currentStep, handleNextStep, formData, setFormData 
                     className={styles.regTextField}
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    style={{ marginTop: '2em' }}
                 />
                 <CustomTextField
                     required label="Phone Number"
@@ -91,6 +94,7 @@ const RegistrationStep1 = ({ currentStep, handleNextStep, formData, setFormData 
                     className={styles.regTextField}
                     value={formData.phoneNumber}
                     onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
+                    style={{ marginTop: '2em' }}
                 />
                 <CustomTextField
                     required label="Password"
@@ -99,6 +103,7 @@ const RegistrationStep1 = ({ currentStep, handleNextStep, formData, setFormData 
                     className={styles.regTextField}
                     value={formData.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    style={{ marginTop: '2em' }}
                     slotProps={{
                         input: {
                             endAdornment:
@@ -121,6 +126,7 @@ const RegistrationStep1 = ({ currentStep, handleNextStep, formData, setFormData 
                     className={styles.regTextField}
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
+                    style={{ marginTop: '2em' }}
                     slotProps={{
                         input: {
                             endAdornment:

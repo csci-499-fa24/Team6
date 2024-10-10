@@ -52,15 +52,10 @@
 .regName {
     display: flex;
     justify-content: space-between;
-    margin-top: 2rem;
 }
 
 .regNameField {
     width: 48%;
-}
-
-.regTextField {
-    margin-top: 1.5rem;
 }
 
 .regButton {

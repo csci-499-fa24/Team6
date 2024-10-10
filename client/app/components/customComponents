@@ -32,6 +32,7 @@ export const CustomTextField = styled(TextField)({
 });
 
 export const CustomDropdown = styled(Select)({
+    backgroundColor: 'White',
     '& .MuiOutlinedInput-notchedOutline': {
       border: '2px solid #E0E0E0',
       borderRadius: '10px',
