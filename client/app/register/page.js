@@ -57,8 +57,28 @@ const Register = () => {
       const data = await response.json();
 
       if (response.ok) {
-        setSuccess('Signup successful. Please log in.');
-        window.location.href = "/login"; // Redirect to login after success
+        localStorage.setItem('token', data.token);
+
+        const token = localStorage.getItem('token');
+        const protectedResponse = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/protected`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`, 
+        },
+      });
+
+      if (protectedResponse.ok) {
+        const protectedData = await protectedResponse.json();
+        console.log('Protected data:', protectedData); 
+        window.location.href = "/pantry"; 
+      } else {
+        console.error('Failed to fetch protected data');
+      }
+
+
+        //  setSuccess('Signup successful. Please log in.');
+        //  window.location.href = "/login"; // Redirect to login after success
       } else {
         console.error('Signup failed:', data);
         setError(data.message || 'Signup failed. Please try again.');
