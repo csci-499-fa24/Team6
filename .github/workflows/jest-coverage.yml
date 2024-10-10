@@ -22,3 +22,6 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           test-script: npm test
+          package-manager: npm
+          skip-step: install
+          base-coverage-file: ''
