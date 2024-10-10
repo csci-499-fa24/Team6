@@ -1,9 +1,6 @@
-name: Test_Coverage
+name: Run Jest Tests and Generate Coverage Report
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
     branches:
       - main
@@ -12,21 +9,29 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: write
+      pull-requests: write
+      checks: write
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '20.5.0'
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
 
-      - name: Install dependencies
-        run: |
-          cd server
-          npm install
+    - name: Install dependencies
+      run: npm install
+      working-directory: ./server
 
-      - name: Run tests
-        run: |
-          cd server
-          npm test
+    - name: Run Jest with Coverage
+      run: npm test -- --coverage
+      working-directory: ./server
+
+    - name: Generate Jest Coverage Report
+      uses: ArtiomTr/jest-coverage-report-action@v2.3.1
+      with:
+        working-directory: ./server
