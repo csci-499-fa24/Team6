@@ -27,15 +27,15 @@ app.get("/api/home", (req, res) => {
 
 const authenticateToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1]; 
+    const token = authHeader && authHeader.split(' ')[1];
 
-    if (!token) return res.sendStatus(401); 
+    if (!token) return res.sendStatus(401);
 
     jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
         if (err) {
-            return res.sendStatus(403); 
+            return res.sendStatus(403);
         }
-        req.user = user; 
+        req.user = user;
         next();
     });
 };
@@ -122,6 +122,19 @@ app.get('/get-low-ingredients', async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 });
+
+app.get('/ingredients', async (req, res) => {
+    try {
+        const result = await db.query('SELECT name FROM ingredients');
+        const ingredients = result.rows.map(row => row.name);
+
+        res.json(ingredients);
+    } catch (error) {
+        console.error('Error fetching ingredients:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
 
 const port = process.env.PORT || 8080;
 app.listen(port, () => {
