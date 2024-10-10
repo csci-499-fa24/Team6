@@ -10,10 +10,24 @@ const RecipePage = () => {
     const [recipes, setRecipes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [userIngredients, setUserIngredients] = useState([]); // State for user ingredients
 
-    const userIngredients = ['noodles', 'beef', 'salt', 'pepper', 'hoisin sauce', 'garlic', 'scallions', 'soy sauce', 'oyster sauce', 'ginger']; 
+    // Fetch user ingredients from your API
+    const fetchUserIngredients = async () => {
+        try {
+            const response = await axios.get(process.env.NEXT_PUBLIC_SERVER_URL +'/api/user-ingredients');
+            const ingredientNames = response.data.map(ingredient => ingredient.name.toLowerCase());
+            setUserIngredients(ingredientNames);
+        } catch (error) {
+            console.error('Error fetching user ingredients:', error);
+            setError('Failed to fetch user ingredients.');
+        }
+    };
 
+    // Fetch recipes based on the user's ingredients
     const fetchRecipes = async () => {
+        if (userIngredients.length === 0) return; // Wait until ingredients are fetched
+
         try {
             const ingredients = userIngredients.join(',');
 
@@ -58,15 +72,21 @@ const RecipePage = () => {
             setRecipes(detailedRecipes);
         } catch (error) {
             console.error('Error fetching recipes:', error);
-            setError(error.message);
+            setError('Failed to fetch recipes.');
         } finally {
             setLoading(false);
         }
     };
 
     useEffect(() => {
-        fetchRecipes();
+        fetchUserIngredients(); // Fetch user ingredients on component mount
     }, []);
+
+    useEffect(() => {
+        if (userIngredients.length > 0) {
+            fetchRecipes(); // Fetch recipes after user ingredients are fetched
+        }
+    }, [userIngredients]);
 
     return (
         <div>
