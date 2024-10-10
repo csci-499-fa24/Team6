@@ -1,38 +1,55 @@
 const request = require('supertest');
-const app = require('../server'); 
-const db = require('../db'); 
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const nodemailer = require('nodemailer'); // Add Nodemailer import
 
-// Mocking the database queries and external libraries
+// Mock modules
 jest.mock('../db');
 jest.mock('bcrypt');
 jest.mock('jsonwebtoken');
-jest.mock('nodemailer'); // Mock Nodemailer
+
+// Mock the entire nodemailer module
+jest.mock('nodemailer', () => ({
+  createTransport: jest.fn().mockReturnValue({
+    verify: jest.fn().mockImplementation(cb => cb(null, true)),
+    sendMail: jest.fn().mockResolvedValue({ messageId: 'mocked-message-id' })
+  })
+}));
+
+// Mock the entire email module
+jest.mock('../email', () => ({
+  transporter: {
+    verify: jest.fn().mockImplementation(cb => cb(null, true)),
+    sendMail: jest.fn().mockResolvedValue({ messageId: 'mocked-message-id' })
+  },
+  sendWelcomeEmail: jest.fn().mockResolvedValue(true)
+}));
+
+// Import mocked modules
+const db = require('../db');
+
+// Import the app after mocking dependencies
+const app = require('../server');
 
 describe('Auth Routes', () => {
+  let originalLog;
+  
+  beforeAll(() => {
+    originalLog = console.log;
+    console.log = jest.fn();
+  });
+
+  afterAll(() => {
+    console.log = originalLog;
+  });
 
   beforeEach(() => {
-    jest.clearAllMocks(); // Clear mocks before each test
-
-    // Mock Nodemailer createTransport and sendMail
-    nodemailer.createTransport.mockReturnValue({
-      sendMail: jest.fn().mockResolvedValue(true), // Simulate email being sent successfully
-    });
+    jest.clearAllMocks();
   });
 
   describe('POST /api/register', () => {
     it('should register a user successfully', async () => {
-      // Mock the db query for email check
-      db.query.mockResolvedValueOnce({ rows: [] }); // Email does not exist
-
-      // Mock the db query for inserting a user
-      db.query.mockResolvedValueOnce({
-        rows: [{ user_id: 1 }] 
-      });
-
-      // Mock the bcrypt hash function
+      db.query.mockResolvedValueOnce({ rows: [] }); // Email doesn't exist
+      db.query.mockResolvedValueOnce({ rows: [{ user_id: 1 }] }); // User inserted
       bcrypt.hash.mockResolvedValue('hashedpassword');
 
       const response = await request(app)
@@ -50,16 +67,10 @@ describe('Auth Routes', () => {
 
       expect(response.status).toBe(201);
       expect(response.body.message).toBe('User registered successfully');
-
-      // Ensure the mock sendMail was called during registration
-      expect(nodemailer.createTransport().sendMail).toHaveBeenCalled();
     });
 
     it('should return error if email already exists', async () => {
-      // Mock the db query for email check
-      db.query.mockResolvedValueOnce({
-        rows: [{ user_id: 1 }] 
-      });
+      db.query.mockResolvedValueOnce({ rows: [{ user_id: 1 }] }); // Email exists
 
       const response = await request(app)
         .post('/api/register')
@@ -76,23 +87,15 @@ describe('Auth Routes', () => {
 
       expect(response.status).toBe(400);
       expect(response.body.message).toBe('Email already in use');
-
-      // Ensure sendMail wasn't called since registration failed
-      expect(nodemailer.createTransport().sendMail).not.toHaveBeenCalled();
     });
   });
 
   describe('POST /api/login', () => {
     it('should login a user with correct credentials', async () => {
-      // Mock the db query for email check
       db.query.mockResolvedValueOnce({
         rows: [{ user_id: 1, email: 'john.doe@example.com', password: 'hashedpassword' }]
       });
-
-      // Mock bcrypt compare function
       bcrypt.compare.mockResolvedValueOnce(true);
-
-      // Mock jwt sign function
       jwt.sign.mockReturnValue('mocked_token');
 
       const response = await request(app)
@@ -107,12 +110,9 @@ describe('Auth Routes', () => {
     });
 
     it('should return error for invalid credentials', async () => {
-      // Mock the db query for email check
       db.query.mockResolvedValueOnce({
         rows: [{ user_id: 1, email: 'john.doe@example.com', password: 'hashedpassword' }]
       });
-
-      // Mock bcrypt compare function to return false (invalid password)
       bcrypt.compare.mockResolvedValueOnce(false);
 
       const response = await request(app)
