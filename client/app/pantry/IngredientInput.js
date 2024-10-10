@@ -1,24 +1,24 @@
 "use client";
 
 import React, { useState } from 'react';
-import styles from './pantry.module.css';
 import { CustomTextField } from "../components/customComponents"
 import { AddCircleOutlineRounded, RemoveCircleOutlineRounded } from '@mui/icons-material';
+import styles from './IngredientInput.module.css'; // Import the CSS module
 
-
-const IngredientInput = () => {
+const IngredientInput = ({ onAddIngredient }) => {
     const [ingredient, setIngredient] = useState('');
     const [amount, setAmount] = useState('');
+    const [unit, setUnit] = useState('');
     const [suggestions, setSuggestions] = useState([]);
     const [selectedIngredient, setSelectedIngredient] = useState(null);
 
-    // Fetch ingredients from Spoonacular API
     const fetchIngredients = async (query) => {
+        // Fetch ingredients from Spoonacular API
         try {
             const apiKey = process.env.NEXT_PUBLIC_SPOONACULAR_API_KEY;
-            const response = await fetch(`https://api.spoonacular.com/food/ingredients/autocomplete?query=${query}&number=5&apiKey=${apiKey}`);
+            const response = await fetch(`https://api.spoonacular.com/food/ingredients/autocomplete?query=${query}&number=5&apiKey=${apiKey}&metaInformation=true`);
             const data = await response.json();
-            setSuggestions(data); // Update suggestions with the fetched data
+            setSuggestions(data);
         } catch (error) {
             console.error('Error fetching ingredients:', error);
         }
@@ -29,33 +29,30 @@ const IngredientInput = () => {
         setIngredient(value);
 
         if (value.length > 0) {
-            fetchIngredients(value); // Fetch suggestions as the user types
+            fetchIngredients(value);
         } else {
-            setSuggestions([]); // Clear suggestions if the input is empty
+            setSuggestions([]);
         }
 
-        setSelectedIngredient(null); // Clear selected ingredient when typing
+        setSelectedIngredient(null);
     };
 
     const handleSuggestionClick = (suggestion) => {
         setIngredient(suggestion.name);
         setSelectedIngredient(suggestion);
-        setSuggestions([]); // Clear suggestions after selection
+        setSuggestions([]);
+        setUnit('');
     };
 
     const handleAdd = () => {
-        // Log the values for debugging
-        console.log('Selected Ingredient:', selectedIngredient);
-        console.log('Amount:', amount);
-
-        if (selectedIngredient && amount) { // Check if both ingredient and amount are provided
+        if (selectedIngredient && amount && unit) {
             const payload = {
-                ingredient_name: selectedIngredient.name, // Adjust based on your API
-                user_id: 1, // Replace with actual user ID
-                amount: parseInt(amount), // Ensure amount is an integer
+                ingredient_name: selectedIngredient.name,
+                user_id: 1,
+                amount: parseInt(amount),
+                unit: unit,
             };
 
-            // Send the ingredient and amount to the backend API
             fetch(process.env.NEXT_PUBLIC_SERVER_URL + '/api/add-ingredient', {
                 method: 'POST',
                 headers: {
@@ -71,56 +68,75 @@ const IngredientInput = () => {
                 })
                 .then((data) => {
                     console.log('Ingredient added:', data);
-                    // Optionally reset the form
+                    // Call the function to add the ingredient to the list
+                    onAddIngredient({
+                        ingredient_id: data.ingredient_id, // Make sure to include the id from the response if applicable
+                        name: selectedIngredient.name,
+                        amount: parseInt(amount),
+                        unit: unit,
+                    });
+                    // Reset the form
                     setIngredient('');
-                    setAmount(''); // Reset amount as well
+                    setAmount('');
+                    setUnit('');
                     setSuggestions([]);
                 })
                 .catch((error) => {
                     console.error('Error adding ingredient:', error);
                 });
         } else {
-            console.error('Please select an ingredient and specify an amount.');
+            console.error('Please select an ingredient, specify an amount, and choose a unit.');
         }
     };
-
 
     return (
         <div>
             <div className={styles.header}>Add an ingredient</div>
-            <div className={styles.ingredientInput}>
-                <div className={styles.ingredient}>
-                    <div className={styles.textfieldLabel}>Ingredient</div>
-                    <CustomTextField
-                        value={ingredient}
-                        onChange={handleInputChange}
-                        size="small"
-                    />
-                </div>
+            <div className={styles.container}>
+            <input
+                    type="text"
+                    value={ingredient}
+                    onChange={handleInputChange}
+                    placeholder="Type an ingredient"
+                    className={styles.input}
+                />
                 {suggestions.length > 0 && (
-                    <ul>
+                    <ul className={styles.suggestions}>
                         {suggestions.map((suggestion) => (
-                            <li key={suggestion.id} onClick={() => handleSuggestionClick(suggestion)}>
-                                <img src={suggestion.image} alt={suggestion.name} width="50" height="50" />
-                                <div>
-                                    <strong>{suggestion.name}</strong>
-                                    <p>Aisle: {suggestion.aisle}</p>
-
-                                </div>
+                            <li
+                                key={suggestion.id}
+                                onClick={() => handleSuggestionClick(suggestion)}
+                                className={styles.suggestionItem}
+                            >
+                                {suggestion.name} {/* Display name without image */}
                             </li>
                         ))}
                     </ul>
                 )}
-                <div className={styles.amount}>
-                    <div className={styles.textfieldLabel}>Quantity</div>
+                <div className={styles.amountContainer}>
                     <CustomTextField
                         type="number"
                         value={amount}
-                        onChange={(e) => setAmount(e.target.value)} // This should correctly set the amount
-                        size="small"
-                        className={styles.amountTextField}
+                        onChange={(e) => setAmount(e.target.value)}
+                        placeholder="Amount"
+                        className={styles.amountInput}
                     />
+                    {selectedIngredient && selectedIngredient.possibleUnits && (
+                        <select
+                            value={unit}
+                            onChange={(e) => setUnit(e.target.value)}
+                            className={styles.unitSelect}
+                        >
+                            <option value="">Select unit</option>
+                            {selectedIngredient.possibleUnits.map((possibleUnit) => (
+                                <option key={possibleUnit} value={possibleUnit}>
+                                    {possibleUnit}
+                                </option>
+                            ))}
+                        </select>
+                    )}
                 </div>
+                <button onClick={handleAdd}>Add</button>
                 <AddCircleOutlineRounded onClick={handleAdd} className={styles.addButton} />
             </div>
         </div>

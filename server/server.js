@@ -10,7 +10,7 @@ const app = express();
 const registerRoute = require('./register');
 
 const corsOptions = {
-    origin: process.env.NEXT_PUBLIC_SERVER_URL || 'https://team6-client.onrender.com',
+    origin: process.env.NEXT_PUBLIC_SERVER_URL || 'https://team6-client.onrender.com/',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
 };
