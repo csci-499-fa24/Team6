@@ -3,16 +3,23 @@ const app = require('../server');
 const db = require('../db'); 
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const nodemailer = require('nodemailer'); // Add Nodemailer import
 
 // Mocking the database queries and external libraries
 jest.mock('../db');
 jest.mock('bcrypt');
 jest.mock('jsonwebtoken');
+jest.mock('nodemailer'); // Mock Nodemailer
 
 describe('Auth Routes', () => {
   
   beforeEach(() => {
     jest.clearAllMocks(); // Clear mocks before each test
+
+    // Mock Nodemailer createTransport and sendMail
+    nodemailer.createTransport.mockReturnValue({
+      sendMail: jest.fn().mockResolvedValue(true), // Simulate email being sent successfully
+    });
   });
 
   describe('POST /api/register', () => {
@@ -43,6 +50,9 @@ describe('Auth Routes', () => {
 
       expect(response.status).toBe(201);
       expect(response.body.message).toBe('User registered successfully');
+
+      // Ensure the mock sendMail was called during registration
+      expect(nodemailer.createTransport().sendMail).toHaveBeenCalled();
     });
 
     it('should return error if email already exists', async () => {
@@ -66,6 +76,9 @@ describe('Auth Routes', () => {
 
       expect(response.status).toBe(400);
       expect(response.body.message).toBe('Email already in use');
+
+      // Ensure sendMail wasn't called since registration failed
+      expect(nodemailer.createTransport().sendMail).not.toHaveBeenCalled();
     });
   });
 
