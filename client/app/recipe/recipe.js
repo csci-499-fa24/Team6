@@ -21,7 +21,7 @@ const RecipePage = () => {
                 params: {
                     apiKey: process.env.NEXT_PUBLIC_SPOONACULAR_API_KEY,
                     ingredients: ingredients,
-                    number: 4
+                    number: 2
                 }
             });
 
