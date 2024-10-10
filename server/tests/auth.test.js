@@ -4,7 +4,7 @@ const db = require('../db');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-// Mocking the database queries
+// Mocking the database queries and external libraries
 jest.mock('../db');
 jest.mock('bcrypt');
 jest.mock('jsonwebtoken');
