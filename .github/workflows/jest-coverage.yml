@@ -3,21 +3,17 @@ name: Run Tests and Coverage
 on: [push, pull_request]
 
 jobs:
-  test:
+  coverage:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-
-      - name: Use Node.js
-        uses: actions/setup-node@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: '20'
-
       - name: Install dependencies
         run: npm ci
-
-      - name: Run tests and generate coverage
-        uses: ArtiomTr/jest-coverage-report-action@v2
+      - name: Jest coverage report
+        uses: ArtiomTr/jest-coverage-report-action@v2.3.1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           test-script: npm test
