@@ -1,18 +1,15 @@
 'use client';
 import * as React from 'react';
+import { useState } from 'react';
 import Navbar from "../components/navbar";
 import RegistrationStep1 from './regStep1';
 import RegistrationStep2 from './regStep2';
 import RegistrationStep3 from './regStep3';
 import RegistrationStep4 from './regStep4';
 import styles from './register.module.css';
-import { useState } from 'react';
 
 const Register = () => {
   const [currentStep, setCurrentStep] = useState(1);
-
-  const [email, setEmail] = useState('');        
-  const [password, setPassword] = useState('');  
   const [error, setError] = useState('');        
   const [success, setSuccess] = useState('');
 
@@ -22,17 +19,17 @@ const Register = () => {
     email: '',
     password: '',
     phoneNumber: '',
-    amount: '',
-    unit: '',
-    ingredients: [{ ingredient: '', quantity: '', units: '' }],
-    allergy: [{allergen: ''}],
-    protein: '',
-    carbohydrates: '',
-    total_fat: '',
-    saturated_fat: '',
-    fiber: '',
-    sodium: '',
-    sugar: ''
+    ingredients: [],
+    allergy: [],
+    nutritionalGoals: {
+      protein: '',
+      carbohydrates: '',
+      total_fat: '',
+      saturated_fat: '',
+      fiber: '',
+      sodium: '',
+      sugar: ''
+    }
   });
 
   const handleNextStep = () => {
@@ -43,49 +40,18 @@ const Register = () => {
     setCurrentStep((prevStep) => (prevStep > 1 ? prevStep - 1 : prevStep));
   };
 
-  //Register 
-  // const handleSignup = async () => {
-  //   console.log("button clicked!")
-  //   setError('');
-  //   setSuccess('');
-  //   if (!email || !password) {
-  //     setError('Please fill in all fields');
-  //     return;
-  //   }
-  //   try {
-  //     const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/register`, {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //       body: JSON.stringify({ email, password }),
-  //     });
-
-  //     const data = await response.json();
-
-  //     if (response.ok) {
-  //       setSuccess('Signup successful. Please log in.');
-  //       window.location.href = "/login"; // Redirect to login after success
-  //     } else {
-  //       setError(data.message || 'Signup failed');
-  //     }
-  //   } catch (err) {
-  //     setError('An error occurred. Please try again.');
-  //   }
-  // };
-
   const handleSignup = async () => {
-    console.log("Submitting form data...");
+    console.log("Submitting form data...", JSON.stringify(formData, null, 2));
     setError('');
     setSuccess('');
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL_LOCAL}/api/signup`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData), // Send the complete formData
+        body: JSON.stringify(formData),
       });
 
       const data = await response.json();
@@ -94,9 +60,11 @@ const Register = () => {
         setSuccess('Signup successful. Please log in.');
         window.location.href = "/login"; // Redirect to login after success
       } else {
-        setError(data.message || 'Signup failed');
+        console.error('Signup failed:', data);
+        setError(data.message || 'Signup failed. Please try again.');
       }
     } catch (err) {
+      console.error('Error during signup:', err);
       setError('An error occurred. Please try again.');
     }
   };
@@ -106,7 +74,7 @@ const Register = () => {
       <Navbar />
       <div className={styles.regPageWrapper}>
         <div className={styles.regWrapper}>
-          <img src="../assets/logoTitle.png" className={styles.regImage} />
+          <img src="../assets/logoTitle.png" className={styles.regImage} alt="Logo" />
 
           {error && <p style={{ color: 'red' }}>{error}</p>}
           {success && <p style={{ color: 'green' }}>{success}</p>}
@@ -117,12 +85,9 @@ const Register = () => {
               handleNextStep={handleNextStep}
               formData={formData}
               setFormData={setFormData}
-              email={email}                   
-              setEmail={setEmail}              
-              password={password}              
-              setPassword={setPassword}
             />
           )}
+
           {currentStep === 2 && (
             <RegistrationStep2
               currentStep={currentStep}
@@ -137,6 +102,7 @@ const Register = () => {
               currentStep={currentStep}
               handleNextStep={handleNextStep}
               handlePrevStep={handlePrevStep}
+              formData={formData}
               setFormData={setFormData}
             />
           )}
@@ -145,6 +111,7 @@ const Register = () => {
               currentStep={currentStep}
               handlePrevStep={handlePrevStep}
               handleFinish={handleSignup}
+              formData={formData}
               setFormData={setFormData}
             />
           )}

@@ -5,9 +5,9 @@ import styles from './register.module.css';
 import { AddCircleOutlineRounded, RemoveCircleOutlineRounded } from '@mui/icons-material';
 import { useState } from 'react';
 
-const RegistrationStep3 = ({ currentStep, handleNextStep, handlePrevStep, setFormData }) => {
-    const [allergies, setAllergies] = useState([]);
+const RegistrationStep3 = ({ currentStep, handleNextStep, handlePrevStep, formData, setFormData }) => {
     const [allergy, setAllergy] = useState('');
+    const [allergies, setAllergies] = useState(formData.allergy || []);
 
     const handleKeyDown = (event) => {
         if (event.key === 'Enter') {
@@ -17,31 +17,21 @@ const RegistrationStep3 = ({ currentStep, handleNextStep, handlePrevStep, setFor
 
     const handleAddAllergy = () => {
         if (allergy) {
-            setAllergies((prev) => [
-                ...prev,
-                { allergen: allergy } // Adjusting to match the structure of formData
-            ]);
+            setAllergies((prev) => [...prev, { allergen: allergy }]);
             setAllergy('');
         }
     };
 
-    const handleRemoveAllergy = (indexToRemove) => {
-        setAllergies((prev) => prev.filter((_, index) => index !== indexToRemove));
+    const handleRemoveAllergy = (index) => {
+        setAllergies((prev) => prev.filter((_, i) => i !== index));
     };
 
     const handleSaveAndNext = () => {
-        // Transform allergies to match formData structure
-        const formattedAllergies = allergies.map(item => ({
-            allergen: item.allergen
-        }));
-
-        // Update formData with the current allergies
         setFormData((prev) => ({
             ...prev,
-            allergy: formattedAllergies // Update the allergies in formData
+            allergy: allergies  // Update allergies in formData
         }));
 
-        // Proceed to the next step
         handleNextStep();
     };
 

@@ -21,9 +21,9 @@ const Units = [
 
 const RegistrationStep2 = ({ currentStep, handleNextStep, handlePrevStep, formData, setFormData }) => {
     const [unit, setUnit] = React.useState('');
-    const [ingredients, setIngredients] = React.useState(formData.ingredients);
     const [quantity, setQuantity] = React.useState('');
     const [ingredient, setIngredient] = React.useState('');
+    const [ingredients, setIngredients] = React.useState(formData.ingredients || []);
 
     const handleKeyDown = (event) => {
         if (event.key === 'Enter') {
@@ -33,7 +33,7 @@ const RegistrationStep2 = ({ currentStep, handleNextStep, handlePrevStep, formDa
 
     const handleAddIngredient = () => {
         if (quantity > 0 && unit && ingredient) {
-            const newIngredient = { ingredient, quantity, unit }; // Use 'unit' instead of 'units'
+            const newIngredient = { ingredient, quantity, unit };
             setIngredients((prev) => [...prev, newIngredient]);
             setQuantity('');
             setUnit('');
@@ -46,20 +46,11 @@ const RegistrationStep2 = ({ currentStep, handleNextStep, handlePrevStep, formDa
     };
 
     const handleSaveAndNext = () => {
-        // Transform pantry items to match formData.ingredients structure
-        const formattedIngredients = ingredients.map(item => ({
-            ingredient: item.ingredient,
-            quantity: item.quantity,
-            units: item.unit // Use 'unit' instead of 'units'
-        }));
-
-        // Update formData with the current formatted ingredients
         setFormData((prev) => ({
             ...prev,
-            ingredients: formattedIngredients // Update the ingredients in formData
+            ingredients  // Pass updated ingredients to formData
         }));
 
-        // Proceed to the next step
         handleNextStep();
     };
 
@@ -77,10 +68,7 @@ const RegistrationStep2 = ({ currentStep, handleNextStep, handlePrevStep, formDa
                     <CustomTextField
                         type="number"
                         value={quantity}
-                        onChange={(event) => {
-                            const value = event.target.value < 0 ? 0 : event.target.value;
-                            setQuantity(value);
-                        }}
+                        onChange={(event) => setQuantity(event.target.value >= 0 ? event.target.value : '')}
                     />
                 </div>
                 <div className={styles.unit}>
@@ -115,7 +103,7 @@ const RegistrationStep2 = ({ currentStep, handleNextStep, handlePrevStep, formDa
                     <div className={styles.scrollableContainer}>
                         {ingredients.map((item, index) => (
                             <div key={index} className={styles.ingredientItem}>
-                                {item.quantity} {item.unit} {item.ingredient} {/* Simplified display */}
+                                {item.quantity} {item.unit} {item.ingredient}
                                 <RemoveCircleOutlineRounded onClick={() => handleRemoveIngredient(index)} className={styles.removeButton} />
                             </div>
                         ))}

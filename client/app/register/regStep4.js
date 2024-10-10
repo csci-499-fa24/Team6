@@ -3,8 +3,8 @@ import * as React from 'react';
 import { CustomTextField, CustomLinearProgress } from "../components/customComponents";
 import styles from './register.module.css';
 
-const RegistrationStep4 = ({ currentStep, handlePrevStep, handleFinish, setFormData }) => {
-    const [nutritionGoals, setNutritionGoals] = React.useState({
+const RegistrationStep4 = ({ currentStep, handlePrevStep, handleFinish, formData, setFormData }) => {
+    const [nutritionGoals, setNutritionGoals] = React.useState(formData.nutritionalGoals || {
         protein: '',
         carbohydrates: '',
         total_fat: '',
@@ -26,20 +26,19 @@ const RegistrationStep4 = ({ currentStep, handlePrevStep, handleFinish, setFormD
 
     const handleInputChange = (event) => {
         const { name, value } = event.target;
+        // Ensure the value is either a number or null (if the field is empty)
         setNutritionGoals((prevGoals) => ({
             ...prevGoals,
-            [name]: value
+            [name]: value === '' ? null : parseFloat(value)
         }));
     };
 
     const handleFinishClick = () => {
-        // Save nutritional goals to formData
-        setFormData((prevFormData) => ({
-            ...prevFormData,
-            ...nutritionGoals // Merging nutritional goals into formData
+        setFormData((prev) => ({
+            ...prev,
+            nutritionalGoals: nutritionGoals  // Save nutrition goals to formData
         }));
 
-        // Call the finish function
         handleFinish();
     };
 
@@ -57,10 +56,10 @@ const RegistrationStep4 = ({ currentStep, handlePrevStep, handleFinish, setFormD
                         <div className={styles.nutritionName}>{nutrition}</div>
                         <CustomTextField
                             type="number"
-                            name={nutrition.toLowerCase().replace(" ", "_")} // Set the name based on nutrition
+                            name={nutrition.toLowerCase().replace(" ", "_")}  // Set the name based on nutrition
                             className={styles.nutritionInput}
-                            value={nutritionGoals[nutrition.toLowerCase().replace(" ", "_")]} // Set the value from state
-                            onChange={handleInputChange} // Handle input change
+                            value={nutritionGoals[nutrition.toLowerCase().replace(" ", "_")] || ''}  // Make sure that empty fields show as blank
+                            onChange={handleInputChange}  // Handle input change
                         />
                         grams
                     </div>
