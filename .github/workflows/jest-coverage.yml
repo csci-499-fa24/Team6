@@ -5,6 +5,7 @@ on: [push, pull_request]
 permissions:
   contents: read
   checks: write
+  pull-requests: write
 
 jobs:
   test:
@@ -17,12 +18,15 @@ jobs:
           node-version: '20'
       - name: Install dependencies
         run: npm ci
-      - name: Run tests
-        run: npm test
-      - name: Generate coverage report
-        run: npm test -- --coverage --coverageReporters="json-summary" --coverageDirectory=./coverage
+      - name: Run tests and generate coverage
+        run: npm test -- --coverage
       - name: Upload coverage report
         uses: actions/upload-artifact@v3
         with:
           name: coverage
           path: coverage/
+      - name: Post Coverage Report
+        uses: romeovs/lcov-reporter-action@v0.2.16
+        with:
+          lcov-file: ./coverage/lcov.info
+          github-token: ${{ secrets.GITHUB_TOKEN }}
