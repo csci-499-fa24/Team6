@@ -9,6 +9,9 @@ export const CustomTextField = styled(TextField)({
     color: '#EC4A27',
   },
   '& .MuiOutlinedInput-root': {
+    backgroundColor: 'White',
+    borderRadius: '10px',
+
     '& fieldset': {
       border: '2px solid #E0E0E0',
       borderRadius: '10px',
@@ -21,6 +24,9 @@ export const CustomTextField = styled(TextField)({
     },
     '& input': {
       fontFamily: 'Inter', 
+      color: 'black !important',
+      backgroundColor: 'White',
+      borderRadius: '10px',
     },
   },
 });
