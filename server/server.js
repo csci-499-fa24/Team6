@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const db = require('./db');
 const { checkAndSendEmail } = require('./email');
 const ingredientRoutes = require('./ingredient/ingredient');
+const userIngredientRoutes = require('./ingredient/user_ingredient');
 const { body, validationResult } = require('express-validator');
 const app = express();
 const registerRoute = require('./register');
@@ -20,7 +21,7 @@ app.use(cors(corsOptions));
 
 // Existing routes
 app.use(express.json());
-app.use(ingredientRoutes);
+
 app.get("/api/home", (req, res) => {
     res.json({ message: "Hello World!" });
 });
@@ -41,6 +42,8 @@ const authenticateToken = (req, res, next) => {
 };
 
 app.use('/api/register', registerRoute);
+app.use('/api/ingredient', ingredientRoutes);
+app.use('/api/user-ingredients', userIngredientRoutes);
 
 // User login route
 app.post("/api/login", async (req, res) => {
