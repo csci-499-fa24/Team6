@@ -22,34 +22,51 @@ const Login = () => {
     event.preventDefault();
   };
 
-  //Login
-  const handleLogin = async () => {
-    setError('');
-    if (!email || !password) {
-      setError('Please fill in all fields');
-      return;
-    }
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/login`, {
-        method: 'POST',
+//Login 
+const handleLogin = async () => {
+  setError('');
+  if (!email || !password) {
+    setError('Please fill in all fields');
+    return;
+  }
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      localStorage.setItem('token', data.token);
+
+      const token = localStorage.getItem('token');
+      const protectedResponse = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/protected`, {
+        method: 'GET',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`, 
         },
-        body: JSON.stringify({ email, password }),
       });
 
-      const data = await response.json();
-
-      if (response.ok) {
-        localStorage.setItem('token', data.token);
+      if (protectedResponse.ok) {
+        const protectedData = await protectedResponse.json();
+        console.log('Protected data:', protectedData); 
         window.location.href = "/discover"; 
       } else {
-        setError(data.message || 'Login failed');
+        console.error('Failed to fetch protected data');
       }
-    } catch (err) {
-      setError('An error occurred. Please try again.');
+    } else {
+      setError(data.message || 'Login failed');
     }
-  };
+  } catch (err) {
+    setError('An error occurred. Please try again.');
+  }
+};
+
 
     return (
       <div>
@@ -65,6 +82,7 @@ const Login = () => {
               className={styles.loginEmail} 
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              style={{ marginTop: '2.5em' }}
             />
             <CustomTextField 
               required label="Password" 
@@ -72,6 +90,7 @@ const Login = () => {
               type={showPassword ? 'text' : 'password'}
               className={styles.loginPassword}
               value={password}
+              style={{ marginTop: '2.5em' }}
               onChange={(e) => setPassword(e.target.value)}
               slotProps={{
                 input: {
