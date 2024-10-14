@@ -3,15 +3,15 @@ const cors = require('cors');
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const db = require('./db');
-const { checkAndSendEmail } = require('./email');
+const { checkAndSendEmail } = require('./email_noti/email');
 const ingredientRoutes = require('./ingredient/ingredient');
 const { body, validationResult } = require('express-validator');
 const app = express();
 
 const corsOptions = {
-    origin: 'https://team6-client.onrender.com', 
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],   
-    credentials: true,  
+    origin: 'https://team6-client.onrender.com',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true,
 };
 
 app.use(cors(corsOptions));
@@ -49,19 +49,19 @@ app.post(
       if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
       }
-  
+
       const { email, password } = req.body;
-  
+
       try {
         const user = await db.query("SELECT * FROM users WHERE email = $1", [email]);
         if (user.rows.length > 0) {
           return res.status(400).json({ message: "Email already exists" });
         }
-  
+
         const hashedPassword = await bcrypt.hash(password, 10);
-  
+
         await db.query("INSERT INTO users (email, password) VALUES ($1, $2)", [email, hashedPassword]);
-  
+
         res.status(201).json({ message: "User registered successfully" });
       } catch (err) {
         console.error(err);
@@ -114,36 +114,44 @@ app.get('/user-profiles', async (req, res) => {
     }
 });
 
-// New endpoint to get low ingredients
 app.get('/get-low-ingredients', async (req, res) => {
     try {
-        // Query to get user profile and ingredients below amount of 30 for user_id = 5
         const result = await db.query(`
-            SELECT up.name, i.name AS ingredient_name, ui.amount
-            FROM user_profiles up
+            SELECT up.first_name, up.last_name, up.email, i.name AS ingredient_name, ui.amount
+            FROM users u
+            JOIN user_profiles up ON u.user_id = up.user_id
             JOIN user_ingredient ui ON up.user_id = ui.user_id
             JOIN ingredients i ON ui.ingredient_id = i.ingredient_id
-            WHERE up.user_id = 5 AND ui.amount < 30;
+            WHERE ui.amount < 5 AND up.email IS NOT NULL;
         `);
 
         const users = result.rows;
 
         if (users.length > 0) {
-            const lowIngredients = users.map(user => ({
-                name: user.ingredient_name,
-                amount: user.amount
+            const userIngredients = {};
+            users.forEach(user => {
+                const userKey = `${user.first_name} ${user.last_name}`;
+                if (!userIngredients[userKey]) {
+                    userIngredients[userKey] = {
+                        email: user.email,
+                        lowIngredients: []
+                    };
+                }
+                userIngredients[userKey].lowIngredients.push({
+                    name: user.ingredient_name,
+                    amount: user.amount
+                });
+            });
+
+            const response = Object.keys(userIngredients).map(user => ({
+                name: user,
+                email: userIngredients[user].email,
+                lowIngredients: userIngredients[user].lowIngredients
             }));
 
-            // Send response with user name and low ingredients
-            res.json({
-                name: users[0].name,
-                lowIngredients
-            });
+            res.json(response);
         } else {
-            res.json({
-                name: "User",
-                lowIngredients: []
-            });
+            res.json([]);
         }
     } catch (err) {
         console.error('Error querying database:', err);
