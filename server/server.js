@@ -6,6 +6,7 @@ const db = require('./db');
 const { checkAndSendEmail } = require('./email_noti/email');
 const ingredientRoutes = require('./ingredient/ingredient');
 const { body, validationResult } = require('express-validator');
+const { initializeCronJobs } = require('./email_noti/cronJobs');
 const app = express();
 
 const corsOptions = {
@@ -162,4 +163,5 @@ app.get('/get-low-ingredients', async (req, res) => {
 const port = process.env.PORT || 8080;
 app.listen(port, () => {
     console.log(`Server started on port ${port}`);
+    initializeCronJobs();
 });
