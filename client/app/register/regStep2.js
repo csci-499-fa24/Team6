@@ -34,6 +34,7 @@ const RegistrationStep2 = ({ currentStep, handleNextStep, handlePrevStep, formDa
         const fetchIngredients = async () => {
             try {
                 const response = await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}/ingredients`);
+                console.log('Fetched ingredients:', response.data);
                 setIngredientList(response.data);
             } catch (error) {
                 console.error('Error fetching ingredients:', error);
