@@ -23,6 +23,9 @@ jobs:
       - name: Run tests and generate coverage
         run: npm test -- --coverage
 
+      - name: List coverage directory
+        run: ls -R coverage/
+
       - name: Upload coverage report
         uses: actions/upload-artifact@v3
         with:
