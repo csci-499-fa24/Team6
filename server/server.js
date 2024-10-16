@@ -10,13 +10,13 @@ const app = express();
 const registerRoute = require('./register');
 
 const corsOptions = {
-    origin: process.env.NEXT_PUBLIC_SERVER_URL || 'https://team6-client.onrender.com',
+    // origin: process.env.NEXT_PUBLIC_SERVER_URL || 'https://team6-client.onrender.com',
+    origin: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
 };
 
 app.use(cors(corsOptions));
-
 
 // Existing routes
 app.use(express.json());
@@ -27,15 +27,15 @@ app.get("/api/home", (req, res) => {
 
 const authenticateToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1]; 
+    const token = authHeader && authHeader.split(' ')[1];
 
-    if (!token) return res.sendStatus(401); 
+    if (!token) return res.sendStatus(401);
 
     jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
         if (err) {
-            return res.sendStatus(403); 
+            return res.sendStatus(403);
         }
-        req.user = user; 
+        req.user = user;
         next();
     });
 };
@@ -86,42 +86,18 @@ app.get('/user-profiles', async (req, res) => {
     }
 });
 
-// New endpoint to get low ingredients
-app.get('/get-low-ingredients', async (req, res) => {
+app.get('/ingredients', async (req, res) => {
     try {
-        // Query to get user profile and ingredients below amount of 30 for user_id = 5
-        const result = await db.query(`
-            SELECT up.name, i.name AS ingredient_name, ui.amount
-            FROM user_profiles up
-            JOIN user_ingredient ui ON up.user_id = ui.user_id
-            JOIN ingredients i ON ui.ingredient_id = i.ingredient_id
-            WHERE up.user_id = 5 AND ui.amount < 30;
-        `);
+        const result = await db.query('SELECT name FROM ingredients');
+        const ingredients = result.rows.map(row => row.name);
 
-        const users = result.rows;
-
-        if (users.length > 0) {
-            const lowIngredients = users.map(user => ({
-                name: user.ingredient_name,
-                amount: user.amount
-            }));
-
-            // Send response with user name and low ingredients
-            res.json({
-                name: users[0].name,
-                lowIngredients
-            });
-        } else {
-            res.json({
-                name: "User",
-                lowIngredients: []
-            });
-        }
-    } catch (err) {
-        console.error('Error querying database:', err);
+        res.json(ingredients);
+    } catch (error) {
+        console.error('Error fetching ingredients:', error);
         res.status(500).json({ message: 'Internal server error' });
     }
 });
+
 
 const port = process.env.PORT || 8080;
 app.listen(port, () => {

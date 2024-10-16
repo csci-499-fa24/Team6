@@ -4,6 +4,8 @@ import { CustomTextField, CustomDropdown, CustomLinearProgress } from "../compon
 import styles from './register.module.css';
 import { MenuItem } from '@mui/material';
 import { AddCircleOutlineRounded, RemoveCircleOutlineRounded } from '@mui/icons-material';
+import axios from 'axios';
+import { useState, useEffect } from 'react';
 
 const Units = [
     { value: "g", label: "Gram(s)" },
@@ -20,10 +22,38 @@ const Units = [
 ];
 
 const RegistrationStep2 = ({ currentStep, handleNextStep, handlePrevStep, formData, setFormData }) => {
-    const [unit, setUnit] = React.useState('');
-    const [quantity, setQuantity] = React.useState('');
-    const [ingredient, setIngredient] = React.useState('');
-    const [ingredients, setIngredients] = React.useState(formData.ingredients || []);
+    const [unit, setUnit] = useState('');
+    const [quantity, setQuantity] = useState('');
+    const [ingredient, setIngredient] = useState('');
+    const [ingredients, setIngredients] = useState(formData.ingredients || []);
+    const [ingredientList, setIngredientList] = useState([]);
+    const [suggestions, setSuggestions] = useState([]);
+
+
+    useEffect(() => {
+        const fetchIngredients = async () => {
+            try {
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}/ingredients`);
+                console.log('Fetched ingredients:', response.data);
+                setIngredientList(response.data);
+            } catch (error) {
+                console.error('Error fetching ingredients:', error);
+            }
+        };
+        fetchIngredients();
+    }, []);
+
+
+    useEffect(() => {
+        if (ingredient) {
+            const filteredSuggestions = ingredientList
+                .filter(item => item.toLowerCase().startsWith(ingredient.toLowerCase()))
+                .filter(item => item.toLowerCase() !== ingredient.toLowerCase());
+            setSuggestions(filteredSuggestions);
+        } else {
+            setSuggestions([]);
+        }
+    }, [ingredient, ingredientList]);
 
     const handleKeyDown = (event) => {
         if (event.key === 'Enter') {
@@ -34,24 +64,29 @@ const RegistrationStep2 = ({ currentStep, handleNextStep, handlePrevStep, formDa
     const handleAddIngredient = () => {
         if (quantity > 0 && unit && ingredient) {
             const newIngredient = { ingredient, quantity, unit };
-            setIngredients((prev) => [...prev, newIngredient]);
+            setIngredients(prev => [...prev, newIngredient]);
             setQuantity('');
             setUnit('');
             setIngredient('');
+            setSuggestions([]);
         }
     };
 
     const handleRemoveIngredient = (index) => {
-        setIngredients((prev) => prev.filter((_, i) => i !== index));
+        setIngredients(prev => prev.filter((_, i) => i !== index));
     };
 
     const handleSaveAndNext = () => {
-        setFormData((prev) => ({
+        setFormData(prev => ({
             ...prev,
-            ingredients  // Pass updated ingredients to formData
+            ingredients
         }));
-
         handleNextStep();
+    };
+
+    const handleSuggestionClick = (suggestion) => {
+        setIngredient(suggestion);
+        setSuggestions([]);
     };
 
     return (
@@ -95,6 +130,19 @@ const RegistrationStep2 = ({ currentStep, handleNextStep, handlePrevStep, formDa
                         onChange={(event) => setIngredient(event.target.value)}
                         onKeyDown={handleKeyDown}
                     />
+                    {suggestions.length > 0 && (
+                        <div className={styles.suggestionList}>
+                            {suggestions.map((suggestion, index) => (
+                                <div
+                                    key={index}
+                                    className={styles.suggestionItem}
+                                    onClick={() => handleSuggestionClick(suggestion)}
+                                >
+                                    {suggestion}
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
                 <AddCircleOutlineRounded onClick={handleAddIngredient} className={styles.addButton} />
             </div>
