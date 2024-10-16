@@ -42,8 +42,6 @@
 # dependencies
 /server/node_modules
 
-# testing
-/server/coverage
 
 # local env files
 /server/.env
