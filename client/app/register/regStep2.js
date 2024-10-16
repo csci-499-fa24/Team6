@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import { CustomTextField, CustomDropdown, CustomLinearProgress } from "../components/customComponents";
 import styles from './register.module.css';
@@ -33,7 +34,6 @@ const RegistrationStep2 = ({ currentStep, handleNextStep, handlePrevStep, formDa
         const fetchIngredients = async () => {
             try {
                 const response = await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}/ingredients`);
-                console.log('Fetched ingredients:', response.data);
                 setIngredientList(response.data);
             } catch (error) {
                 console.error('Error fetching ingredients:', error);
