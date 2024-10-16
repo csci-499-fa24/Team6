@@ -6,6 +6,9 @@ const db = require('./db');
 const { checkAndSendEmail } = require('./email');
 const ingredientRoutes = require('./ingredient/ingredient');
 const userIngredientRoutes = require('./ingredient/user_ingredient');
+const addAllergenRoute = require('./allergen/allergenAdd');
+const removeAllergenRoute = require('./allergen/allergenRemove');
+const allergyRoute = require('./allergen/allergen');
 const { body, validationResult } = require('express-validator');
 const app = express();
 const registerRoute = require('./register');
@@ -44,6 +47,9 @@ const authenticateToken = (req, res, next) => {
 app.use('/api/register', registerRoute);
 app.use('/api/ingredient', ingredientRoutes);
 app.use('/api/user-ingredients', userIngredientRoutes);
+app.use('/api/allergies/add', addAllergenRoute);
+app.use('/api/allergies/remove', removeAllergenRoute);
+app.use('/api/allergies', allergyRoute);
 
 // User login route
 app.post("/api/login", async (req, res) => {

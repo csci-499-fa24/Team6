@@ -33,7 +33,6 @@ const authenticateToken = (req, res, next) => {
 // Route to get user ingredients based on the user ID in the token
 router.post('/', authenticateToken, async (req, res) => {
     const user_id = req.user.id; // Extract user_id from the token payload
-    console.log("UI user id: ", user_id);
     try {
         // First query: Get the ingredient_id, amount, and unit from user_ingredient
         const userIngredientsQuery = await pool.query(
