@@ -10,13 +10,13 @@ const { initializeCronJobs } = require('./email_noti/cronJobs');
 const app = express();
 
 const corsOptions = {
-    origin: 'https://team6-client.onrender.com',
+    origin: process.env.NEXT_PUBLIC_SERVER_URL || 'https://team6-client.onrender.com',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
 };
 
 app.use(cors(corsOptions));
-app.use(express.json()); // Add this line to parse JSON bodies
+app.use(express.json());
 
 // Existing routes
 app.use(express.json());
@@ -165,4 +165,3 @@ app.listen(port, () => {
     console.log(`Server started on port ${port}`);
     initializeCronJobs();
 });
-

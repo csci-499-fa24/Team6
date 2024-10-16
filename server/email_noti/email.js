@@ -3,7 +3,7 @@ const db = require('../db');
 require('dotenv').config();
 const axios = require('axios');
 
-const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:8080';
+const serverUrl = process.env.SERVER_URL || 'http://localhost:8080';
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',
