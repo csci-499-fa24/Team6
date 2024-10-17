@@ -5,6 +5,10 @@ const jwt = require("jsonwebtoken");
 const db = require('./db');
 const { checkAndSendEmail } = require('./email_noti/email');
 const ingredientRoutes = require('./ingredient/ingredient');
+const userIngredientRoutes = require('./ingredient/user_ingredient');
+const addAllergenRoute = require('./allergen/allergenAdd');
+const removeAllergenRoute = require('./allergen/allergenRemove');
+const allergyRoute = require('./allergen/allergen');
 const { body, validationResult } = require('express-validator');
 const { initializeCronJobs } = require('./email_noti/cronJobs');
 const app = express();
@@ -20,7 +24,7 @@ app.use(express.json());
 
 // Existing routes
 app.use(express.json());
-app.use(ingredientRoutes);
+
 app.get("/api/home", (req, res) => {
     res.json({ message: "Hello World!" });
 });
@@ -38,38 +42,14 @@ const authenticateToken = (req, res, next) => {
     });
 };
 
-// User registration
-app.post(
-    "/api/register",
-    [
-      body("email").isEmail().withMessage("Invalid email"),
-      body("password").isLength({ min: 6 }).withMessage("Password must be at least 6 characters"),
-    ],
-    async (req, res) => {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-      }
 
-      const { email, password } = req.body;
+app.use('/api/register', registerRoute);
+app.use('/api/ingredient', ingredientRoutes);
+app.use('/api/user-ingredients', userIngredientRoutes);
+app.use('/api/allergies/add', addAllergenRoute);
+app.use('/api/allergies/remove', removeAllergenRoute);
+app.use('/api/allergies', allergyRoute);
 
-      try {
-        const user = await db.query("SELECT * FROM users WHERE email = $1", [email]);
-        if (user.rows.length > 0) {
-          return res.status(400).json({ message: "Email already exists" });
-        }
-
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        await db.query("INSERT INTO users (email, password) VALUES ($1, $2)", [email, hashedPassword]);
-
-        res.status(201).json({ message: "User registered successfully" });
-      } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: "Server error" });
-      }
-    }
-  );
 
 // User login route
 app.post("/api/login", async (req, res) => {
@@ -159,6 +139,9 @@ app.get('/get-low-ingredients', async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 });
+
+
+module.exports = app;
 
 const port = process.env.PORT || 8080;
 app.listen(port, () => {
