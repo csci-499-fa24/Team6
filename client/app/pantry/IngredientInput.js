@@ -6,7 +6,7 @@ import { AddCircleOutlineRounded, RemoveCircleOutlineRounded } from '@mui/icons-
 import styles from './pantry.module.css'
 import { MenuItem } from '@mui/material';
 
-const IngredientInput = ({ onAddIngredient }) => {
+const IngredientInput = () => {
     const [ingredient, setIngredient] = useState('');
     const [amount, setAmount] = useState('');
     const [unit, setUnit] = useState('');
@@ -47,49 +47,51 @@ const IngredientInput = ({ onAddIngredient }) => {
     };
 
     const handleAdd = () => {
-        if (selectedIngredient && amount && unit) {
+        if (ingredient && amount && unit) {
             const payload = {
-                ingredient_name: selectedIngredient.name,
-                user_id: 1,
+                ingredient_name: ingredient,
                 amount: parseInt(amount),
                 unit: unit,
             };
-
-            fetch(process.env.NEXT_PUBLIC_SERVER_URL + '/api/add-ingredient', {
+    
+            // Retrieve the token from local storage
+            const token = localStorage.getItem("token");
+            console.log(payload);
+            fetch(process.env.NEXT_PUBLIC_SERVER_URL + '/api/ingredient', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}` // Add the token in the Authorization header
                 },
                 body: JSON.stringify(payload),
             })
-                .then((response) => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then((data) => {
-                    console.log('Ingredient added:', data);
-                    // Call the function to add the ingredient to the list
-                    onAddIngredient({
-                        ingredient_id: data.ingredient_id, // Make sure to include the id from the response if applicable
-                        name: selectedIngredient.name,
-                        amount: parseInt(amount),
-                        unit: unit,
-                    });
-                    // Reset the form
-                    setIngredient('');
-                    setAmount('');
-                    setUnit('');
-                    setSuggestions([]);
-                })
-                .catch((error) => {
-                    console.error('Error adding ingredient:', error);
-                });
+            .then((response) => {
+                console.log(response);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then((data) => {
+                // onAddIngredient({
+                //     name: ingredient,
+                //     amount: parseInt(amount),
+                //     unit: unit,
+                // });
+                // Reset the form
+                setIngredient('');
+                setAmount('');
+                setUnit('');
+                setSuggestions([]);
+            })
+            .catch((error) => {
+                console.error('Error adding ingredient:', error);
+            });
         } else {
             console.error('Please select an ingredient, specify an amount, and choose a unit.');
         }
     };
+    
 
     return (
         <div className={styles.ingredientContainer}>
