@@ -2,6 +2,33 @@
 
 import React, { useEffect, useState } from 'react';
 import styles from './pantry.module.css';
+import { CustomTextField } from "../components/customComponents"
+
+const capitalizeFirstLetter = (string) => {
+    return string
+        .split(' ') 
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1)) 
+        .join(' ');
+};
+
+// IngredientItem Component
+const IngredientItem = ({ ingredient, amount, unit, onAmountChange, isEditable, onToggleEdit }) => {
+    return (
+        <div className={styles.ingredientItem} key={ingredient.ingredient_id}>
+            <div className={styles.ingredientItemTitle}>{capitalizeFirstLetter(ingredient.name)}</div>
+            {/* {isEditable ? ( */}
+                <CustomTextField
+                    type="number"
+                    placeholder="Amount"
+                    value={amount || ''}
+                    onChange={(e) => onAmountChange(ingredient.ingredient_id, e.target.value)}
+                    size="small"
+                    sx={{ width: '10%'}}
+                />
+            {unit && <span className={styles.ingredientItemUnit}>{` ${unit}`}</span>}
+        </div>
+    );
+};
 
 // IngredientForm Component
 const IngredientForm = ({ onUpdate }) => {
@@ -45,19 +72,19 @@ const IngredientList = () => {
     }
 
     return (
-        <div>
-            <div>Your Ingredients</div>
+        <div className={styles.ingredientInputContainer}>
+            <div className={styles.header}>Your Ingredients</div>
             {error && <p style={{ color: 'red' }}>{error}</p>} {/* Display error message if any */}
             {userIngredients.length === 0 ? ( // Check if there are no ingredients
                 <p>No ingredients found. Please add some ingredients.</p>
             ) : (
-                <ul>
+                <div className={styles.ingredientList}>
                     {userIngredients.map((ingredient) => (
                         <li key={ingredient.ingredient_id}> {/* Ensure each list item has a unique key */}
                             <strong>{ingredient.name}</strong> {ingredient.amount} {ingredient.unit && <span>{ingredient.unit}</span>}
                         </li>
                     ))}
-                </ul>
+                </div>
             )}
             <IngredientForm onUpdate={handleUpdate} />
         </div>
