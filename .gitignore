@@ -54,3 +54,6 @@
 # lock files
 /yarn.lock
 /package-lock.json
+
+#coverage
+/server/coverage/
