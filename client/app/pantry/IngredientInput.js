@@ -12,7 +12,8 @@ const IngredientInput = () => {
     const [unit, setUnit] = useState('');
     const [suggestions, setSuggestions] = useState([]);
     const [selectedIngredient, setSelectedIngredient] = useState(null);
-
+    console.log(selectedIngredient)
+    
     const fetchIngredients = async (query) => {
         // Fetch ingredients from Spoonacular API
         try {
@@ -87,30 +88,32 @@ const IngredientInput = () => {
     
 
     return (
-        <div>
+        <div className={styles.ingredientContainer}>
             <div className={styles.header}>Add an ingredient</div>
-            <div className={styles.container}>
-                <input
-                    type="text"
-                    value={ingredient}
-                    onChange={handleInputChange}
-                    placeholder="Type an ingredient"
-                    className={styles.input}
-                />
+            <div className={styles.input}>
+                <div className={styles.ingredient}>
+                    <div className={styles.textfieldLabel}>Ingredient</div>
+                    <CustomTextField
+                        type="text"
+                        value={ingredient}
+                        onChange={handleInputChange}
+                        size="small"
+                    />
 
-                {suggestions.length > 0 && (
-                    <ul className={styles.suggestions}>
-                        {suggestions.map((suggestion) => (
-                            <li
-                                key={suggestion.id}
-                                onClick={() => handleSuggestionClick(suggestion)}
-                                className={styles.suggestionItem}
-                            >
-                                {suggestion.name} {/* Display name without image */}
-                            </li>
-                        ))}
-                    </ul>
-                )}
+                    {suggestions.length > 0 && (
+                        <ul className={styles.suggestions}>
+                            {suggestions.map((suggestion) => (
+                                <li
+                                    key={suggestion.id}
+                                    onClick={() => handleSuggestionClick(suggestion)}
+                                    className={styles.suggestionItem}
+                                >
+                                    {suggestion.name} {/* Display name without image */}
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </div>
                 <div className={styles.amount}>
                     <div className={styles.textfieldLabel}>Quantity</div>
                     <CustomTextField
@@ -118,13 +121,18 @@ const IngredientInput = () => {
                         value={amount}
                         onChange={(e) => setAmount(e.target.value)} // This should correctly set the amount
                         size="small"
-                        className={styles.amountTextField}
                     />
-                    {selectedIngredient && selectedIngredient.possibleUnits && (
+                </div>
+                <div className={styles.unitContainer}>
+                {selectedIngredient && selectedIngredient.possibleUnits && (
+                    <div className={styles.units}>
+                        <div className={styles.textfieldLabel}>Unit</div>
                         <CustomDropdown
                             value={unit}
                             onChange={(e) => setUnit(e.target.value)}
                             className={styles.unitSelect}
+                            size="small"
+                            sx={{ width: '100%'}}
                         >
                             {selectedIngredient.possibleUnits.map((possibleUnit) => (
                                 <MenuItem
@@ -136,7 +144,8 @@ const IngredientInput = () => {
                                 </MenuItem>
                             ))}
                         </CustomDropdown>
-                    )}
+                    </div>
+                )}
                 </div>
                 <AddCircleOutlineRounded onClick={handleAdd} className={styles.addButton} />
             </div>

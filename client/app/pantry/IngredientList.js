@@ -130,8 +130,8 @@ const IngredientList = () => {
     };
 
     return (
-        <div>
-            <div>Your Ingredients</div>
+        <div className={styles.ingredientInputContainer}>
+            <div className={styles.header}>Your Ingredients</div>
             {error && <p style={{ color: 'red' }}>{error}</p>} {/* Display error message if any */}
             {userIngredients.length === 0 ? (
                 <p>No ingredients found. Please add some ingredients.</p>
