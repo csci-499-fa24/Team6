@@ -15,8 +15,15 @@ const RecipePage = () => {
     // Fetch user ingredients from your API
     const fetchUserIngredients = async () => {
         try {
-            const response = await axios.get(process.env.NEXT_PUBLIC_SERVER_URL +'/api/user-ingredients');
-            const ingredientNames = response.data.map(ingredient => ingredient.name.toLowerCase());
+            const token = localStorage.getItem('token');
+            const response = await fetch(process.env.NEXT_PUBLIC_SERVER_URL + '/api/user-ingredients', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}` 
+                }
+            });
+            const data = await response.json();
+            const ingredientNames = data.map(ingredient => ingredient.name.toLowerCase());
             setUserIngredients(ingredientNames);
         } catch (error) {
             console.error('Error fetching user ingredients:', error);
