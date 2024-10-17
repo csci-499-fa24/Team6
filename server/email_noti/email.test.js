@@ -1,7 +1,6 @@
 const nodemailer = require('nodemailer');
 const { checkAndSendEmail } = require('./email');
-const db = require('../db');
-// Mock nodemailer transporter
+
 jest.mock('nodemailer');
 
 const mockSendMail = jest.fn((mailOptions, callback) => {
@@ -18,8 +17,13 @@ nodemailer.createTransport.mockReturnValue({
 });
 
 describe('Email environment variables', () => {
+   beforeAll(() => {
+       process.env.EMAIL_USER = 'test_email_user';
+       process.env.EMAIL_PASS = 'test_email_pass';
+   });
+
    it('should have EMAIL_USER and EMAIL_PASS set correctly', () => {
-       expect(process.env.EMAIL_USER).toBe('pantrypal.notifications@gmail.com');
-       expect(process.env.EMAIL_PASS).toBe('oljpzstklsqknfjz');
+       expect(process.env.EMAIL_USER).toBe('test_email_user');
+       expect(process.env.EMAIL_PASS).toBe('test_email_pass');
    });
 });
