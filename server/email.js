@@ -1,28 +1,28 @@
 const nodemailer = require('nodemailer');
 const db = require('./db');
-
 require('dotenv').config();
 
-// Create email transporter
-const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-    }
-});
+let transporter;
 
-transporter.verify(function (error, success) {
-    if (error) {
-        // console.log('Error during email sign-in:', error);
-    } else {
-        // console.log('Sign-in successful, ready to send emails');
-    }
-});
+async function createTransporter() {
+    transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS
+        }
+    });
+}
 
 async function checkAndSendEmail() {
     try {
-        // Query to get user profile and ingredients below amount of 30 for user_id = 5
+        if (!transporter) {
+            await createTransporter();
+        }
+        
+        await transporter.verify();
+        console.log('Sign-in successful, ready to send emails');
+
         const result = await db.query(`
             SELECT up.name, up.email, i.name AS ingredient_name, ui.amount
             FROM user_profiles up
@@ -34,11 +34,9 @@ async function checkAndSendEmail() {
         const users = result.rows;
 
         if (users.length > 0) {
-            let lowIngredients = [];
-
-            for (let user of users) {
-                lowIngredients.push(`"${user.ingredient_name}", you currently have ${user.amount} units remaining`);
-            }
+            const lowIngredients = users.map(user => 
+                `"${user.ingredient_name}", you currently have ${user.amount} units remaining`
+            );
 
             if (lowIngredients.length > 0) {
                 const message = `
@@ -55,27 +53,15 @@ async function checkAndSendEmail() {
                     text: message
                 };
 
-                transporter.sendMail(mailOptions, function (error, info) {
-                    if (error) {
-                        console.log('Error sending email:', error);
-                    } else {
-                        console.log('Email sent: ' + info.response);
-                    }
-                });
+                const info = await transporter.sendMail(mailOptions);
+                console.log('Email sent:', info.response);
             }
         } else {
             console.log('No low ingredients found for user_id = 5');
         }
     } catch (err) {
-        console.error('Error querying database:', err);
+        console.error('Error:', err);
     }
 }
 
-
-
-//Test case to see if its print out correct log-in info
-// console.log('EMAIL_USER:', process.env.EMAIL_USER);
-// console.log('EMAIL_PASS:', process.env.EMAIL_PASS);
-// checkAndSendEmail();
-
-module.exports = { checkAndSendEmail };
+module.exports = { checkAndSendEmail, createTransporter };
