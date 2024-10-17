@@ -1,18 +1,72 @@
-name: 'coverage'
+# name: 'coverage'
+# on:
+#     pull_request:
+#         branches:
+#             - master
+#             - main
+# jobs:
+#     coverage:
+#         runs-on: ubuntu-latest
+#         steps:
+#             - name: checkout code
+#               uses: actions/checkout@v3
+
+#             - name: install dependencies
+#               run: npm install
+
+#             - name: run Jest coverage report
+#               uses: ArtiomTr/jest-coverage-report-action@v2
+
+
+name: Run Jest Tests and Generate Coverage Report
+
 on:
-    pull_request:
-        branches:
-            - master
-            - main
+  pull_request:
+    branches:
+      - main
+
 jobs:
-    coverage:
-        runs-on: ubuntu-latest
-        steps:
-            - name: checkout code
-              uses: actions/checkout@v3
+  test:
+    runs-on: ubuntu-latest
 
-            - name: install dependencies
-              run: npm install
+    permissions:
+      contents: write
+      pull-requests: write
+      checks: write
 
-            - name: run Jest coverage report
-              uses: ArtiomTr/jest-coverage-report-action@v2
+    env:
+      ACTIONS_STEP_DEBUG: true
+      EMAIL_USER: ${{ secrets.EMAIL_USER }}
+      EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
+
+    steps:
+    # Step 1: Checkout the repository
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    # Step 2: Set up Node.js
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20'
+
+    # Step 3: Install dependencies in the server folder
+    - name: Install dependencies
+      run: npm install
+      working-directory: ./server
+
+    # Step 4: Run Jest with Coverage in the server folder
+    - name: Run Jest with Coverage
+      run: npm test -- --coverage
+      working-directory: ./server
+
+    # Step 5: List contents of the coverage directory to verify path
+    - name: List coverage directory
+      run: ls -R ./server/coverage
+
+    # Step 6: Generate Jest Coverage Report using the correct path
+    - name: Generate Jest Coverage Report
+      uses: ArtiomTr/jest-coverage-report-action@v2.3.1
+      with:
+        coverage-file: ./server/coverage/lcov-report/index.html
+        working-directory: ./server
