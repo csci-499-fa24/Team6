@@ -12,12 +12,14 @@ const allergyRoute = require('./allergen/allergen');
 const { body, validationResult } = require('express-validator');
 const app = express();
 const registerRoute = require('./register');
+const discoverRoutes = require('./discover/discoverPage');
 
 const corsOptions = {
-    origin: process.env.NEXT_PUBLIC_SERVER_URL || 'https://team6-client.onrender.com',
+    origin: ['http://localhost:3000', 'https://team6-client.onrender.com'],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
 };
+
 
 app.use(cors(corsOptions));
 
@@ -50,6 +52,7 @@ app.use('/api/user-ingredients', userIngredientRoutes);
 app.use('/api/allergies/add', addAllergenRoute);
 app.use('/api/allergies/remove', removeAllergenRoute);
 app.use('/api/allergies', allergyRoute);
+app.use('/api/discover', discoverRoutes);
 
 // User login route
 app.post("/api/login", async (req, res) => {
