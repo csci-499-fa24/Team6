@@ -36,7 +36,7 @@ const Navbar = () => {
         {!isLoginPage && !isRegisterPage && (
         <>
           <div className={styles.navLinksWrapper}>
-            <Link href="/home" className={isActiveLink("/home") ? styles.activeLink : ""}>
+            <Link href="/" className={isActiveLink("/") ? styles.activeLink : ""}>
               Home
             </Link>
             <Link href="/pantry" className={isActiveLink("/pantry") ? styles.activeLink : ""}>

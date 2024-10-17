@@ -3,7 +3,7 @@ const cors = require('cors');
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const db = require('./db');
-const { checkAndSendEmail } = require('./email');
+const { checkAndSendEmail } = require('./email_noti/email');
 const ingredientRoutes = require('./ingredient/ingredient');
 const userIngredientRoutes = require('./ingredient/user_ingredient');
 const ingredientRemoveRoute = require('./ingredient/ingredientRemove');
@@ -12,9 +12,11 @@ const addAllergenRoute = require('./allergen/allergenAdd');
 const removeAllergenRoute = require('./allergen/allergenRemove');
 const allergyRoute = require('./allergen/allergen');
 const { body, validationResult } = require('express-validator');
+const { initializeCronJobs } = require('./email_noti/cronJobs');
 const app = express();
 const registerRoute = require('./register');
 const discoverRoutes = require('./discover/discoverPage');
+
 
 const corsOptions = {
     origin: ['http://localhost:3000', 'https://team6-client.onrender.com'],
@@ -24,7 +26,7 @@ const corsOptions = {
 
 
 app.use(cors(corsOptions));
-
+app.use(express.json());
 
 // Existing routes
 app.use(express.json());
@@ -34,19 +36,18 @@ app.get("/api/home", (req, res) => {
 });
 
 const authenticateToken = (req, res, next) => {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1]; 
+    const token = req.headers['authorization'];
+    if (!token) return res.sendStatus(401);
 
-    if (!token) return res.sendStatus(401); 
-
-    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    jwt.verify(token.split(' ')[1], process.env.JWT_SECRET, (err, user) => {
         if (err) {
-            return res.sendStatus(403); 
+            return res.sendStatus(403);
         }
-        req.user = user; 
+        req.user = user;
         next();
     });
 };
+
 
 app.use('/api/register', registerRoute);
 app.use('/api/ingredient', ingredientRoutes);
@@ -57,6 +58,7 @@ app.use('/api/allergies/add', addAllergenRoute);
 app.use('/api/allergies/remove', removeAllergenRoute);
 app.use('/api/allergies', allergyRoute);
 app.use('/api/discover', discoverRoutes);
+
 
 // User login route
 app.post("/api/login", async (req, res) => {
@@ -102,36 +104,44 @@ app.get('/user-profiles', async (req, res) => {
     }
 });
 
-// New endpoint to get low ingredients
 app.get('/get-low-ingredients', async (req, res) => {
     try {
-        // Query to get user profile and ingredients below amount of 30 for user_id = 5
         const result = await db.query(`
-            SELECT up.name, i.name AS ingredient_name, ui.amount
-            FROM user_profiles up
+            SELECT up.first_name, up.last_name, up.email, i.name AS ingredient_name, ui.amount
+            FROM users u
+            JOIN user_profiles up ON u.user_id = up.user_id
             JOIN user_ingredient ui ON up.user_id = ui.user_id
             JOIN ingredients i ON ui.ingredient_id = i.ingredient_id
-            WHERE up.user_id = 5 AND ui.amount < 30;
+            WHERE ui.amount < 5 AND up.email IS NOT NULL;
         `);
 
         const users = result.rows;
 
         if (users.length > 0) {
-            const lowIngredients = users.map(user => ({
-                name: user.ingredient_name,
-                amount: user.amount
+            const userIngredients = {};
+            users.forEach(user => {
+                const userKey = `${user.first_name} ${user.last_name}`;
+                if (!userIngredients[userKey]) {
+                    userIngredients[userKey] = {
+                        email: user.email,
+                        lowIngredients: []
+                    };
+                }
+                userIngredients[userKey].lowIngredients.push({
+                    name: user.ingredient_name,
+                    amount: user.amount
+                });
+            });
+
+            const response = Object.keys(userIngredients).map(user => ({
+                name: user,
+                email: userIngredients[user].email,
+                lowIngredients: userIngredients[user].lowIngredients
             }));
 
-            // Send response with user name and low ingredients
-            res.json({
-                name: users[0].name,
-                lowIngredients
-            });
+            res.json(response);
         } else {
-            res.json({
-                name: "User",
-                lowIngredients: []
-            });
+            res.json([]);
         }
     } catch (err) {
         console.error('Error querying database:', err);
@@ -145,4 +155,5 @@ module.exports = app;
 const port = process.env.PORT || 8080;
 app.listen(port, () => {
     console.log(`Server started on port ${port}`);
+    initializeCronJobs();
 });
