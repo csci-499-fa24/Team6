@@ -16,11 +16,11 @@ jobs:
 
     steps:
       # Checkout the code
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       # Setup Node.js environment
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
 
@@ -28,11 +28,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # Install Jest globally (Step 4)
+      # Install Jest globally
       - name: Install Jest globally
         run: npm install -g jest
 
-      # Log Jest configuration
+      # Log Jest Configuration
       - name: Log Jest Configuration
         run: npx jest --showConfig
 
@@ -55,10 +55,9 @@ jobs:
           name: coverage-report
           path: coverage/
 
-      # Use Jest coverage report action to publish coverage results
+      # Publish Jest coverage results
       - name: Report Coverage
         uses: ArtiomTr/jest-coverage-report-action@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          coverage-path: coverage/lcov.info
-          test-script: npm test
+          coverage-file: coverage/lcov.info
