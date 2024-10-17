@@ -15,37 +15,30 @@ jobs:
       checks: write
 
     env:
-      ACTIONS_STEP_DEBUG: true  # Enable debug logging to capture more details
+      ACTIONS_STEP_DEBUG: true
 
     steps:
-    # Step 1: Checkout the repository
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    # Step 2: Set up Node.js
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
         node-version: '20'
 
-    # Step 3: Install project dependencies
     - name: Install dependencies
       run: npm install
       working-directory: ./server
 
-    # Step 4: Run Jest tests with coverage
     - name: Run Jest with Coverage
-      run: ./node_modules/.bin/jest --coverage --verbose
+      run: ./node_modules/.bin/jest --coverage
       working-directory: ./server
 
-    # Step 5: List contents of the coverage directory (for debugging)
     - name: List coverage directory
       run: ls -R ./server/coverage
 
-    # Step 6: Generate Jest Coverage Report
     - name: Generate Jest Coverage Report
       uses: ArtiomTr/jest-coverage-report-action@v2.3.1
       with:
         coverage-file: ./coverage/lcov-report/index.html
         working-directory: ./server
-        github-token: ${{ secrets.GITHUB_TOKEN }}
