@@ -26,26 +26,32 @@ jobs:
 
       # Install dependencies
       - name: Install dependencies
+        working-directory: ./server
         run: npm ci
 
       # Install Jest globally
       - name: Install Jest globally
+        working-directory: ./server
         run: npm install -g jest
 
       # Log Jest configuration
       - name: Log Jest Configuration
+        working-directory: ./server
         run: npx jest --showConfig
 
       # Run Jest tests with coverage
       - name: Run Jest tests with coverage
-        run: CI=true npm test -- --coverage --verbose
+        working-directory: ./server
+        run: CI=true npm test -- --coverage
 
-      # List contents of the root directory for debugging
-      - name: List root directory
+      # List contents of the server directory for debugging
+      - name: List server directory
+        working-directory: ./server
         run: ls -la
 
       # List coverage directory for debugging
       - name: List coverage directory
+        working-directory: ./server
         run: ls -R coverage/ || echo "Coverage directory not found"
 
       # Upload coverage report for inspection
@@ -53,11 +59,14 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: coverage-report
-          path: coverage/
+          path: ./server/coverage/
 
-      # Use Jest coverage report action to publish coverage results
-      - name: Report Coverage
-        uses: ArtiomTr/jest-coverage-report-action@v2
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          coverage-file: coverage/lcov.info
+      # Use a generic action to upload coverage results (instead of a specific Jest action)
+      - name: Upload code coverage results
+        working-directory: ./server
+        run: |
+          if [ -f coverage/lcov.info ]; then
+            cat coverage/lcov.info
+          else
+            echo "lcov.info not found!"
+          fi
