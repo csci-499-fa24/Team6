@@ -1,10 +1,15 @@
+require('dotenv').config({ path: './.env.test' });
+
 module.exports = {
-    collectCoverage: true,
+  collectCoverage: true,
 
-    coverageDirectory: 'coverage',
+  coverageDirectory: 'coverage',
 
-    coverageReporters: ['lcov', 'text', 'html'],
+  coverageReporters: ['lcov', 'text', 'html'],
 
-    testTimeout: 10000,
-    testEnvironment: 'node',
-  };
+  testTimeout: 10000,
+
+  testEnvironment: 'node',
+
+  verbose: true,
+};
