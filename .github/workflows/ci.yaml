@@ -1,72 +1,44 @@
-name: Run Jest Tests and Coverage
+name: Run Jest Tests and Generate Coverage Report
 
 on:
   pull_request:
     branches:
       - main
 
-permissions:
-  contents: read
-  checks: write
-  pull-requests: write
-
 jobs:
-  coverage:
-    runs-on: ubuntu-latest
+  test:
+    runs-on: ubuntu-latest  # Use the latest version of Ubuntu for the job
+
+    permissions:
+      contents: write
+      pull-requests: write
+      checks: write
 
     steps:
-      # Checkout the code
-      - uses: actions/checkout@v4
+    # Step 1: Checkout the repository code
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
-      # Setup Node.js environment
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
+    # Step 2: Set up Node.js
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20'
 
-      # Install dependencies
-      - name: Install dependencies
+    # Step 3: Install project dependencies
+    - name: Install dependencies
+      run: npm install
+      working-directory: ./server
+
+    # Step 4: Run Jest tests with coverage
+    - name: Run Jest with Coverage
+      run: npm test -- --coverage
+      working-directory: ./server
+
+    # Step 5: Generate Jest Coverage Report
+    - name: Generate Jest Coverage Report
+      uses: ArtiomTr/jest-coverage-report-action@v2.3.1
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        coverage-file: ./server/coverage/lcov.info
         working-directory: ./server
-        run: npm ci
-
-      # Install Jest globally
-      - name: Install Jest globally
-        working-directory: ./server
-        run: npm install -g jest
-
-      # Log Jest configuration
-      - name: Log Jest Configuration
-        working-directory: ./server
-        run: npx jest --showConfig
-
-      # Run Jest tests with coverage
-      - name: Run Jest tests with coverage
-        working-directory: ./server
-        run: CI=true npm test -- --coverage
-
-      # List contents of the server directory for debugging
-      - name: List server directory
-        working-directory: ./server
-        run: ls -la
-
-      # List coverage directory for debugging
-      - name: List coverage directory
-        working-directory: ./server
-        run: ls -R coverage/ || echo "Coverage directory not found"
-
-      # Upload coverage report for inspection
-      - name: Upload Coverage Report
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-report
-          path: ./server/coverage/
-
-      # Use a generic action to upload coverage results (instead of a specific Jest action)
-      - name: Upload code coverage results
-        working-directory: ./server
-        run: |
-          if [ -f coverage/lcov.info ]; then
-            cat coverage/lcov.info
-          else
-            echo "lcov.info not found!"
-          fi
