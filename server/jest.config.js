@@ -1,6 +1,10 @@
 module.exports = {
-    verbose: true,
     collectCoverage: true,
+
     coverageDirectory: 'coverage',
-    coverageReporters: ['lcov', 'text'],
+
+    coverageReporters: ['lcov', 'text', 'html'],
+
+    testTimeout: 10000,
+    testEnvironment: 'node',
   };

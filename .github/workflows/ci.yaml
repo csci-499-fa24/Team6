@@ -16,11 +16,11 @@ jobs:
 
     steps:
       # Checkout the code
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v3
 
       # Setup Node.js environment
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v3
         with:
           node-version: '20'
 
@@ -32,13 +32,13 @@ jobs:
       - name: Install Jest globally
         run: npm install -g jest
 
-      # Log Jest Configuration
+      # Log Jest configuration
       - name: Log Jest Configuration
         run: npx jest --showConfig
 
       # Run Jest tests with coverage
       - name: Run Jest tests with coverage
-        run: CI=true npm test -- --coverage
+        run: CI=true npm test -- --coverage --verbose
 
       # List contents of the root directory for debugging
       - name: List root directory
@@ -55,7 +55,7 @@ jobs:
           name: coverage-report
           path: coverage/
 
-      # Publish Jest coverage results
+      # Use Jest coverage report action to publish coverage results
       - name: Report Coverage
         uses: ArtiomTr/jest-coverage-report-action@v2
         with:
