@@ -28,13 +28,25 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # Run Jest tests and generate coverage report
+      # Install Jest globally (Step 4)
+      - name: Install Jest globally
+        run: npm install -g jest
+
+      # Log Jest configuration
+      - name: Log Jest Configuration
+        run: npx jest --showConfig
+
+      # Run Jest tests with coverage
       - name: Run Jest tests with coverage
-        run: npm test -- --coverage
+        run: CI=true npm test -- --coverage
+
+      # List contents of the root directory for debugging
+      - name: List root directory
+        run: ls -la
 
       # List coverage directory for debugging
       - name: List coverage directory
-        run: ls -R coverage/
+        run: ls -R coverage/ || echo "Coverage directory not found"
 
       # Upload coverage report for inspection
       - name: Upload Coverage Report
@@ -43,29 +55,10 @@ jobs:
           name: coverage-report
           path: coverage/
 
-      # Post coverage report to PR as a comment
-      - name: Post Coverage Report Comment
-        if: github.event_name == 'pull_request'
-        uses: actions/github-script@v6
+      # Use Jest coverage report action to publish coverage results
+      - name: Report Coverage
+        uses: ArtiomTr/jest-coverage-report-action@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const fs = require('fs');
-            const lcovPath = 'coverage/lcov.info';
-            let coverageMessage = 'Unable to determine code coverage.';
-
-            if (fs.existsSync(lcovPath)) {
-              const lcov = fs.readFileSync(lcovPath, 'utf8');
-              const lines = lcov.split('\n');
-              const linesHit = parseInt(lines.find(line => line.startsWith('LH:')).split(':')[1]);
-              const linesFound = parseInt(lines.find(line => line.startsWith('LF:')).split(':')[1]);
-              const coverage = (linesHit / linesFound * 100).toFixed(2);
-              coverageMessage = `Total code coverage: ${coverage}%`;
-            }
-
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: `${coverageMessage}\n\n[Detailed coverage report available in Actions artifacts]`
-            });
+          coverage-path: coverage/lcov.info
+          test-script: npm test
