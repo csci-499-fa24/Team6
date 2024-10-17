@@ -32,9 +32,40 @@ jobs:
       - name: Run Jest tests with coverage
         run: npm test -- --coverage
 
-      # Use Jest coverage report action to publish coverage results
-      - name: Report Coverage
-        uses: ArtiomTr/jest-coverage-report-action@v2
+      # List coverage directory for debugging
+      - name: List coverage directory
+        run: ls -R coverage/
+
+      # Upload coverage report for inspection
+      - name: Upload Coverage Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-report
+          path: coverage/
+
+      # Post coverage report to PR as a comment
+      - name: Post Coverage Report Comment
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          test-script: npm test
+          script: |
+            const fs = require('fs');
+            const lcovPath = 'coverage/lcov.info';
+            let coverageMessage = 'Unable to determine code coverage.';
+
+            if (fs.existsSync(lcovPath)) {
+              const lcov = fs.readFileSync(lcovPath, 'utf8');
+              const lines = lcov.split('\n');
+              const linesHit = parseInt(lines.find(line => line.startsWith('LH:')).split(':')[1]);
+              const linesFound = parseInt(lines.find(line => line.startsWith('LF:')).split(':')[1]);
+              const coverage = (linesHit / linesFound * 100).toFixed(2);
+              coverageMessage = `Total code coverage: ${coverage}%`;
+            }
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `${coverageMessage}\n\n[Detailed coverage report available in Actions artifacts]`
+            });
