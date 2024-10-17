@@ -7,7 +7,7 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest  # Use the latest version of Ubuntu for the job
+    runs-on: ubuntu-latest
 
     permissions:
       contents: write
@@ -15,30 +15,23 @@ jobs:
       checks: write
 
     steps:
-    # Step 1: Checkout the repository code
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    # Step 2: Set up Node.js
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '20'
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
 
-    # Step 3: Install project dependencies
-    - name: Install dependencies
-      run: npm install
-      working-directory: ./server
-
-    # Step 4: Run Jest tests with coverage
-    - name: Run Jest with Coverage
-      run: npm test -- --coverage
-      working-directory: ./server
-
-    # Step 5: Generate Jest Coverage Report
-    - name: Generate Jest Coverage Report
-      uses: ArtiomTr/jest-coverage-report-action@v2.3.1
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        coverage-file: ./server/coverage/lcov.info
+      - name: Install dependencies
+        run: npm ci
         working-directory: ./server
+
+      - name: Run Jest with Coverage
+        run: npm test -- --coverage
+        working-directory: ./server
+
+      - name: Generate Jest Coverage Report
+        uses: ArtiomTr/jest-coverage-report-action@v2.3.1
+        with:
+          working-directory: ./server
