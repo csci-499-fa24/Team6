@@ -14,22 +14,32 @@ jobs:
       pull-requests: write
       checks: write
 
+    env:
+      ACTIONS_STEP_DEBUG: true
+
     steps:
+    # Step 1: Checkout the repository
     - name: Checkout repository
       uses: actions/checkout@v3
 
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '18'
+        node-version: '20'
+
 
     - name: Install dependencies
       run: npm install
       working-directory: ./server
 
+
     - name: Run Jest with Coverage
-      run: npm test -- --coverage
+      run: ./node_modules/.bin/jest --coverage
       working-directory: ./server
+
+
+    - name: List coverage directory
+      run: ls -R ./server/coverage
 
     - name: Generate Jest Coverage Report
       uses: ArtiomTr/jest-coverage-report-action@v2.3.1
