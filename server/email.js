@@ -14,9 +14,9 @@ const transporter = nodemailer.createTransport({
 
 transporter.verify(function (error, success) {
     if (error) {
-        console.log('Error during email sign-in:', error);
+        // console.log('Error during email sign-in:', error);
     } else {
-        console.log('Sign-in successful, ready to send emails');
+        // console.log('Sign-in successful, ready to send emails');
     }
 });
 
