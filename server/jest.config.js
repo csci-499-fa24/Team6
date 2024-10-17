@@ -7,5 +7,4 @@ module.exports = {
   testTimeout: 10000,
   testEnvironment: 'node',
   verbose: true,
-  testMatch: ['**/tests/**/*.test.js'],
 };
