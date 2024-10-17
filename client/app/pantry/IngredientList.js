@@ -2,25 +2,31 @@
 
 import React, { useEffect, useState } from 'react';
 import styles from './pantry.module.css';
+import { CustomTextField } from "../components/customComponents"
+
+const capitalizeFirstLetter = (string) => {
+    return string
+        .split(' ') 
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1)) 
+        .join(' ');
+};
 
 // IngredientItem Component
 const IngredientItem = ({ ingredient, amount, unit, onAmountChange, isEditable, onToggleEdit }) => {
     return (
-        <li key={ingredient.ingredient_id}>
-            <strong>{ingredient.name}</strong>
-            {/* Toggle between display and input mode */}
-            {isEditable ? (
-                <input
+        <div className={styles.ingredientItem} key={ingredient.ingredient_id}>
+            <div className={styles.ingredientItemTitle}>{capitalizeFirstLetter(ingredient.name)}</div>
+            {/* {isEditable ? ( */}
+                <CustomTextField
                     type="number"
                     placeholder="Amount"
                     value={amount || ''}
                     onChange={(e) => onAmountChange(ingredient.ingredient_id, e.target.value)}
+                    size="small"
+                    sx={{ width: '10%'}}
                 />
-            ) : (
-                <span onClick={() => onToggleEdit(ingredient.ingredient_id)}>{amount || '0'}</span>
-            )}
-            {unit && <span>{` ${unit}`}</span>}
-        </li>
+            {unit && <span className={styles.ingredientItemUnit}>{` ${unit}`}</span>}
+        </div>
     );
 };
 
@@ -108,7 +114,7 @@ const IngredientForm = ({ userIngredients, amounts, onSubmit, onResetAmounts }) 
 const IngredientList = () => {
     const [userIngredients, setUserIngredients] = useState([]);
     const [amounts, setAmounts] = useState({});
-    const [editableIngredients, setEditableIngredients] = useState(new Set()); // Set to track editable ingredients
+    // const [editableIngredients, setEditableIngredients] = useState(new Set()); // Set to track editable ingredients
     const [error, setError] = useState(null);
 
     // Fetch user ingredients from the server
@@ -145,18 +151,6 @@ const IngredientList = () => {
         }));
     };
 
-    const handleToggleEdit = (ingredient_id) => {
-        setEditableIngredients(prev => {
-            const newEditable = new Set(prev);
-            if (newEditable.has(ingredient_id)) {
-                newEditable.delete(ingredient_id); // If already editable, remove it
-            } else {
-                newEditable.add(ingredient_id); // Add to editable set
-            }
-            return newEditable;
-        });
-    };
-
     const handleUpdate = () => {
         fetchUserIngredients(); // Refresh the ingredient list after updating
     };
@@ -168,31 +162,26 @@ const IngredientList = () => {
             resetAmounts[ingredient.ingredient_id] = ''; // Reset to empty string
         });
         setAmounts(resetAmounts); // Update amounts state
-
-        // Reset editable ingredients to an empty set
-        setEditableIngredients(new Set()); // Make all ingredients non-editable
     };
 
     return (
-        <div>
+        <div className={styles.ingredientInputContainer}>
             <div className={styles.header}>Your Ingredients</div>
             {error && <p style={{ color: 'red' }}>{error}</p>} {/* Display error message if any */}
             {userIngredients.length === 0 ? ( // Check if there are no ingredients
                 <p>No ingredients found. Please add some ingredients.</p>
             ) : (
-                <ul>
+                <div className={styles.ingredientList}>
                     {userIngredients.map((ingredient) => (
                         <IngredientItem
                             key={ingredient.ingredient_id}
                             ingredient={ingredient}
                             amount={amounts[ingredient.ingredient_id]}
                             unit={ingredient.unit}
-                            isEditable={editableIngredients.has(ingredient.ingredient_id)} // Check if the ingredient is editable
                             onAmountChange={handleAmountChange}
-                            onToggleEdit={handleToggleEdit} // Pass toggle function
                         />
                     ))}
-                </ul>
+                </div>
             )}
             <IngredientForm userIngredients={userIngredients} amounts={amounts} onSubmit={handleUpdate} onResetAmounts={handleResetAmounts} />
         </div>
