@@ -1,7 +1,10 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
+import { MenuItem, IconButton, TextField, Button } from '@mui/material';
+import { RemoveCircleOutlineRounded, EditRounded, SaveRounded, CloseRounded } from '@mui/icons-material';
 import styles from './pantry.module.css';
+import { CustomDropdown } from "../components/customComponents";
 
 // IngredientForm Component
 const IngredientForm = ({ onUpdate }) => {
@@ -11,6 +14,10 @@ const IngredientForm = ({ onUpdate }) => {
 // Main IngredientList Component
 const IngredientList = () => {
     const [userIngredients, setUserIngredients] = useState([]);
+    const [editIndex, setEditIndex] = useState(null);
+    const [editAmount, setEditAmount] = useState('');  // Amount in edit mode
+    const [editUnit, setEditUnit] = useState('');
+    const [editPossibleUnits, setEditPossibleUnits] = useState([]);
     const [error, setError] = useState(null);
 
     // Fetch user ingredients from the server
@@ -44,22 +51,140 @@ const IngredientList = () => {
         fetchUserIngredients();
     }
 
+
+    const fetchPossibleUnits = async (ingredient) => {
+        // Fetch ingredients from Spoonacular API
+        try {
+            const apiKey = process.env.NEXT_PUBLIC_SPOONACULAR_API_KEY;
+            const response = await fetch(`https://api.spoonacular.com/food/ingredients/autocomplete?query=${ingredient}&number=5&apiKey=${apiKey}&metaInformation=true`);
+            const data = await response.json();
+            const units = data[0]?.possibleUnits || [];
+            setEditPossibleUnits(units);
+        } catch (error) {
+            console.error('Error fetching ingredients:', error);
+        }
+    };
+
+    const handleRemove = async (ingredientId) => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(process.env.NEXT_PUBLIC_SERVER_URL + '/api/user-ingredients/remove', {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ingredientId})
+            });
+            if (!response.ok) {
+                throw new Error('Failed to remove ingredient');
+            }
+            fetchUserIngredients(); // Refresh list after deletion
+        } catch (error) {
+            console.error('Error removing ingredient:', error);
+            setError('Failed to remove ingredient.');
+        }
+    };
+
+    const handleEdit = (index, ingredient) => {
+        setEditIndex(index);  // Set the index of the ingredient being edited
+        setEditAmount(ingredient.amount);  // Initialize the amount input with the current value
+        setEditUnit(ingredient.unit || '');  // Initialize the unit input with the current unit
+    
+        // Fetch the possible units for this ingredient when entering edit mode
+        fetchPossibleUnits(ingredient.name);
+    };
+
+
+    const handleSave = async (ingredient_id) => {
+        const token = localStorage.getItem('token');
+        try {
+            const response = await fetch(process.env.NEXT_PUBLIC_SERVER_URL + '/api/user-ingredients/update', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    ingredientId: ingredient_id,
+                    amount: editAmount,
+                    unit: editUnit,
+                }),
+            });
+            if (!response.ok) {
+                throw new Error('Failed to update ingredient');
+            }
+            setEditIndex(null); // Exit edit mode
+            fetchUserIngredients(); // Refresh the ingredient list
+        } catch (error) {
+            console.error('Error updating ingredient:', error);
+        }
+    };
+
+    // Handle cancelling the edit
+    const handleCancelEdit = () => {
+        setEditIndex(null);  // Exit edit mode without saving
+        setEditAmount('');   // Reset the amount
+        setEditUnit('');     // Reset the unit
+        setEditPossibleUnits([]);  // Clear possible units
+    };
+
     return (
         <div>
             <div>Your Ingredients</div>
             {error && <p style={{ color: 'red' }}>{error}</p>} {/* Display error message if any */}
-            {userIngredients.length === 0 ? ( // Check if there are no ingredients
+            {userIngredients.length === 0 ? (
                 <p>No ingredients found. Please add some ingredients.</p>
             ) : (
                 <ul>
-                    {userIngredients.map((ingredient) => (
-                        <li key={ingredient.ingredient_id}> {/* Ensure each list item has a unique key */}
-                            <strong>{ingredient.name}</strong> {ingredient.amount} {ingredient.unit && <span>{ingredient.unit}</span>}
+                    {userIngredients.map((ingredient, index) => (
+                        <li key={ingredient.ingredient_id} className={styles.ingredientItem}>
+                            {editIndex === index ? (
+                                // Edit mode: show input fields
+                                <>
+                                    <strong>{ingredient.name}</strong>
+                                    <TextField
+                                        value={editAmount}
+                                        onChange={(e) => setEditAmount(e.target.value)}
+                                        type="number"
+                                        size="small"
+                                        className={styles.amountTextField}
+                                    />
+                                    <CustomDropdown
+                                        value={editUnit || ""}
+                                        onChange={(e) => setEditUnit(e.target.value)}
+                                        className={styles.unitSelect}
+                                    >
+                                        {editPossibleUnits.map((unit) => (
+                                            <MenuItem key={unit} value={unit}>
+                                                {unit}
+                                            </MenuItem>
+                                        ))}
+                                    </CustomDropdown>
+                                    <IconButton onClick={() => handleSave(ingredient.ingredient_id)}>
+                                        <SaveRounded />
+                                    </IconButton>
+                                    <IconButton onClick={handleCancelEdit}>
+                                        <CloseRounded />
+                                    </IconButton>
+                                </>
+                            ) : (
+                                // Normal mode: display amount and unit
+                                <>
+                                    <strong>{ingredient.name}</strong> {ingredient.amount} {ingredient.unit}
+                                    <IconButton onClick={() => handleEdit(index, ingredient)}>
+                                        <EditRounded />
+                                    </IconButton>
+                                    <IconButton onClick={() => handleRemove(ingredient.ingredient_id)}>
+                                        <RemoveCircleOutlineRounded />
+                                    </IconButton>
+                                </>
+                            )}
                         </li>
                     ))}
                 </ul>
             )}
-            <IngredientForm onUpdate={handleUpdate} />
+            <IngredientForm onUpdate={fetchUserIngredients} /> {/* Refresh button */}
         </div>
     );
 };
