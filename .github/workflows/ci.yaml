@@ -31,8 +31,8 @@ jobs:
         run: npm test -- --coverage
         working-directory: ./server
 
-      - name: Check coverage directory
-        run: ls -R ./server/coverage
+      - name: Check coverage directory contents
+        run: ls -l ./server/coverage
 
       - name: Generate Jest Coverage Report
         uses: ArtiomTr/jest-coverage-report-action@v2.3.1
