@@ -63,7 +63,8 @@ router.post('/', authenticateToken, async (req, res) => {
             return {
                 name: ingredientName ? ingredientName.name : 'Unknown ingredient',  // Ensure we handle missing names gracefully
                 amount: ing.amount,
-                unit: ing.unit
+                unit: ing.unit,
+                ingredient_id: ing.ingredient_id
             };
         });
 
