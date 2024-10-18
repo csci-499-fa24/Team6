@@ -49,6 +49,9 @@ describe('Email service', () => {
     await createTransporter();
     await checkAndSendEmail();
 
+    // Add a small delay to allow for asynchronous operations to complete
+    await new Promise(resolve => setTimeout(resolve, 100));
+
     expect(mockVerify).toHaveBeenCalled();
     expect(mockSendMail).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -66,6 +69,8 @@ describe('Email service', () => {
 
     await createTransporter();
     await checkAndSendEmail();
+
+    await new Promise(resolve => setTimeout(resolve, 100));
 
     expect(mockVerify).toHaveBeenCalled();
     expect(mockSendMail).not.toHaveBeenCalled();
