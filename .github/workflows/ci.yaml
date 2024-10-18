@@ -18,7 +18,7 @@
 #               uses: ArtiomTr/jest-coverage-report-action@v2
 
 
-name: Run Jest Tests and Generate Coverage Report
+name: CI
 
 on:
   pull_request:
@@ -30,9 +30,8 @@ jobs:
     runs-on: ubuntu-latest
 
     permissions:
-      contents: write
+      contents: read
       pull-requests: write
-      checks: write
 
     env:
       ACTIONS_STEP_DEBUG: true
@@ -53,18 +52,17 @@ jobs:
       working-directory: ./server
 
     - name: Run Jest with Coverage
-      run: npm test -- --coverage --coverageReporters="text" --coverageReporters="lcov"
+      run: npm test
       working-directory: ./server
 
-    - name: List coverage directory
-      run: ls -R ./server/coverage
-      if: always()
+    - name: List coverage files
+      run: ls -R coverage
+      working-directory: ./server
 
-    - name: Generate Jest Coverage Report
-      uses: ArtiomTr/jest-coverage-report-action@v2.3.1
+    - name: Generate coverage report
+      uses: ArtiomTr/jest-coverage-report-action@v2
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
-        test-script: npm test
-        coverage-file: ./coverage/lcov.info
-        base-coverage-file: ./coverage/lcov.info
+        package-manager: npm
         working-directory: ./server
+        test-script: npm run test
