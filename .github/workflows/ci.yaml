@@ -1,4 +1,4 @@
-name: Run Jest Tests and Generate Coverage Report
+name: CI
 
 on:
   pull_request:
@@ -10,40 +10,40 @@ jobs:
     runs-on: ubuntu-latest
 
     permissions:
-      contents: write
+      contents: read
       pull-requests: write
       checks: write
 
     env:
       ACTIONS_STEP_DEBUG: true
+      EMAIL_USER: ${{ secrets.EMAIL_USER }}
+      EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
 
     steps:
-    # Step 1: Checkout the repository
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    # Step 2: Set up Node.js
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
         node-version: '20'
 
-    # Step 3: Install dependencies in the server folder
     - name: Install dependencies
-      run: npm install
+      run: npm ci
       working-directory: ./server
 
-    # Step 4: Run Jest with Coverage in the server folder
     - name: Run Jest with Coverage
-      run: ./node_modules/.bin/jest --coverage
+      run: npm test
       working-directory: ./server
 
-    # Step 5: List contents of the coverage directory to verify path
-    - name: List coverage directory
-      run: ls -R ./server/coverage
+    - name: List coverage files
+      run: ls -R coverage
+      working-directory: ./server
 
-    # Step 6: Generate Jest Coverage Report using the correct path
-    - name: Generate Jest Coverage Report
-      uses: ArtiomTr/jest-coverage-report-action@v2.3.1
+    - name: Generate coverage report
+      uses: ArtiomTr/jest-coverage-report-action@v2
       with:
-        coverage-file: /coverage/lcov-report/index.html
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        package-manager: npm
+        working-directory: ./server
+        test-script: npm run test

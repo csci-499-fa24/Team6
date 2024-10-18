@@ -55,5 +55,4 @@
 /yarn.lock
 /package-lock.json
 
-#coverage
 /server/coverage/

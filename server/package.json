@@ -25,5 +25,10 @@
   "devDependencies": {
     "jest": "^29.7.0",
     "nodemon": "^3.1.4"
+  },
+  "jest": {
+    "collectCoverage": true,
+    "coverageReporters": ["lcov", "text"],
+    "coverageDirectory": "./coverage"
   }
 }
