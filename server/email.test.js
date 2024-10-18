@@ -75,4 +75,9 @@ describe('Email service', () => {
     expect(mockVerify).toHaveBeenCalled();
     expect(mockSendMail).not.toHaveBeenCalled();
   });
+
+  // New dummy test case
+  it('should pass a dummy test', () => {
+    expect(true).toBe(true);
+  });
 });
