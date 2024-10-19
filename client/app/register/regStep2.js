@@ -48,7 +48,7 @@ const RegistrationStep2 = ({ currentStep, handleNextStep, handlePrevStep, formDa
     const handleSaveAndNext = () => {
         setFormData((prev) => ({
             ...prev,
-            ingredients  // Pass updated ingredients to formData
+            ingredients
         }));
 
         handleNextStep();
