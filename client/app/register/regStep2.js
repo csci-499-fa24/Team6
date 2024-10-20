@@ -4,6 +4,8 @@ import { CustomTextField, CustomDropdown, CustomLinearProgress } from "../compon
 import styles from './register.module.css';
 import { MenuItem } from '@mui/material';
 import { AddCircleOutlineRounded, RemoveCircleOutlineRounded } from '@mui/icons-material';
+import Link from "next/link";
+import { useState } from 'react';
 
 const Units = [
     { value: "g", label: "Gram(s)" },
@@ -48,9 +50,8 @@ const RegistrationStep2 = ({ currentStep, handleNextStep, handlePrevStep, formDa
     const handleSaveAndNext = () => {
         setFormData((prev) => ({
             ...prev,
-            ingredients
+            ingredients  // Pass updated ingredients to formData
         }));
-
         handleNextStep();
     };
 
