@@ -5,7 +5,7 @@ import axios from 'axios';
 import Navbar from '../../components/navbar';
 import styles from './RecipeDetailPage.module.css';
 
-const RecipeDetail = ({ params }) => {
+const RecipeDetailPlan = ({ params }) => {
     const { id } = params; 
     const [recipe, setRecipe] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -35,12 +35,12 @@ const RecipeDetail = ({ params }) => {
         }
     };
 
-    const handleAddRecipe = async () => {
+    const handleRemoveRecipe = async () => {
         try {
             const token = localStorage.getItem('token');
 
-            const response = await fetch(process.env.NEXT_PUBLIC_SERVER_URL + '/api/plan/add-recipe', {
-                method: 'POST',
+            const response = await fetch(process.env.NEXT_PUBLIC_SERVER_URL + '/api/plan/remove-recipe', {
+                method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${token}`
@@ -97,10 +97,10 @@ const RecipeDetail = ({ params }) => {
                     <p>Fat: {recipe.nutrition?.nutrients.find(n => n.name === 'Fat')?.amount} g</p>
                     <p>Carbs: {recipe.nutrition?.nutrients.find(n => n.name === 'Carbohydrates')?.amount} g</p>
                 </div>
-                <button onClick={handleAddRecipe}>Add to Plan</button>
+                <button onClick={handleRemoveRecipe}>Remove From Plan</button>
             </div>
         </div>
     );
 };
 
-export default RecipeDetail;
+export default RecipeDetailPlan;

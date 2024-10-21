@@ -28,7 +28,10 @@
   },
   "jest": {
     "collectCoverage": true,
-    "coverageReporters": ["lcov", "text"],
+    "coverageReporters": [
+      "lcov",
+      "text"
+    ],
     "coverageDirectory": "./coverage"
   }
 }
