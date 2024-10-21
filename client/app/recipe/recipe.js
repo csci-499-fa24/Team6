@@ -4,13 +4,16 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Navbar from '../components/navbar';
 import axios from 'axios';
-import styles from './RecipePage.module.css'; // Import the CSS module
+import styles from './RecipePage.module.css';
+import FavoritesPage from './favorites';
+
 
 const RecipePage = () => {
     const [recipes, setRecipes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [userIngredients, setUserIngredients] = useState([]); // State for user ingredients
+    const [showFavorites, setShowFavorites] = useState(false);
 
     // Fetch user ingredients from your API
     const fetchUserIngredients = async () => {
@@ -19,7 +22,7 @@ const RecipePage = () => {
             const response = await fetch(process.env.NEXT_PUBLIC_SERVER_URL + '/api/user-ingredients', {
                 method: 'POST',
                 headers: {
-                    'Authorization': `Bearer ${token}` 
+                    'Authorization': `Bearer ${token}`
                 }
             });
             const data = await response.json();
@@ -95,10 +98,22 @@ const RecipePage = () => {
         }
     }, [userIngredients]);
 
+
+    const handleFavoritesClick = () => {
+        setShowFavorites(true);
+    };
+
+    const handleCloseFavorites = () => {
+    setShowFavorites(false);
+    };
+
+
     return (
         <div>
             <Navbar />
             <h1>Recipes Based on Your Ingredients</h1>
+            <button onClick={handleFavoritesClick}>Favorites</button>
+            {showFavorites && <FavoritesPage onClose={handleCloseFavorites} />}
 
             {loading ? (
                 <p>Loading recipes...</p>
