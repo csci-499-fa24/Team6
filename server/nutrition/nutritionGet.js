@@ -47,12 +47,15 @@ router.post('/', authenticateToken, async (req, res) => {
             protein: 0,
             carbohydrates: 0,
             total_fat: 0,
-            // Add more nutrients as needed
+            saturated_fat: 0,
+            fiber: 0,
+            sodium: 0,
+            sugar: 0
         };
 
         // Call Spoonacular API for each recipe to sum nutrients
         for (const recipeId of recipeIds) {
-            const recipeData = await spoonacularApiCall(recipeId); // Make API call to get nutrients
+            const recipeData = await spoonacularApiCall(recipeId);
             totalNutrients.protein += recipeData.protein;
             totalNutrients.carbohydrates += recipeData.carbs;
             totalNutrients.total_fat += recipeData.fat;
