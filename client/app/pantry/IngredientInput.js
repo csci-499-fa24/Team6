@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { CustomTextField, CustomDropdown } from "../components/customComponents"
+import { CustomTextField, CustomDropdown } from "../components/customComponents.js"
 import { AddCircleOutlineRounded, RemoveCircleOutlineRounded } from '@mui/icons-material';
 import styles from './pantry.module.css'
 import { MenuItem } from '@mui/material';

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import styles from './pantry.module.css';
-import { CustomTextField } from "../components/customComponents"
+import { CustomTextField } from "../components/customComponents.js"
 
 const capitalizeFirstLetter = (string) => {
     return string

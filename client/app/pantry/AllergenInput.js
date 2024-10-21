@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import styles from './pantry.module.css';
-import { CustomTextField } from "../components/customComponents";
+import { CustomTextField } from "../components/customComponents.js";
 import { AddCircleOutlineRounded, RemoveCircleOutlineRounded } from '@mui/icons-material';
 
 const AllergenInput = () => {
