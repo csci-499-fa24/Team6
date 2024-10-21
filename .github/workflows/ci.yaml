@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      pull-requests: write
+      checks: write
+
+    env:
+      ACTIONS_STEP_DEBUG: true
+      EMAIL_USER: ${{ secrets.EMAIL_USER }}
+      EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20'
+
+    - name: Install dependencies
+      run: npm ci
+      working-directory: ./server
+
+    - name: Run Jest with Coverage
+      run: npm test
+      working-directory: ./server
+
+    - name: List coverage files
+      run: ls -R coverage
+      working-directory: ./server
+
+    - name: Generate coverage report
+      uses: ArtiomTr/jest-coverage-report-action@v2
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        package-manager: npm
+        working-directory: ./server
+        test-script: npm run test

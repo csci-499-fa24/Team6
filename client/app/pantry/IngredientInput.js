@@ -73,12 +73,6 @@ const IngredientInput = () => {
                 return response.json();
             })
             .then((data) => {
-                // onAddIngredient({
-                //     name: ingredient,
-                //     amount: parseInt(amount),
-                //     unit: unit,
-                // });
-                // Reset the form
                 setIngredient('');
                 setAmount('');
                 setUnit('');
