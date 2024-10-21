@@ -48,6 +48,9 @@ const Navbar = () => {
             <Link href="/recipe" className={isActiveLink("/recipe") ? styles.activeLink : ""}>
               Recipes
             </Link>
+            <Link href="/plan" className={isActiveLink("/plan") ? styles.activeLink : ""}>
+              Plan
+            </Link>
           </div>
           <div className={styles.navLinksWrapper}>
             {authenticated ? (
