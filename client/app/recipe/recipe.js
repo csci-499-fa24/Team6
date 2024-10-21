@@ -5,6 +5,9 @@ import Link from 'next/link';
 import Navbar from '../components/navbar';
 import axios from 'axios';
 import styles from './RecipePage.module.css'; // Import the CSS module
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import LocalDiningIcon from '@mui/icons-material/LocalDining';
 
 const RecipePage = () => {
     const [recipes, setRecipes] = useState([]);
@@ -19,7 +22,7 @@ const RecipePage = () => {
             const response = await fetch(process.env.NEXT_PUBLIC_SERVER_URL + '/api/user-ingredients', {
                 method: 'POST',
                 headers: {
-                    'Authorization': `Bearer ${token}` 
+                    'Authorization': `Bearer ${token}`
                 }
             });
             const data = await response.json();
@@ -61,6 +64,7 @@ const RecipePage = () => {
                 const usedIngredients = [];
                 const missingIngredients = [];
 
+
                 detailedRecipe.extendedIngredients.forEach(ingredient => {
                     if (userIngredients.includes(ingredient.name.toLowerCase())) {
                         usedIngredients.push(ingredient.original);
@@ -69,10 +73,15 @@ const RecipePage = () => {
                     }
                 });
 
+                const usedIngredientCount = usedIngredients.length;
+                const totalIngredientCount = detailedRecipe.extendedIngredients.length
+
                 detailedRecipes.push({
                     ...detailedRecipe,
                     usedIngredients,
-                    missingIngredients
+                    missingIngredients,
+                    usedIngredientCount,
+                    totalIngredientCount
                 });
             }
 
@@ -98,28 +107,37 @@ const RecipePage = () => {
     return (
         <div>
             <Navbar />
-            <h1>Recipes Based on Your Ingredients</h1>
-
-            {loading ? (
-                <p>Loading recipes...</p>
-            ) : error ? (
-                <p>Error: {error}</p>
-            ) : (
-                <div className={styles.gridContainer}>
-                    {recipes.length > 0 ? (
-                        recipes.map((recipe) => (
-                            <Link href={`/recipe/${recipe.id}`} key={recipe.id} className={styles.recipeCard}>
-                                <div>
-                                    <h2>{recipe.title}</h2>
-                                    <img src={recipe.image} alt={recipe.title} className={styles.recipeImage} />
-                                </div>
-                            </Link>
-                        ))
-                    ) : (
-                        <p>No recipes found for your ingredients.</p>
-                    )}
+            <div className={styles.recipePageWrapper}>
+                <div className={styles.title}>
+                    <div className={styles.recipePageTitle}>Recommended Recipes</div>
+                    <div className={styles.recipePageDescription}>Based on your pantry</div>
                 </div>
-            )}
+                {loading ? (
+                    <p>Loading recipes...</p>
+                ) : error ? (
+                    <p>Error: {error}</p>
+                ) : (
+                    <div className={styles.recipesContainer}>
+                        {recipes.length > 0 ? (
+                            recipes.map((recipe) => (
+                                <Link href={`/recipe/${recipe.id}`} key={recipe.id} className={styles.recipeCard}>
+                                    <img src={recipe.image} alt={recipe.title} className={styles.recipeImage} />
+                                    <div className={styles.recipeTitleWrapper}>
+                                        <div className={styles.recipeTitle} >{recipe.title}</div>
+                                        <FavoriteBorderIcon className={styles.recipeHeart} />
+                                    </div>
+                                    <div className={styles.recipeInfoWrapper}>
+                                        <div className={styles.recipeTime}><AccessTimeIcon className={styles.recipeClock} />{recipe.readyInMinutes} min</div>
+                                        <div className={styles.recipeIngredients}><LocalDiningIcon className={styles.recipeClock} />{recipe.usedIngredientCount}/{recipe.totalIngredientCount} Ingredients</div>
+                                    </div>
+                                </Link>
+                            ))
+                        ) : (
+                            <p>No recipes found for your ingredients.</p>
+                        )}
+                    </div>
+                )}
+            </div>
         </div>
     );
 };

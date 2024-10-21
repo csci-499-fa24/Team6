@@ -1,6 +1,6 @@
 'use client';
 import * as React from 'react';
-import { CustomTextField, CustomLinearProgress } from "../components/customComponents";
+import { CustomTextField, CustomLinearProgress } from "../components/customComponents.js";
 import styles from './register.module.css'; 
 import { InputAdornment, IconButton } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
