@@ -1,4 +1,5 @@
-import { styled, TextField, Select, LinearProgress, linearProgressClasses } from '@mui/material';
+import { styled, TextField, Select, LinearProgress, linearProgressClasses, CircularProgress } from '@mui/material';
+import { Box } from '@mui/material';
 
 export const CustomTextField = styled(TextField)({
   '& label': {
@@ -63,3 +64,30 @@ export const CustomLinearProgress = styled(LinearProgress)(({ theme }) => ({
     backgroundColor: '#EC4A27',
   },
 }));
+
+export const CustomCircularProgress = ({ value, progressColor, backgroundColor, thickness = 8, size = 60 }) => {
+  return (
+      <Box position="relative" display="inline-flex">
+          <CircularProgress
+              variant="determinate"
+              value={100}
+              thickness={thickness}
+              size={size}
+              sx={{
+                  color: backgroundColor,
+              }}
+          />
+          <CircularProgress
+              variant="determinate"
+              value={value}
+              thickness={thickness}
+              size={size}
+              sx={{
+                  position: 'absolute',
+                  left: 0,
+                  color: progressColor,
+              }}
+          />
+      </Box>
+  );
+};

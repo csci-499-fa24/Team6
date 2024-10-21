@@ -1,6 +1,6 @@
 'use client';
 import * as React from 'react';
-import { CustomTextField, CustomDropdown, CustomLinearProgress } from "../components/customComponents";
+import { CustomTextField, CustomDropdown, CustomLinearProgress } from "../components/customComponents.js";
 import styles from './register.module.css';
 import { MenuItem } from '@mui/material';
 import { AddCircleOutlineRounded, RemoveCircleOutlineRounded } from '@mui/icons-material';

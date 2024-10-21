@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { useState } from 'react';
 import Navbar from "../components/navbar";
-import { CustomTextField } from "../components/customComponents"
+import { CustomTextField } from "../components/customComponents.js"
 import styles from './login.module.css'; 
 import Link from "next/link"; 
 import { IconButton, InputAdornment } from '@mui/material';

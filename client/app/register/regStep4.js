@@ -1,6 +1,6 @@
 'use client';
 import * as React from 'react';
-import { CustomTextField, CustomLinearProgress } from "../components/customComponents";
+import { CustomTextField, CustomLinearProgress } from "../components/customComponents.js";
 import styles from './register.module.css';
 
 const RegistrationStep4 = ({ currentStep, handlePrevStep, handleFinish, formData, setFormData }) => {
