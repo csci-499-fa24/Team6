@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest --coverage",
     "start": "node server",
     "dev": "nodemon server"
   },
@@ -18,11 +18,17 @@
     "express": "^4.21.0",
     "express-validator": "^7.2.0",
     "jsonwebtoken": "^9.0.2",
+    "node-cron": "^3.0.3",
     "nodemailer": "^6.9.15",
     "pg": "^8.13.0"
   },
   "devDependencies": {
     "jest": "^29.7.0",
     "nodemon": "^3.1.4"
+  },
+  "jest": {
+    "collectCoverage": true,
+    "coverageReporters": ["lcov", "text"],
+    "coverageDirectory": "./coverage"
   }
 }

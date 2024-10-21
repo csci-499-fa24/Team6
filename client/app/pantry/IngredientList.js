@@ -4,7 +4,33 @@ import React, { useEffect, useState } from 'react';
 import { MenuItem, IconButton, TextField, Button } from '@mui/material';
 import { RemoveCircleOutlineRounded, EditRounded, SaveRounded, CloseRounded } from '@mui/icons-material';
 import styles from './pantry.module.css';
-import { CustomDropdown } from "../components/customComponents";
+import { CustomTextField } from "../components/customComponents.js"
+
+const capitalizeFirstLetter = (string) => {
+    return string
+        .split(' ') 
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1)) 
+        .join(' ');
+};
+
+// IngredientItem Component
+const IngredientItem = ({ ingredient, amount, unit, onAmountChange, isEditable, onToggleEdit }) => {
+    return (
+        <div className={styles.ingredientItem} key={ingredient.ingredient_id}>
+            <div className={styles.ingredientItemTitle}>{capitalizeFirstLetter(ingredient.name)}</div>
+            {/* {isEditable ? ( */}
+                <CustomTextField
+                    type="number"
+                    placeholder="Amount"
+                    value={amount || ''}
+                    onChange={(e) => onAmountChange(ingredient.ingredient_id, e.target.value)}
+                    size="small"
+                    sx={{ width: '10%'}}
+                />
+            {unit && <span className={styles.ingredientItemUnit}>{` ${unit}`}</span>}
+        </div>
+    );
+};
 
 // IngredientForm Component
 const IngredientForm = ({ onUpdate }) => {
