@@ -5,14 +5,16 @@ import Link from 'next/link';
 import Navbar from '../components/navbar';
 import axios from 'axios';
 import styles from './RecipePage.module.css';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import LocalDiningIcon from '@mui/icons-material/LocalDining';
 import FavoritesPage from './favorites';
-
 
 const RecipePage = () => {
     const [recipes, setRecipes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [userIngredients, setUserIngredients] = useState([]); // State for user ingredients
+    const [userIngredients, setUserIngredients] = useState([]);
     const [showFavorites, setShowFavorites] = useState(false);
 
     // Fetch user ingredients from your API
@@ -72,10 +74,15 @@ const RecipePage = () => {
                     }
                 });
 
+                const usedIngredientCount = usedIngredients.length;
+                const totalIngredientCount = detailedRecipe.extendedIngredients.length;
+
                 detailedRecipes.push({
                     ...detailedRecipe,
                     usedIngredients,
-                    missingIngredients
+                    missingIngredients,
+                    usedIngredientCount,
+                    totalIngredientCount
                 });
             }
 
@@ -98,15 +105,13 @@ const RecipePage = () => {
         }
     }, [userIngredients]);
 
-
     const handleFavoritesClick = () => {
         setShowFavorites(true);
     };
 
     const handleCloseFavorites = () => {
-    setShowFavorites(false);
+        setShowFavorites(false);
     };
-
 
     return (
         <div>
@@ -127,6 +132,20 @@ const RecipePage = () => {
                                 <div>
                                     <h2>{recipe.title}</h2>
                                     <img src={recipe.image} alt={recipe.title} className={styles.recipeImage} />
+                                    <div className={styles.recipeTitleWrapper}>
+                                        <div className={styles.recipeTitle}>{recipe.title}</div>
+                                        <FavoriteBorderIcon className={styles.recipeHeart} />
+                                    </div>
+                                    <div className={styles.recipeInfoWrapper}>
+                                        <div className={styles.recipeTime}>
+                                            <AccessTimeIcon className={styles.recipeClock} />
+                                            {recipe.readyInMinutes} min
+                                        </div>
+                                        <div className={styles.recipeIngredients}>
+                                            <LocalDiningIcon className={styles.recipeClock} />
+                                            {recipe.usedIngredientCount}/{recipe.totalIngredientCount} Ingredients
+                                        </div>
+                                    </div>
                                 </div>
                             </Link>
                         ))
