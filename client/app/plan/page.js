@@ -11,10 +11,9 @@ const Plan = () => {
     const [recipes, setRecipes] = useState([]);
     const [error, setError] = useState(null);
     const router = useRouter();
-    const token = localStorage.getItem('token');
 
     // Fetch user's recipes
-    const fetchUserRecipes = async () => {
+    const fetchUserRecipes = async (token) => {
         try {
             const response = await fetch(process.env.NEXT_PUBLIC_SERVER_URL + '/api/plan/user-recipes', {
                 headers: {
@@ -34,6 +33,7 @@ const Plan = () => {
 
     // Combined useEffect to check authentication and fetch recipes
     useEffect(() => {
+        const token = localStorage.getItem('token');
         const verifyToken = async () => {
             if (!token) {
                 setLoading(false);
@@ -51,7 +51,7 @@ const Plan = () => {
                 });
 
                 if (response.ok) {
-                    await fetchUserRecipes();  // Fetch user recipes if token is valid
+                    await fetchUserRecipes(token);  // Fetch user recipes if token is valid
                 } else {
                     router.push('/login'); // Redirect if token is invalid
                 }
