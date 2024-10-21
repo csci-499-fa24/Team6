@@ -2,22 +2,22 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 1.5rem;
+    font-size: 1.5em;
     font-weight: 700;
-    padding: 1.6rem 3.5rem 1.6rem 3.5rem ;
+    padding: 1.6em 3.5em 1.6em 3.5em ;
     border-bottom: 1px solid black;
 }
 
 .navLogo {
-    height: 5rem;
-    width: 5rem;
+    height: 2em;
+    width: 2em;
     padding-right: 15px;
 }
 
 .navTitle {
     display: flex;
     align-items: center;
-    font-size: 2rem;
+    font-size: 1.3em;
     font-weight: 900;
     text-decoration: none;
     color: black;
@@ -30,13 +30,13 @@
 .navLinksWrapper *{
     text-decoration: none;
     color: rgb(0, 0, 0) !important;
-    margin: 0 1.5rem 0 1.5rem;
+    margin: 0 1em 0 1em;
 }
 
 .navGetStarted {
     background-color: #EC4A27;
     border-radius: 25px;
-    height: 3rem;
+    height: 2em;
     display: flex;
     align-items: center;
 
@@ -57,4 +57,42 @@
 
 .activeLink {
     color:#EC4A27 !important;
-  }
+}
+
+@media screen and (max-width: 2000px) {
+    .navWrapper {
+        font-size: 1.2em;
+        padding: 1.6em 3.5em 1.6em 3.5em ;
+    }
+}
+
+.mobileDrawer {
+    display: none;
+}
+
+.mobileIconStyles {
+    color:#EC4A27;
+    font-size: 1.3em !important;
+    &:hover {
+        color: rgb(233, 69, 15);
+        cursor: pointer;
+    }
+}
+
+.mobileIconButton {
+    background-color: none;
+}
+
+@media screen and (max-width: 450px) {
+    .mobileDrawer {
+        display: contents;
+    }
+
+    .navLinksWrapper {
+        display: none;
+    }
+
+    .navWrapper {
+        padding: 1em;
+    }
+}
