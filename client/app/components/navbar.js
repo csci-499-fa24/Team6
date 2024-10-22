@@ -48,21 +48,24 @@ const Navbar = () => {
             <Link href="/recipe" className={isActiveLink("/recipe") ? styles.activeLink : ""}>
               Recipes
             </Link>
+            <Link href="/plan" className={isActiveLink("/plan") ? styles.activeLink : ""}>
+              Plan
+            </Link>
           </div>
-          <div className={styles.navLinksWrapper}>
-            {authenticated ? (
-              <div onClick={handleLogout} className={styles.logoutButton}>
-                Logout
-              </div>
-            ) : (
-              <>
-                <Link href="/login">Log in</Link>
-                <Link className={styles.navGetStarted} href="/register">
-                  <div className={styles.navGetStartedText}>Get Started</div>
-                </Link>
-              </>
-            )}
-          </div>
+            <div className={styles.navLinksWrapper}>
+              {authenticated ? (
+                <div onClick={handleLogout} className={styles.logoutButton}>
+                  Logout
+                </div>
+              ) : (
+                <>
+                  <Link href="/login" className={styles.loginButton}>Log in</Link> 
+                  <Link className={styles.navGetStarted} href="/register">
+                    <div className={styles.navGetStartedText}>Get Started</div>
+                  </Link>
+                </>
+              )}
+            </div>
         </>
       )}
     </div>

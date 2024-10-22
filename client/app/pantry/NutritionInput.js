@@ -2,36 +2,7 @@
 
 import React, { useState } from 'react';
 import styles from './pantry.module.css';
-import { CustomTextField } from "../components/customComponents"
-import CircularProgress from '@mui/material/CircularProgress';
-import { Box } from '@mui/material';
-
-const CustomCircularProgress = ({ value, progressColor, backgroundColor }) => {
-    return (
-        <Box position="relative" display="inline-flex">
-            <CircularProgress
-                variant="determinate"
-                value={100}
-                thickness={8}
-                size={60}
-                sx={{
-                    color: backgroundColor,
-                }}
-            />
-            <CircularProgress
-                variant="determinate"
-                value={value}
-                thickness={8}
-                size={60}
-                sx={{
-                    position: 'absolute',
-                    left: 0,
-                    color: progressColor,
-                }}
-            />
-        </Box>
-    );
-};
+import { CustomTextField, CustomCircularProgress } from "../components/customComponents.js"
 
 const NutritionInput = () => {
     const NutritionList = [
