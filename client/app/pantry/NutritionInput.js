@@ -4,8 +4,53 @@ import React, { useState, useEffect } from 'react';
 import styles from './pantry.module.css';
 import { CustomTextField, CustomCircularProgress } from "../components/customComponents.js";
 
+const colorMapping = {
+    calories: { 
+      title: 'Calories', 
+      progressColor: '#74DE72', 
+      backgroundColor: '#C3F5C2' 
+    },
+    protein: { 
+      title: 'Protein', 
+      progressColor: '#72B1F1', 
+      backgroundColor: '#B6D9FC' 
+    },
+    total_fat: { 
+      title: 'Total Fat', 
+      progressColor: '#EC4A27', 
+      backgroundColor: '#F5AD9D' 
+    },
+    saturated_fat: { 
+      title: 'Saturated Fat', 
+      progressColor: '#FF6D99', 
+      backgroundColor: '#F5C5CE' 
+    },
+    carbohydrates: { 
+      title: 'Carbohydrates', 
+      progressColor: '#EBB06C', 
+      backgroundColor: '#FFCF96' 
+    },
+    fiber: { 
+      title: 'Fiber', 
+      progressColor: '#7D975C', 
+      backgroundColor: '#C1CBB9' 
+    },
+    sugar: { 
+      title: 'Sugar', 
+      progressColor: '#8893F2', 
+      backgroundColor: '#C9C8FF' 
+    },
+    sodium: { 
+      title: 'Sodium', 
+      progressColor: '#9474A3', 
+      backgroundColor: '#CBA6DD' 
+    },
+  };
+  
+
 const NutritionInput = () => {
     const [goals, setGoals] = useState({
+        calories: '',
         protein: '',
         carbohydrates: '',
         total_fat: '',
@@ -27,7 +72,6 @@ const NutritionInput = () => {
                 });
                 const data = await response.json();
                 const { goals, consumed } = data;
-                
                 // Remove user_id and set goals
                 const filteredGoals = { ...goals };
                 delete filteredGoals.user_id;
@@ -91,22 +135,24 @@ const NutritionInput = () => {
     const NutritionalGoals = Object.keys(goals).filter((key) => goals[key] !== null);
 
     return (
-        <div className={styles.nutritionalGoalsPage}>
-            <div className={styles.goalsFormSection}>
-                <div className={styles.header}>Set Your Nutritional Goals</div>
-                <div className={styles.formWrapper}>
+        <div className={styles.nutritionalGoals}>
+            <div className={styles.nutritionSection}>
+                <div className={styles.header}>Modify your nutritional goals</div>
+                <div className={styles.nutritionInputs}>
                     {Object.keys(goals).map((goal) => (
-                        <div key={goal} className={styles.inputGroup}>
-                            <label>{goal.charAt(0).toUpperCase() + goal.slice(1)}</label>
+                        <div key={goal} className={styles.nutritionalItem}>
+                            <label className={styles.nutritionName}>{goal.charAt(0).toUpperCase() + goal.slice(1)}</label>
                             <CustomTextField
                                 name={goal}
                                 value={goals[goal] || ''}
                                 onChange={handleGoalChange}
                                 size="small"
+                                className={styles.nutritionInput}
                             />
+                            <div style={{ marginLeft: '1.5em' }}>grams</div>
                         </div>
                     ))}
-                    <button onClick={handleSaveGoals} className={styles.saveButton}>Save</button>
+                    <div onClick={handleSaveGoals} className={styles.saveButton}>Save Changes</div>
                 </div>
             </div>
 
@@ -116,11 +162,11 @@ const NutritionInput = () => {
                     {NutritionalGoals.map((nutrient) => (
                         <div key={nutrient} className={styles.trackerItem}>
                             <div className={styles.trackerVisual}>
-                                <div className={styles.trackerItemTitle}>{nutrient}</div>
+                                <div className={styles.trackerItemTitle}>{colorMapping[nutrient]?.title || nutrient} </div>
                                 <CustomCircularProgress
                                     value={(consumed[nutrient] / goals[nutrient]) * 100 || 0}
-                                    progressColor="#74DE72"
-                                    backgroundColor="#C3F5C2"
+                                    progressColor={colorMapping[nutrient]?.progressColor || '#74DE72'} 
+                                    backgroundColor={colorMapping[nutrient]?.backgroundColor || '#C3F5C2'}
                                 />
                             </div>
                             <div className={styles.data}>

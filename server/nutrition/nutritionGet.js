@@ -46,6 +46,7 @@ router.get('/', authenticateToken, async (req, res) => {
         const recipeIds = recipesResult.rows.map(row => row.recipe_id);
 
         let totalNutrients = {
+            calories: 0,
             protein: 0,
             carbohydrates: 0,
             total_fat: 0,
@@ -68,12 +69,13 @@ router.get('/', authenticateToken, async (req, res) => {
         });
 
         const recipeDetailsResponses = await Promise.all(recipeDetailsPromises);
-
         recipeDetailsResponses.forEach(response => {
             const nutrients = response.nutrients;
-            
             nutrients.forEach(nutrient => {
                 switch (nutrient.name) {
+                    case "Calories":
+                        totalNutrients.calories += nutrient.amount;
+                        break;
                     case "Protein":
                         totalNutrients.protein += nutrient.amount;
                         break;
