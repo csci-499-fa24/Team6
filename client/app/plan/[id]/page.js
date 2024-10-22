@@ -4,9 +4,15 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Navbar from '../../components/navbar';
 import styles from './RecipeDetailPage.module.css';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import LocalDiningIcon from '@mui/icons-material/LocalDining';
+import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
+import LocalPrintshopOutlinedIcon from '@mui/icons-material/LocalPrintshopOutlined';
+import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
+import { CustomCircularProgress } from '../../components/customComponents';
 
 const RecipeDetailPlan = ({ params }) => {
-    const { id } = params; 
+    const { id } = params;
     const [recipe, setRecipe] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -39,19 +45,46 @@ const RecipeDetailPlan = ({ params }) => {
         try {
             const token = localStorage.getItem('token');
 
-            const response = await fetch(process.env.NEXT_PUBLIC_SERVER_URL + '/api/plan/remove-recipe', {
+            await fetch(process.env.NEXT_PUBLIC_SERVER_URL + '/api/plan/remove-recipe', {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`
+                    Authorization: `Bearer ${token}`,
                 },
-                body: JSON.stringify({ recipeId: id })
+                body: JSON.stringify({ recipeId: id }),
             });
-
-
         } catch (error) {
-            console.error('Error adding recipe:', error);
+            console.error('Error removing recipe:', error);
         }
+    };
+
+    const renderIngredients = (ingredients, color = "#506264") => (
+        <div>
+            {ingredients?.map((ingredient, i) => (
+                <div key={i} style={{ color: color }} className={styles.ingredient}>
+                    {ingredient.original}
+                </div>
+            ))}
+        </div>
+    );
+
+    const renderInstructions = (instructions) => {
+        if (instructions) {
+            const steps = instructions
+                .replace(/<\/?ol>/g, '')
+                .replace(/<\/?li>/g, '')
+                .replace(/&amp;/g, '&')
+                .split('.');
+
+            return (
+                <ol className={styles.instructionList}>
+                    {steps.map((step, index) => (
+                        step.trim() && <li key={index}>{step.trim()}</li>
+                    ))}
+                </ol>
+            );
+        }
+        return <p>No instructions available.</p>;
     };
 
     if (loading) {
@@ -65,39 +98,48 @@ const RecipeDetailPlan = ({ params }) => {
     return (
         <div>
             <Navbar />
-            <div className={styles.recipeContainer}>
-                <h1>{recipe.title}</h1>
-                <img src={recipe.image} alt={recipe.title} className={styles.recipeImage} />
-                
-                <div className={styles.detailsSection}>
-                    <h2>Ingredients</h2>
-                    <ul className={styles.ingredientList}>
-                        {recipe.extendedIngredients.map((ingredient) => (
-                            <li key={ingredient.id}>{ingredient.original}</li>
-                        ))}
-                    </ul>
+            <div className={styles.recipeWrapper}>
+                <div className={styles.recipeDetailsWrapper}>
+                    <div className={styles.recipeTitle}>{recipe.title}</div>
+                    <img className={styles.recipeImage} src={recipe.image} alt={recipe.title} />
+                    <div className={styles.recipeStatsWrapper}>
+                        <div className={styles.recipeTime}>
+                            <AccessTimeIcon className={styles.recipeClock} />
+                            {recipe.readyInMinutes} min
+                        </div>
+                        <div className={styles.recipeIngredients}>
+                            <LocalDiningIcon className={styles.recipeClock} />
+                            {recipe.extendedIngredients.length} Ingredients
+                        </div>
+                        <div className={styles.servingSize}>
+                            <PersonOutlineOutlinedIcon className={styles.recipeClock} />
+                            Serves {recipe.servings}
+                        </div>
+                    </div>
+                    <div className={styles.trackerWrapper}>
+                        {/* Tracker details similar to previous */}
+                    </div>
                 </div>
+                <div className={styles.recipeInstructionWrapper}>
+                    <div className={styles.titleWrapper}>
+                        <div className={styles.title}>Ingredients</div>
+                        <div className={styles.titleButtons}>
+                            <FileDownloadOutlinedIcon className={styles.button} />
+                            <LocalPrintshopOutlinedIcon className={styles.button} />
+                        </div>
+                    </div>
+                    <div className={styles.ingredientWrapper}>
+                        {renderIngredients(recipe.extendedIngredients)}
+                    </div>
 
-                <div className={styles.detailsSection}>
-                    <h2>Instructions</h2>
-                    <ol className={styles.instructionsList}>
-                        {recipe?.analyzedInstructions[0]?.steps
-                            .filter(step => step.step.length > 20)
-                            .map((step) => (
-                                <li key={step.number}>{step.step}</li>
-                            ))
-                        }
-                    </ol>
+                    <div className={styles.title}>Instructions</div>
+                    <div className={styles.instructionWrapper}>
+                        {renderInstructions(recipe.instructions)}
+                    </div>
+                    <div className={styles.madeButton} onClick={handleRemoveRecipe}>
+                        <div className={styles.madeButtonText}>Remove from Plan</div>
+                    </div>
                 </div>
-
-                <div className={styles.detailsSection}>
-                    <h2>Nutrition Facts</h2>
-                    <p>Calories: {recipe.nutrition?.nutrients.find(n => n.name === 'Calories')?.amount} kcal</p>
-                    <p>Protein: {recipe.nutrition?.nutrients.find(n => n.name === 'Protein')?.amount} g</p>
-                    <p>Fat: {recipe.nutrition?.nutrients.find(n => n.name === 'Fat')?.amount} g</p>
-                    <p>Carbs: {recipe.nutrition?.nutrients.find(n => n.name === 'Carbohydrates')?.amount} g</p>
-                </div>
-                <button onClick={handleRemoveRecipe}>Remove From Plan</button>
             </div>
         </div>
     );
