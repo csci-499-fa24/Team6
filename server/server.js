@@ -11,6 +11,9 @@ const ingredientUpdateRoute = require('./ingredient/ingredientUpdate');
 const addAllergenRoute = require('./allergen/allergenAdd');
 const removeAllergenRoute = require('./allergen/allergenRemove');
 const allergyRoute = require('./allergen/allergen');
+const planAddRoute = require('./plan/planAdd');
+const planGetRoute = require('./plan/planGet');
+const planRemoveRoute = require('./plan/planRemove');
 const { body, validationResult } = require('express-validator');
 const { initializeCronJobs } = require('./email_noti/cronJobs');
 const app = express();
@@ -58,6 +61,9 @@ app.use('/api/allergies/add', addAllergenRoute);
 app.use('/api/allergies/remove', removeAllergenRoute);
 app.use('/api/allergies', allergyRoute);
 app.use('/api/discover', discoverRoutes);
+app.use('/api/plan/add-recipe', planAddRoute);
+app.use('/api/plan/user-recipes', planGetRoute);
+app.use('/api/plan/remove-recipe', planRemoveRoute);
 
 
 // User login route
