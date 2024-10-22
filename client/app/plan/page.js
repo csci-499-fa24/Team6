@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Navbar from '../components/navbar';
 import styles from './PlanPage.module.css';
+import AccessTimeIcon from '@mui/icons-material/AccessTime'; // Importing the icon
+import LocalDiningIcon from '@mui/icons-material/LocalDining';
 
 const Plan = () => {
     const [loading, setLoading] = useState(true);
@@ -31,7 +33,6 @@ const Plan = () => {
         }
     };
 
-    // Combined useEffect to check authentication and fetch recipes
     useEffect(() => {
         const token = localStorage.getItem('token');
         const verifyToken = async () => {
@@ -42,7 +43,6 @@ const Plan = () => {
             }
 
             try {
-                // Verify token first
                 const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/protected`, {
                     method: 'GET',
                     headers: {
@@ -64,7 +64,7 @@ const Plan = () => {
         };
 
         verifyToken();
-    }, [router]);  // Depend on router to re-run when routing changes
+    }, [router]);
 
     if (loading) {
         return <div>Loading...</div>;
@@ -77,21 +77,27 @@ const Plan = () => {
     return (
         <div>
             <Navbar />
-            <h1>Your Plan</h1>
-            <div className={styles.gridContainer}>
-                {recipes.length > 0 ? (
-                    recipes.map((recipe) => (
-                        <div key={recipe.id} className={styles.recipeCard}>
-                            <Link href={`/plan/${recipe.id}`}>
+            <div className={styles.planPageWrapper}>
+                <div className={styles.title}>
+                    <h1>Your Plan</h1>
+                </div>
+                <div className={styles.recipesContainer}>
+                    {recipes.length > 0 ? (
+                        recipes.map((recipe) => (
+                            <Link href={`/plan/${recipe.id}`} key={recipe.id} className={styles.recipeCard}>
                                 <img src={recipe.image} alt={recipe.title} className={styles.recipeImage} />
-                                <h2>{recipe.title}</h2>
-                                <p>{recipe.readyInMinutes} min</p>
+                                <div className={styles.recipeTitleWrapper}>
+                                    <div className={styles.recipeTitle}>{recipe.title}</div>
+                                    <AccessTimeIcon className={styles.recipeClock} />{recipe.readyInMinutes} min
+                                    <LocalDiningIcon className={styles.recipeClock} />
+                                        {recipe.extendedIngredients?.length || 0} Ingredients
+                                </div>
                             </Link>
-                        </div>
-                    ))
-                ) : (
-                    <p>No recipes in your plan.</p>
-                )}
+                        ))
+                    ) : (
+                        <p>No recipes in your plan.</p>
+                    )}
+                </div>
             </div>
         </div>
     );
