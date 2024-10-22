@@ -1,9 +1,11 @@
 .landingPage {
-    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 .landingPageWrapper {
-    height: 90vh;
+    flex: 1;
     background-image: url('/assets/foodRight.png');
     background-position: right;
     background-repeat: no-repeat;
@@ -16,27 +18,27 @@
 }
 
 .landingLogo {
-    width: 28rem;
-    height: 27rem;
+    width: 18vw;
+    height: 33vh;
 }
 
 .descriptionTitle {
-    font-size: 3.5rem;
+    font-size: 2.3vw;
     font-weight: 700;
-    margin-top: 1rem;
+    margin-top: .5em;
 }
 
 .descriptionBullets {
-    font-size: 2rem;
+    font-size: 1.2vw;
     font-weight: 700;
-    margin-top: 3rem;
+    margin-top: 1.5em;
     margin-left: 4rem;
 }
 
 .descriptionBullet {
     display: flex;
     align-items: center;
-    margin-bottom: 2rem;
+    margin-bottom: 3vh;
 }
 
 .bottomContent {
@@ -49,7 +51,7 @@
 
 .bottomDescription {
     display: flex;
-    font-size: 1.6rem;
+    font-size: 1vw;
     font-weight: 600;
     font-style: italic;
     color: #506264;
@@ -81,7 +83,7 @@
 }
 
 .login {
-    font-size: 1.2rem;
+    font-size: .8vw;
     font-weight: 600;
 }
 
@@ -90,7 +92,37 @@
 }
 
 .bulletArrow {
-    color:#EC4A27;
+    color: #EC4A27;
     font-size: 2.5rem !important;
     margin-right: 1rem;
+}
+
+@media screen and (max-width: 450px) {
+    .landingPageWrapper {
+        background-image: none;
+    }
+
+    .landingPageContent {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 7vh 0 0 0;
+    } 
+
+    .landingLogo {
+        height: 50%;
+        width: 50%;
+    }
+
+    .descriptionTitle {
+        font-size: 5vw;
+    }
+
+    .bulletArrow {
+        font-size: 5vw !important;
+    }
+
+    .descriptionBullets {
+        font-size: 1vw;
+    }
 }
