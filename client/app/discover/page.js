@@ -1,27 +1,32 @@
-'use client';
-import { useEffect, useState } from 'react';
-import axios from 'axios';
-import Link from 'next/link'; 
+"use client";
+
+import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation'; 
 import Navbar from "../components/navbar";
-import styles from './DiscoverPage.module.css'; 
+import axios from 'axios';
+import styles from './DiscoverPage.module.css';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import LocalDiningIcon from '@mui/icons-material/LocalDining';
 
 const Discover = () => {
-    const router = useRouter(); 
     const [loading, setLoading] = useState(true);
-    const [authenticated, setAuthenticated] = useState(false); 
     const [recipes, setRecipes] = useState([]);
     const [error, setError] = useState(null);
-    const [page, setPage] = useState(1); 
+    const [page, setPage] = useState(1);
+    const [authenticated, setAuthenticated] = useState(false);
     const [filters, setFilters] = useState({
         type: '',
         cuisine: '',
         diet: ''
     });
-    const recipesPerPage = 10; 
+    const recipesPerPage = 12;
+    const router = useRouter(); 
 
+    // Authentication logic
     useEffect(() => {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('token'); 
 
         const verifyToken = async () => {
             if (!token) {
@@ -31,29 +36,28 @@ const Discover = () => {
                     const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/protected`, {
                         method: 'GET',
                         headers: {
-                            'Authorization': `Bearer ${token}`,
+                            'Authorization': `Bearer ${token}`, 
                         },
                     });
 
                     if (response.ok) {
                         const data = await response.json();
                         console.log('Protected data:', data);
-                        setAuthenticated(true);
-                        fetchRandomRecipes(page, filters);
+                        setAuthenticated(true); 
                     } else {
-                        router.push('/login');
+                        router.push('/login'); 
                     }
                 } catch (error) {
                     console.error('Error verifying token:', error);
                     router.push('/login');
                 } finally {
-                    setLoading(false);
+                    setLoading(false); 
                 }
             }
         };
 
         verifyToken();
-    }, [router, page, filters]);
+    }, [router]);
 
     const fetchRandomRecipes = async (page = 1, filters = {}) => {
         setLoading(true);
@@ -62,7 +66,7 @@ const Discover = () => {
                 params: {
                     number: recipesPerPage,
                     offset: (page - 1) * recipesPerPage,
-                    type: filters.type || '',  
+                    type: filters.type || '',
                     cuisine: filters.cuisine || '',
                     diet: filters.diet || ''
                 }
@@ -77,12 +81,16 @@ const Discover = () => {
         }
     };
 
+    useEffect(() => {
+        fetchRandomRecipes(page, filters);
+    }, [page, filters]);
+
     const handleFilterChange = (e) => {
         setFilters({
             ...filters,
             [e.target.name]: e.target.value
         });
-        setPage(1); 
+        setPage(1);
     };
 
     const handleNextPage = () => {
@@ -98,17 +106,25 @@ const Discover = () => {
     }
 
     if (!authenticated) {
-        return null;
+        return null; 
     }
 
     return (
-        <div>
+        <div className={styles.pageWrapper}>
             <Navbar />
-            <h1>Discover Random Recipes</h1>
+            <div className={styles.title}>
+                <div className={styles.pageTitle}>Discover Random Recipes</div>
+                <div className={styles.pageDescription}>Explore new dishes</div>
+            </div>
 
             {/* Filter Section */}
-            <div className={styles.filters}>
-                <select name="type" value={filters.type} onChange={handleFilterChange}>
+            <div className={styles.filtersContainer}>
+                <select 
+                    name="type" 
+                    value={filters.type} 
+                    onChange={handleFilterChange}
+                    className={styles.filterSelect}
+                >
                     <option value="">Select Meal Type</option>
                     <option value="breakfast">Breakfast</option>
                     <option value="lunch">Lunch</option>
@@ -116,7 +132,12 @@ const Discover = () => {
                     <option value="snack">Snack</option>
                 </select>
 
-                <select name="cuisine" value={filters.cuisine} onChange={handleFilterChange}>
+                <select 
+                    name="cuisine" 
+                    value={filters.cuisine} 
+                    onChange={handleFilterChange}
+                    className={styles.filterSelect}
+                >
                     <option value="">Select Cuisine</option>
                     <option value="american">American</option>
                     <option value="british">British</option>
@@ -135,7 +156,12 @@ const Discover = () => {
                     <option value="vietnamese">Vietnamese</option>
                 </select>
 
-                <select name="diet" value={filters.diet} onChange={handleFilterChange}>
+                <select 
+                    name="diet" 
+                    value={filters.diet} 
+                    onChange={handleFilterChange}
+                    className={styles.filterSelect}
+                >
                     <option value="">Select Diet</option>
                     <option value="gluten free">Gluten Free</option>
                     <option value="ketogenic">Ketogenic</option>
@@ -149,27 +175,48 @@ const Discover = () => {
             </div>
 
             {/* Recipe Grid */}
-            <div className={styles.gridContainer}>
+            <div className={styles.recipesContainer}>
                 {recipes.length > 0 ? (
                     recipes.map((recipe) => (
-                        <Link href={`/discover/${recipe.id}`} key={recipe.id}>
-                            <div className={styles.recipeCard}>
-                                <img src={recipe.image} alt={recipe.title} className={styles.recipeImage} />
-                                <h2>{recipe.title}</h2>
-                                <p>{recipe.readyInMinutes} min</p>
+                        <Link href={`/discover/${recipe.id}`} key={recipe.id} className={styles.recipeCard}>
+                            <img src={recipe.image} alt={recipe.title} className={styles.recipeImage} />
+                            <div className={styles.recipeTitleWrapper}>
+                                <div className={styles.recipeTitle}>{recipe.title}</div>
+                                <FavoriteBorderIcon className={styles.recipeHeart} />
+                            </div>
+                            <div className={styles.recipeInfoWrapper}>
+                                <div className={styles.recipeTime}>
+                                    <AccessTimeIcon className={styles.recipeClock} />
+                                    {recipe.readyInMinutes} min
+                                </div>
+                                <div className={styles.recipeIngredients}>
+                                    <LocalDiningIcon className={styles.recipeClock} />
+                                    {recipe.totalIngredients} Ingredients
+                                </div>
                             </div>
                         </Link>
                     ))
                 ) : (
-                    <p>No recipes found.</p>
+                    <p className={styles.noRecipes}>No recipes found.</p>
                 )}
             </div>
 
             {/* Pagination */}
             <div className={styles.pagination}>
-                <button onClick={handlePreviousPage} disabled={page === 1}>Previous</button>
-                <span>Page {page}</span>
-                <button onClick={handleNextPage}>Next</button>
+                <button 
+                    onClick={handlePreviousPage} 
+                    disabled={page === 1}
+                    className={styles.paginationButton}
+                >
+                    Previous
+                </button>
+                <span className={styles.pageNumber}>Page {page}</span>
+                <button 
+                    onClick={handleNextPage}
+                    className={styles.paginationButton}
+                >
+                    Next
+                </button>
             </div>
         </div>
     );
