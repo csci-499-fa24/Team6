@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { MenuItem, IconButton, TextField, Button } from '@mui/material';
 import { RemoveCircleOutlineRounded, EditRounded, SaveRounded, CloseRounded } from '@mui/icons-material';
 import styles from './pantry.module.css';
-import { CustomTextField } from "../components/customComponents.js"
+import { CustomTextField, CustomDropdown } from "../components/customComponents.js"
 
 const capitalizeFirstLetter = (string) => {
     return string
