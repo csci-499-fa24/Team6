@@ -1,10 +1,17 @@
 import { styled, TextField, Select, LinearProgress, linearProgressClasses, CircularProgress } from '@mui/material';
 import { Box } from '@mui/material';
 
-export const CustomTextField = styled(TextField)({
+export const CustomTextField = styled(TextField)(({}) => ({
   '& label': {
     color: '#8C8A8A',
     fontFamily: "Inter",
+    fontSize: '.65vw',
+    '@media (max-width: 600px)': {
+      fontSize: '3vw',
+    },
+    '@media (min-width: 601px) and (max-width: 2000px)': {
+      fontSize: '15px',
+    },
   },
   '& label.Mui-focused': {
     color: '#EC4A27',
@@ -28,9 +35,16 @@ export const CustomTextField = styled(TextField)({
       color: 'black !important',
       backgroundColor: 'White',
       borderRadius: '10px',
+      fontSize: '.65vw',
+      '@media (max-width: 600px)': {
+        fontSize: '2.6vw',
+      },
+      '@media (min-width: 601px) and (max-width: 2000px)': {
+        fontSize: '13px',
+      },
     },
   },
-});
+}));
 
 export const CustomDropdown = styled(Select)({
   backgroundColor: 'white',

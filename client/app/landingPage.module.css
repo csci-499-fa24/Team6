@@ -115,14 +115,53 @@
     }
 
     .descriptionTitle {
-        font-size: 5vw;
+        font-size: 6vw;
+        margin-top: 2em;
     }
 
     .bulletArrow {
-        font-size: 5vw !important;
+        font-size: 4vw !important;
     }
 
     .descriptionBullets {
-        font-size: 1vw;
+        margin-left: 0;
+        font-size: 3vw;
+    }
+
+    .descriptionBullet {
+        margin-bottom: 1.5vh;
+        display: flex;
+        align-items: center;
+    }
+
+    .descriptionText {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .bottomContent {
+        width: 100%;
+        padding: 6vh 0;
+    }
+
+    .bottomDescription {
+        font-size: 2.7vw;
+        justify-content: center;
+    }
+
+    .bottomDescription * { 
+        width: 30%;
+    }
+
+    .getStarted {
+        font-size: 3.5vw;
+        height: 4vh;
+        width: 40vw;
+        margin-bottom: 1.5em;
+    }
+
+    .login {
+        font-size: 3vw;
     }
 }
