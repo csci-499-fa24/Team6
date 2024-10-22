@@ -14,22 +14,22 @@
 
 .landingPageContent {
     display: flex;
-    padding: 13vh 0 0 12vw;
+    padding: 13vh 0 0 10%;
 }
 
 .landingLogo {
-    width: 18vw;
-    height: 33vh;
+    width: 23em;
+    height: 21em;
 }
 
 .descriptionTitle {
-    font-size: 2.3vw;
+    font-size: 45px;
     font-weight: 700;
     margin-top: .5em;
 }
 
 .descriptionBullets {
-    font-size: 1.2vw;
+    font-size: 25px;
     font-weight: 700;
     margin-top: 1.5em;
     margin-left: 4rem;
@@ -42,7 +42,7 @@
 }
 
 .bottomContent {
-    padding: 8vh 0 0 12vw;
+    padding: 100px 0 0 300px;
     width: 50vw;
     display: flex;
     flex-direction: column;
@@ -51,7 +51,7 @@
 
 .bottomDescription {
     display: flex;
-    font-size: 1vw;
+    font-size: 22px;
     font-weight: 600;
     font-style: italic;
     color: #506264;
@@ -59,21 +59,21 @@
 }
 
 .bottomDescription * {
-    width: 10vw;
+    width: 220px;
     text-align: center;
 }
 
 .getStarted {
     background-color: #EC4A27;
-    height: 5vh;
-    width: 15vw;
+    height: 60px;
+    width: 360px;
     border-radius: 30px;
     display: flex;
     align-items: center;
     justify-content: center;
     color: white !important;
     text-decoration: none;
-    font-size: 1.2vw;
+    font-size: 28px;
     font-weight: 750;
     margin-bottom: 1.5rem;
 
@@ -83,7 +83,7 @@
 }
 
 .login {
-    font-size: .8vw;
+    font-size: 18px;
     font-weight: 600;
 }
 
@@ -93,8 +93,148 @@
 
 .bulletArrow {
     color: #EC4A27;
-    font-size: 2.5rem !important;
+    font-size: 2.4rem !important;
     margin-right: 1rem;
+}
+
+@media (min-width: 1300px) and (max-width: 2000px) { 
+    .landingLogo {
+        width: 20em;
+        height: 19em;
+    }
+
+    .descriptionTitle {
+        font-size: 40px;
+    }
+
+    .descriptionBullets {
+        font-size: 20px;
+        font-weight: 700;
+        margin-top: 25px;
+        margin-left: 3.5rem;
+    }
+    
+    .bottomDescription {
+        font-size: 17px;
+    }
+
+    .bottomDescription * {
+        width: 170px;
+    }
+
+    .login {
+        font-size: 15px;
+    }
+
+    .getStarted {
+        font-size: 22px;
+        width: 330px;
+    }
+}
+
+@media (min-width: 1000px) and (max-width: 1300px) { 
+    .landingPageWrapper {
+        background-image: none;
+    }
+
+    .landingPageContent {
+        padding: 13vh 0 0 0;
+        justify-content: center;
+    }
+
+    .landingLogo {
+        width: 20em;
+        height: 19em;
+    }
+
+    .descriptionTitle {
+        font-size: 40px;
+    }
+
+    .descriptionBullets {
+        font-size: 20px;
+        font-weight: 700;
+        margin-top: 25px;
+        margin-left: 3.5rem;
+    }
+    
+    .bottomDescription {
+        font-size: 17px;
+    }
+
+    .bottomDescription * {
+        width: 170px;
+    }
+
+    .login {
+        font-size: 15px;
+    }
+
+    .getStarted {
+        font-size: 22px;
+        width: 330px;
+    }
+}
+
+@media (min-width: 499px) and (max-width: 1000px) { 
+    .landingPageWrapper {
+        background-image: none;
+    }
+
+    .landingPageContent {
+        padding: 8vh 0 0 0;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .landingLogo {
+        width: 320px;
+        height: 300px;
+    }
+
+    .descriptionTitle {
+        font-size: 33px;
+        text-align: center;
+    }
+
+    .bottomContent {
+        justify-content: center;
+        width: 100%;
+        padding: 4vh 0 0 0;
+    }
+
+    .descriptionBullets {
+        font-size: 16px;
+        font-weight: 700;
+        margin-top: 1.3em;
+        margin-left: 2.5rem;
+    }
+
+    .descriptionBullet {
+        margin-bottom: 2vh;
+    }
+
+    .bulletArrow {
+        font-size: 1.2rem !important;
+    }
+    
+    .bottomDescription {
+        font-size: 16px;
+    }
+
+    .login {
+        font-size: 16px;
+    }
+
+    .getStarted {
+        font-size: 20px;
+        width: 320px;
+    }
+
+    .bottomDescription * {
+        width: 150px;
+    }
 }
 
 @media screen and (max-width: 450px) {
