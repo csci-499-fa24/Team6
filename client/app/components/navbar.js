@@ -141,7 +141,11 @@ const Navbar = () => {
             </Link>
           </div>
           <div className={styles.mobileDrawer}>
-            <Button onClick={toggleDrawer(true)} disableRipple={true}><MenuIcon className={styles.mobileIconStyles} /></Button>
+            <Button onClick={toggleDrawer(true)} disableRipple={true} sx={{
+              '&:hover': {
+                '--variant-textBg': 'none',
+              },
+            }} ><MenuIcon className={styles.mobileIconStyles} /></Button>
             <Drawer
               open={open}
               onClose={toggleDrawer(false)}
