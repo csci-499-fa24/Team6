@@ -8,7 +8,6 @@ import styles from './RecipePage.module.css';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import LocalDiningIcon from '@mui/icons-material/LocalDining';
-// import FavoritesPage from './favorites';
 
 const RecipePage = () => {
     const [recipes, setRecipes] = useState([]);
