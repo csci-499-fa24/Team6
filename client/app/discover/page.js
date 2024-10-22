@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation'; 
+import { Button } from '@mui/material'; 
+import { useRouter } from 'next/navigation';
 import Navbar from "../components/navbar";
 import axios from 'axios';
 import styles from './DiscoverPage.module.css';
@@ -19,47 +20,43 @@ const Discover = () => {
     const [filters, setFilters] = useState({
         type: '',
         cuisine: '',
-        diet: ''
+        diet: '',
+        searchQuery: '' 
     });
     const recipesPerPage = 12;
-    const router = useRouter(); 
+    const router = useRouter();
 
     // Authentication logic
     useEffect(() => {
-        const token = localStorage.getItem('token'); 
-
-        const verifyToken = async () => {
-            if (!token) {
-                router.push('/login'); 
-            } else {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            router.push('/login');
+        } else {
+            const verifyToken = async () => {
                 try {
-                    const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/protected`, {
-                        method: 'GET',
+                    const response = await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/protected`, {
                         headers: {
-                            'Authorization': `Bearer ${token}`, 
+                            Authorization: `Bearer ${token}`,
                         },
                     });
 
-                    if (response.ok) {
-                        const data = await response.json();
-                        console.log('Protected data:', data);
-                        setAuthenticated(true); 
+                    if (response.status === 200) {
+                        setAuthenticated(true);
                     } else {
-                        router.push('/login'); 
+                        router.push('/login');
                     }
                 } catch (error) {
                     console.error('Error verifying token:', error);
                     router.push('/login');
-                } finally {
-                    setLoading(false); 
                 }
-            }
-        };
+            };
 
-        verifyToken();
+            verifyToken();
+        }
     }, [router]);
 
-    const fetchRandomRecipes = async (page = 1, filters = {}) => {
+    // Fetch random or filtered recipes when the page loads or user clicks search
+    const fetchRecipes = async () => {
         setLoading(true);
         try {
             const response = await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/discover/random-recipes`, {
@@ -68,29 +65,37 @@ const Discover = () => {
                     offset: (page - 1) * recipesPerPage,
                     type: filters.type || '',
                     cuisine: filters.cuisine || '',
-                    diet: filters.diet || ''
+                    diet: filters.diet || '',
+                    search: filters.searchQuery || '' 
                 }
             });
 
             setRecipes(response.data.recipes);
         } catch (error) {
-            console.error('Error fetching random recipes:', error);
+            console.error('Error fetching recipes:', error);
             setError('Failed to fetch recipes.');
         } finally {
             setLoading(false);
         }
     };
 
-    useEffect(() => {
-        fetchRandomRecipes(page, filters);
-    }, [page, filters]);
-
     const handleFilterChange = (e) => {
         setFilters({
             ...filters,
             [e.target.name]: e.target.value
         });
-        setPage(1);
+    };
+
+    const handleSearchChange = (e) => {
+        setFilters({
+            ...filters,
+            searchQuery: e.target.value
+        });
+    };
+
+    const handleSearchClick = () => {
+        setPage(1); 
+        fetchRecipes(); 
     };
 
     const handleNextPage = () => {
@@ -100,6 +105,11 @@ const Discover = () => {
     const handlePreviousPage = () => {
         setPage(prevPage => (prevPage > 1 ? prevPage - 1 : prevPage));
     };
+
+    // Fetch random recipes on initial load 
+    useEffect(() => {
+        fetchRecipes();
+    }, [page]);
 
     if (loading) {
         return <div>Loading...</div>;
@@ -115,6 +125,20 @@ const Discover = () => {
             <div className={styles.title}>
                 <div className={styles.pageTitle}>Discover Random Recipes</div>
                 <div className={styles.pageDescription}>Explore new dishes</div>
+            </div>
+
+            {/* Search Bar */}
+            <div className={styles.searchBarContainer}>
+                <input
+                    type="text"
+                    placeholder="Search for recipes..."
+                    value={filters.searchQuery}
+                    onChange={handleSearchChange}
+                    className={styles.searchBar}
+                />
+                <Button className={styles.searchButton} onClick={handleSearchClick}>
+                    Search
+                </Button>
             </div>
 
             {/* Filter Section */}

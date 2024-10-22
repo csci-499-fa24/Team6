@@ -58,3 +58,23 @@
 .activeLink {
     color:#EC4A27 !important;
   }
+
+  .loginButton,
+.logoutButton {
+    border: 2px solid black; 
+    border-radius: 25px; 
+    padding: 0 1em; 
+    height: 3rem; 
+    background-color: transparent; 
+    color: black; 
+    display: flex;
+    align-items: center; 
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none; 
+}
+
+.loginButton:hover,
+.logoutButton:hover {
+    background-color: rgba(0, 0, 0, 0.1); 
+}
