@@ -1,5 +1,11 @@
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
 .regPageWrapper {
-    height: 90vh;
+    flex: 1;
     background-image: url('/assets/ingredients.png');
     background-position: bottom;
     background-repeat: no-repeat;
@@ -13,8 +19,8 @@
     background-color: rgba(253, 243, 243, 0.9);
     box-shadow: 2px 4px 10px 2px rgba(0, 0, 0, 0.25);
     border-radius: 20px;
-    width: 1000px;
-    height: 950px;
+    width: 950px;
+    height: 900px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -22,8 +28,8 @@
 }
 
 .regImage {
-    height: 13%;
-    width: 13%;
+    height: 12%;
+    width: 12%;
 }
 
 .step1 {
@@ -34,7 +40,7 @@
 }
 
 .regTitle {
-    font-size: 2rem;
+    font-size: 30px;
     font-weight: 600;
     margin-top: 2vh;
 }
@@ -60,7 +66,7 @@
 
 .regButton {
     background-color: #EC4A27;
-    font-size: 1.5rem;
+    font-size: 23px;
     font-weight: 600;
     color: white;
     width: 45%;
@@ -76,8 +82,8 @@
 }
 
 .regHaveAcc {
-    margin-top: 2.5rem;
-    font-size: 1.3rem;
+    margin-top: 30px;
+    font-size: 20px;
     font-weight: 600;
 }
 
@@ -102,6 +108,11 @@
     display: flex;
     flex-direction: column;
     color: #506264;
+}
+
+.labelText {
+    margin-bottom: 2px;
+    margin-left: 2px;
 }
 
 .quantity {
@@ -173,14 +184,14 @@
 
 .navButton {
     background-color: #EC4A27;
-    font-size: 1.5rem;
+    font-size: 20px;
     font-weight: 600;
     color: white;
-    width: 20%;
+    width: 150px;
     text-align: center;
     border-radius: 10px;
     padding: .7rem 0;
-    margin-top: 2.5rem;
+    margin-top: 35px;
 
     &:hover {
         background-color: rgb(233, 69, 15);
@@ -193,7 +204,7 @@
     display: flex;
     align-items: center;
     width: 65%;
-    margin-top: 2rem;
+    margin-top: 25px;
     justify-content: space-around;
 }
 
@@ -225,4 +236,317 @@
 
 .nutritionInput {
     width: 30%;
+}
+
+.error {
+    color:#EC4A27;
+    font-size: 15px;
+    margin-top: 10px;
+}
+
+@media (min-width: 900px) and (max-width: 2000px) { 
+    .regWrapper {
+        width: 750px;
+        height: 700px;
+    }
+
+    .regTitle {
+        font-size: 23px
+    }
+
+    .regHaveAcc {
+        margin-top: 25px;
+        font-size: 16px;
+    }
+
+    .regButton {
+        font-size: 20px;
+        padding: .7rem 0;
+        margin-top: 3%;
+    }
+
+    .regImage {
+        height: 12%;
+        width: 12%;
+    }
+
+    .quantity, .unit, .ingredient, .allergyInput{
+        font-size: 13px;
+    }
+
+    .ingredientList {
+        width: 60%;
+        height: 200px;
+    }
+
+    .ingredientItem { 
+        font-size: 15px;
+        padding-bottom: .7rem;
+    }
+
+    .removeButton { 
+        font-size: 17px
+    }
+
+    .navButton {
+        font-size: 15px;
+        width: 120px;
+        padding: .5rem 0;
+        margin-top: 30px;
+    }
+    
+    .addIngredient, .nutritionalGoals, .addAllergy {
+        margin-top: 20px;
+    }
+
+    .addButton {
+        font-size: 20px;
+    }
+
+    .nutritionalItem {
+        padding-bottom: .5rem;
+        font-size: 16px;
+    }
+}
+
+@media (min-width: 650px) and (max-width: 900px) { 
+    .regWrapper {
+        width: 550px;
+        height: 700px;
+    }
+
+    .regTitle {
+        font-size: 16px
+    }
+
+    .regHaveAcc {
+        margin-top: 23px;
+        font-size: 14px;
+    }
+
+    .regButton {
+        font-size: 17px;
+        padding: .7rem 0;
+        margin-top: 4%;
+        width: 65%;
+    }
+
+    .regImage {
+        height: 9%;
+        width: 12%;
+    }
+
+    .quantity, .unit, .ingredient, .allergyInput{
+        font-size: 11px;
+    }
+
+    .ingredientList {
+        width: 60%;
+        height: 200px;
+    }
+
+    .ingredientItem { 
+        font-size: 12px;
+        padding-bottom: .5rem;
+    }
+
+    .removeButton { 
+        font-size: 15px
+    }
+
+    .navButton {
+        font-size: 13px;
+        width: 100px;
+        padding: .5rem 0;
+        margin-top: 30px;
+    }
+    
+    .addIngredient, .nutritionalGoals, .addAllergy {
+        margin-top: 20px;
+    }
+
+    .addButton {
+        font-size: 18px;
+    }
+
+    .nutritionalItem {
+        padding-bottom: .5rem;
+        font-size: 14px;
+    }
+
+    .error {
+        font-size: 12px;
+    }
+
+    .progressBar {
+        width: 60%;
+    }
+
+    .regInput {
+        display: flex;
+        flex-direction: column;
+        width: 65%;
+    }
+}
+
+@media (min-width: 499px) and (max-width: 650px) { 
+    .regWrapper {
+        width: 450px;
+        height: 650px;
+    }
+
+    .regTitle {
+        font-size: 15px
+    }
+
+    .regHaveAcc {
+        margin-top: 18px;
+        font-size: 12px;
+    }
+
+    .regButton {
+        font-size: 14px;
+        padding: .7rem 0;
+        margin-top: 5%;
+        width: 70%;
+    }
+
+    .regImage {
+        height: 7%;
+        width: 11%;
+    }
+
+    .quantity, .unit, .ingredient, .allergyInput{
+        font-size: 11px;
+    }
+
+    .ingredientList {
+        width: 60%;
+        height: 200px;
+    }
+
+    .ingredientItem { 
+        font-size: 11px;
+        padding-bottom: .4rem;
+    }
+
+    .removeButton { 
+        font-size: 14px
+    }
+
+    .navButton {
+        font-size: 11px;
+        width: 100px;
+        padding: .4rem 0;
+        margin-top: 30px;
+    }
+    
+    .addIngredient, .nutritionalGoals, .addAllergy {
+        margin-top: 18px;
+        width: 70%;
+    }
+
+    .addButton {
+        font-size: 16px;
+    }
+
+    .nutritionalItem {
+        padding-bottom: .5rem;
+        font-size: 12px;
+    }
+
+    .error {
+        font-size: 12px;
+    }
+
+    .progressBar {
+        width: 70%;
+    }
+
+    .regInput {
+        display: flex;
+        flex-direction: column;
+        width: 70%;
+    }
+}
+
+@media screen and (max-width: 499px) { 
+    .regWrapper {
+        width: 350px;
+        height: 600px;
+    }
+
+    .regTitle {
+        font-size: 13px
+    }
+
+    .regHaveAcc {
+        margin-top: 15px;
+        font-size: 10px;
+    }
+
+    .regButton {
+        font-size: 12px;
+        padding: .6rem 0;
+        margin-top: 5%;
+        width: 80%;
+    }
+
+    .regImage {
+        height: 8%;
+        width: 15%;
+    }
+
+    .quantity, .unit, .ingredient, .allergyInput{
+        font-size: 9px;
+    }
+
+    .ingredientList {
+        width: 60%;
+        height: 200px;
+    }
+
+    .ingredientItem { 
+        font-size: 10px;
+        padding-bottom: .4rem;
+    }
+
+    .removeButton { 
+        font-size: 13px
+    }
+
+    .navButton {
+        font-size: 11px;
+        width: 90px;
+        padding: .4rem 0;
+        margin-top: 25px;
+    }
+    
+    .addIngredient, .nutritionalGoals, .addAllergy {
+        margin-top: 15px;
+        width: 80%;
+    }
+
+    .addButton {
+        font-size: 16px;
+    }
+
+    .nutritionalItem {
+        padding-bottom: .5rem;
+        font-size: 10px;
+    }
+
+    .error {
+        font-size: 10px;
+    }
+
+    .progressBar {
+        width: 80%;
+    }
+
+    .regInput {
+        display: flex;
+        flex-direction: column;
+        width: 80%;
+    }
 }

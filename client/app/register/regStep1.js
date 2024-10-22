@@ -1,10 +1,10 @@
 'use client';
 import * as React from 'react';
 import { CustomTextField, CustomLinearProgress } from "../components/customComponents.js";
-import styles from './register.module.css'; 
+import styles from './register.module.css';
 import { InputAdornment, IconButton } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import Link from "next/link"; 
+import Link from "next/link";
 
 const RegistrationStep1 = ({ currentStep, handleNextStep, formData, setFormData }) => {
     const [showPassword, setShowPassword] = React.useState(false);
@@ -61,6 +61,7 @@ const RegistrationStep1 = ({ currentStep, handleNextStep, formData, setFormData 
                 value={(currentStep / 4) * 100}
                 className={styles.progressBar}
             />
+            {errorMessage && <div className={styles.error}>{errorMessage}</div>}
             <div className={styles.regInput}>
                 <div className={styles.regName}>
                     <CustomTextField
@@ -69,7 +70,7 @@ const RegistrationStep1 = ({ currentStep, handleNextStep, formData, setFormData 
                         className={styles.regNameField}
                         value={formData.firstName}
                         onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                        style={{ marginTop: '2em' }}
+                        style={{ marginTop: '7%' }}
                     />
                     <CustomTextField
                         required label="Last Name"
@@ -77,7 +78,7 @@ const RegistrationStep1 = ({ currentStep, handleNextStep, formData, setFormData 
                         className={styles.regNameField}
                         value={formData.lastName}
                         onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                        style={{ marginTop: '2em' }}
+                        style={{ marginTop: '7%' }}
                     />
                 </div>
                 <CustomTextField
@@ -86,7 +87,7 @@ const RegistrationStep1 = ({ currentStep, handleNextStep, formData, setFormData 
                     className={styles.regTextField}
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    style={{ marginTop: '2em' }}
+                    style={{ marginTop: '7%' }}
                 />
                 <CustomTextField
                     required label="Phone Number"
@@ -94,7 +95,7 @@ const RegistrationStep1 = ({ currentStep, handleNextStep, formData, setFormData 
                     className={styles.regTextField}
                     value={formData.phoneNumber}
                     onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
-                    style={{ marginTop: '2em' }}
+                    style={{ marginTop: '7%' }}
                 />
                 <CustomTextField
                     required label="Password"
@@ -103,7 +104,7 @@ const RegistrationStep1 = ({ currentStep, handleNextStep, formData, setFormData 
                     className={styles.regTextField}
                     value={formData.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    style={{ marginTop: '2em' }}
+                    style={{ marginTop: '7%' }}
                     slotProps={{
                         input: {
                             endAdornment:
@@ -126,7 +127,7 @@ const RegistrationStep1 = ({ currentStep, handleNextStep, formData, setFormData 
                     className={styles.regTextField}
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    style={{ marginTop: '2em' }}
+                    style={{ marginTop: '7%' }}
                     slotProps={{
                         input: {
                             endAdornment:
@@ -143,7 +144,6 @@ const RegistrationStep1 = ({ currentStep, handleNextStep, formData, setFormData 
                     }}
                 />
             </div>
-            {errorMessage && <div className={styles.error}>{errorMessage}</div>}
             <div className={styles.regButton} onClick={handleRegister}>Register</div>
             <div className={styles.regHaveAcc}>Have an account? <Link className={styles.regLogin} href="/login">Login</Link></div>
         </div>

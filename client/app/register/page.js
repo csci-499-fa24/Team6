@@ -70,7 +70,7 @@ const Register = () => {
   };
 
   return (
-    <div>
+    <div className={styles.wrapper}>
       <Navbar />
       <div className={styles.regPageWrapper}>
         <div className={styles.regWrapper}>
