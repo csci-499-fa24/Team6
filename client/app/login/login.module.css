@@ -1,5 +1,11 @@
+.login {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
 .loginPageWrapper {
-    height: 90vh;
+    flex: 1;
     background-image: url('/assets/ingredients.png');
     background-position: bottom;
     background-repeat: no-repeat;
@@ -14,20 +20,21 @@
     box-shadow: 2px 4px 10px 2px rgba(0, 0, 0, 0.25);
     border-radius: 20px;
     width: 750px;
-    height: 800px;
+    height: 825px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
 }
 
 .loginImage {
-    padding-top: 7rem;
-    height: 15%;
-    width: 17%;
+    height: 120px;
+    width: 130px;
+    margin-top: -3vh;
 }
 
 .loginTitle {
-    font-size: 2rem;
+    font-size: 1.3vw;
     font-weight: 600;
     margin-top: 2vh;
 }
@@ -37,23 +44,23 @@
 }
 
 .loginEmail {
-    width: 25rem;
+    width: 400px;
 }
 
 .loginPassword {
-    width: 25rem;
+    width: 400px;
 }
 
 .loginButton {
     background-color: #EC4A27;
-    font-size: 1.5rem;
+    font-size: 1vw;
     font-weight: 600;
     color: white;
-    width: 25rem;
+    width: 400px;
     text-align: center;
     border-radius: 10px;
-    padding: .7rem 0;
-    margin-top: 2.5rem;
+    padding: .5em 0;
+    margin-top: 3vh;
 
     &:hover {
         background-color: rgb(233, 69, 15);
@@ -62,11 +69,146 @@
 }
 
 .loginNoAcc {
-    margin-top: 2.5rem;
-    font-size: 1.3rem;
+    margin-top: 3vh;
+    font-size: 20px;
     font-weight: 600;
 }
 
 .loginRegister {
     color:#EC4A27;
+}
+
+@media (min-width: 1000px) and (max-width: 2000px) { 
+    .loginImage {
+        height: 90px;
+        width: 95px;
+        margin-top: -3vh;
+    }
+    .loginWrapper {
+        width: 600px;
+        height: 650px;
+    }
+    .loginTitle {
+        font-size: 23px;
+        font-weight: 600;
+    }
+
+    .loginEmail {
+        width: 310px;
+    }
+    
+    .loginPassword {
+        width: 310px;
+    }
+
+    .loginButton {
+        width: 310px;
+        font-size: 20px;
+    }
+
+    .loginNoAcc {
+        font-size: 15px;
+    }
+}
+
+@media (min-width: 750px) and (max-width: 1000px) { 
+    .loginImage {
+        height: 87px;
+        width: 92px;
+        margin-top: -3vh;
+    }
+    .loginWrapper {
+        width: 500px;
+        height: 600px;
+    }
+    .loginTitle {
+        font-size: 20px;
+        font-weight: 600;
+    }
+
+    .loginEmail {
+        width: 280px;
+    }
+    
+    .loginPassword {
+        width: 280px;
+    }
+
+    .loginButton {
+        width: 280px;
+        font-size: 18px;
+    }
+
+    .loginNoAcc {
+        font-size: 14px;
+    }
+}
+
+@media (min-width: 499px) and (max-width: 750px) { 
+    .loginImage {
+        height: 75px;
+        width: 78px;
+        margin-top: -3vh;
+    }
+    .loginWrapper {
+        width: 400px;
+        height: 550px;
+    }
+    .loginTitle {
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+    .loginEmail {
+        width: 250px;
+    }
+    
+    .loginPassword {
+        width: 250px;
+    }
+
+    .loginButton {
+        width: 250px;
+        font-size: 15px;
+        padding: 11px 0;
+    }
+
+    .loginNoAcc {
+        font-size: 12px;
+    }
+}
+
+@media screen and (max-width: 499px) { 
+    .loginWrapper {
+        width: 90%;
+        height: 60%;
+    }
+
+    .loginImage {
+        height: 15%;
+        width: 22%;
+        margin-top: -3vh;
+    }
+
+    .loginTitle {
+        font-size: 3.5vw;
+    }
+
+    .loginButton {
+        font-size: 3.5vw;
+        width: 55vw;
+    }
+
+    .loginNoAcc {
+        margin-top: 3vh;
+        font-size: 2.6vw;
+    }
+
+    .loginEmail {
+        width: 55vw;
+    }
+    
+    .loginPassword {
+        width: 55vw;
+    }
 }

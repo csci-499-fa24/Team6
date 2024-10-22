@@ -64,7 +64,7 @@ const RegistrationStep2 = ({ currentStep, handleNextStep, handlePrevStep, formDa
             />
             <div className={styles.addIngredient}>
                 <div className={styles.quantity}>
-                    Quantity
+                    <div className={styles.labelText}>Quantity</div>
                     <CustomTextField
                         type="number"
                         value={quantity}
@@ -72,7 +72,7 @@ const RegistrationStep2 = ({ currentStep, handleNextStep, handlePrevStep, formDa
                     />
                 </div>
                 <div className={styles.unit}>
-                    Unit
+                <div className={styles.labelText}>Unit</div>
                     <CustomDropdown
                         value={unit}
                         onChange={(event) => setUnit(event.target.value)}
@@ -89,7 +89,7 @@ const RegistrationStep2 = ({ currentStep, handleNextStep, handlePrevStep, formDa
                     </CustomDropdown>
                 </div>
                 <div className={styles.ingredient}>
-                    Ingredients
+                <div className={styles.labelText}>Ingredients</div>
                     <CustomTextField
                         value={ingredient}
                         onChange={(event) => setIngredient(event.target.value)}

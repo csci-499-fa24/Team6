@@ -45,7 +45,7 @@ const RegistrationStep3 = ({ currentStep, handleNextStep, handlePrevStep, formDa
             />
             <div className={styles.addAllergy}>
                 <div className={styles.allergyInput}>
-                    Allergy
+                    <div className={styles.labelText}>Allergy</div>
                     <CustomTextField
                         value={allergy}
                         onChange={(event) => setAllergy(event.target.value)}
