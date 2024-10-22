@@ -1,14 +1,11 @@
 "use client";
 
-import React from 'react';
-import RecipePage from './recipe'; // Import the RecipePage component
-
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Navbar from "../components/navbar";
+import FavoritePage from './favorites';
 
 const Page = () => {
-
     const router = useRouter();
     const [loading, setLoading] = useState(true);
     const [authenticated, setAuthenticated] = useState(false);
@@ -21,7 +18,6 @@ const Page = () => {
                 router.push('/login');
             } else {
                 try {
-                  //updated api route
                     const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/protected`, {
                         method: 'GET',
                         headers: {
@@ -58,7 +54,7 @@ const Page = () => {
 
     return (
         <div>
-            <RecipePage /> {/* Render the RecipePage component */}
+            <FavoritePage /> {/* Render the FavoritePage component */}
         </div>
     );
 };

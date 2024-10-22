@@ -139,6 +139,9 @@ const Navbar = () => {
             <Link href="/plan" className={isActiveLink("/plan") ? styles.activeLink : ""}>
               Plan
             </Link>
+            <Link href="/favorite" className={isActiveLink("/favorite") ? styles.activeLink : ""}>
+              Favorites
+            </Link>
           </div>
           <div className={styles.mobileDrawer}>
             <Button onClick={toggleDrawer(true)} disableRipple={true} sx={{
@@ -161,7 +164,7 @@ const Navbar = () => {
                 </div>
               ) : (
                 <>
-                  <Link href="/login" className={styles.loginButton}>Log in</Link> 
+                  <Link href="/login" className={styles.loginButton}>Log in</Link>
                   <Link className={styles.navGetStarted} href="/register">
                     <div className={styles.navGetStartedText}>Get Started</div>
                   </Link>
