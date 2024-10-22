@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Navbar from '../components/navbar';
 import axios from 'axios';
-import styles from './RecipePage.module.css';
+import styles from './RecipePage.module.css'; // Import the CSS module
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import LocalDiningIcon from '@mui/icons-material/LocalDining';
@@ -13,8 +13,7 @@ const RecipePage = () => {
     const [recipes, setRecipes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [userIngredients, setUserIngredients] = useState([]);
-    const [showFavorites, setShowFavorites] = useState(false);
+    const [userIngredients, setUserIngredients] = useState([]); // State for user ingredients
 
     // Fetch user ingredients from your API
     const fetchUserIngredients = async () => {
@@ -104,14 +103,6 @@ const RecipePage = () => {
             fetchRecipes(); // Fetch recipes after user ingredients are fetched
         }
     }, [userIngredients]);
-
-    const handleFavoritesClick = () => {
-        setShowFavorites(true);
-    };
-
-    const handleCloseFavorites = () => {
-        setShowFavorites(false);
-    };
 
     return (
         <div>

@@ -14,7 +14,7 @@ const Page = () => {
     const [authenticated, setAuthenticated] = useState(false);
 
     useEffect(() => {
-        const token = localStorage.getItem('token');  
+        const token = localStorage.getItem('token');
 
         const verifyToken = async () => {
             if (!token) {
@@ -25,14 +25,14 @@ const Page = () => {
                     const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/protected`, {
                         method: 'GET',
                         headers: {
-                            'Authorization': `Bearer ${token}`,  
+                            'Authorization': `Bearer ${token}`,
                         },
                     });
 
                     if (response.ok) {
                         const data = await response.json();
                         console.log('Protected data:', data);
-                        setAuthenticated(true);  
+                        setAuthenticated(true);
                     } else {
                         router.push('/login');
                     }
@@ -40,20 +40,20 @@ const Page = () => {
                     console.error('Error verifying token:', error);
                     router.push('/login');
                 } finally {
-                    setLoading(false);  
+                    setLoading(false);
                 }
             }
         };
 
         verifyToken();
-    }, [router]);  
+    }, [router]);
 
     if (loading) {
-        return <div>Loading...</div>;  
+        return <div>Loading...</div>;
     }
 
     if (!authenticated) {
-        return null;  
+        return null;
     }
 
     return (

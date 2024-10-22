@@ -22,7 +22,7 @@
 
 .recipesContainer {
     display: grid;
-    grid-template-columns: repeat(4, 1fr); 
+    grid-template-columns: repeat(4, 1fr);
     grid-column-gap: 5em;
     grid-row-gap: 3em;
     margin: 2em 8em;
@@ -40,7 +40,7 @@
 
 .recipeCard:hover {
     background-color: rgba(171, 169, 231, 0.264);
-    box-shadow: 0 4px 10px rgba(65, 65, 82, 0.3); 
+    box-shadow: 0 4px 10px rgba(65, 65, 82, 0.3);
 }
 
 .recipeTitleWrapper {
@@ -110,5 +110,3 @@
         color: #EC4A27;
     }
 }
-
-
