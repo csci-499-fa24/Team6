@@ -7,10 +7,10 @@ import { Box, Button, Divider, Drawer, List, ListItem, ListItemButton, ListItemI
 import HomeIcon from '@mui/icons-material/Home';
 import RestaurantMenuIcon from '@mui/icons-material/RestaurantMenu';
 import LightbulbIcon from '@mui/icons-material/Lightbulb';
-import FoodBankIcon from '@mui/icons-material/FoodBank';
 import { Login } from "@mui/icons-material";
 import PersonIcon from '@mui/icons-material/Person';
 import MenuIcon from '@mui/icons-material/Menu';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 const Navbar = () => {
   const router = useRouter();
@@ -42,7 +42,7 @@ const Navbar = () => {
 
   const iconMapping = {
     Home: <HomeIcon className={styles.mobileIconStyles} />,
-    Pantry: <FoodBankIcon className={styles.mobileIconStyles} />,
+    Account: <AccountCircleIcon className={styles.mobileIconStyles} />,
     Discover: <LightbulbIcon className={styles.mobileIconStyles} />,
     Recipes: <RestaurantMenuIcon className={styles.mobileIconStyles} />,
     'Log in': <Login className={styles.mobileIconStyles} />,
@@ -55,7 +55,7 @@ const Navbar = () => {
       <List>
         {[
           { text: 'Home', href: '/' },
-          { text: 'Pantry', href: '/pantry' },
+          { text: 'Account', href: '/account' },
           { text: 'Discover', href: '/discover' },
           { text: 'Recipes', href: '/recipe' }
         ].map(({ text, href }) => (
@@ -127,17 +127,14 @@ const Navbar = () => {
             <Link href="/" className={isActiveLink("/") ? styles.activeLink : ""}>
               Home
             </Link>
-            <Link href="/pantry" className={isActiveLink("/pantry") ? styles.activeLink : ""}>
-              Pantry
-            </Link>
-            <Link href="/discover" className={isActiveLink("/discover") ? styles.activeLink : ""}>
-              Discover
+            <Link href="/account" className={isActiveLink("/account") ? styles.activeLink : ""}>
+              Account
             </Link>
             <Link href="/recipe" className={isActiveLink("/recipe") ? styles.activeLink : ""}>
               Recipes
             </Link>
-            <Link href="/plan" className={isActiveLink("/plan") ? styles.activeLink : ""}>
-              Plan
+            <Link href="/discover" className={isActiveLink("/discover") ? styles.activeLink : ""}>
+              Discover
             </Link>
             <Link href="/favorite" className={isActiveLink("/favorite") ? styles.activeLink : ""}>
               Favorites
@@ -157,20 +154,20 @@ const Navbar = () => {
               {DrawerList}
             </Drawer>
           </div>
-            <div className={styles.navLinksWrapper}>
-              {authenticated ? (
-                <div onClick={handleLogout} className={styles.logoutButton}>
-                  Logout
-                </div>
-              ) : (
-                <>
-                  <Link href="/login" className={styles.loginButton}>Log in</Link>
-                  <Link className={styles.navGetStarted} href="/register">
-                    <div className={styles.navGetStartedText}>Get Started</div>
-                  </Link>
-                </>
-              )}
-            </div>
+          <div className={styles.navLinksWrapper}>
+            {authenticated ? (
+              <div onClick={handleLogout} className={styles.logoutButton}>
+                Logout
+              </div>
+            ) : (
+              <>
+                <Link href="/login" className={styles.loginButton}>Log in</Link>
+                <Link className={styles.navGetStarted} href="/register">
+                  <div className={styles.navGetStartedText}>Get Started</div>
+                </Link>
+              </>
+            )}
+          </div>
         </>
       )}
     </div>

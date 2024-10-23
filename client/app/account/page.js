@@ -5,8 +5,10 @@ import IngredientInput from './IngredientInput';
 import IngredientList from './IngredientList'
 import NutritionInput from "./NutritionInput";
 import AllergenInput from "./AllergenInput";
+import RecipeHistory from './RecipeHistory';
+
 import React from "react";
-import styles from './pantry.module.css';
+import styles from './account.module.css';
 import { useState, useEffect } from 'react';
 
 const Pantry = () => {
@@ -76,7 +78,7 @@ if (!authenticated) {
               onClick={() => handleSectionClick('Ingredients')}
               className={activeSection === 'Ingredients' ? styles.active : styles.notActive}
             >
-              Ingredients
+              Pantry
             </div>
             <div
               onClick={() => handleSectionClick('Allergens')}
@@ -90,6 +92,12 @@ if (!authenticated) {
             >
               Nutrition
             </div>
+            <div
+              onClick={() => handleSectionClick('History')}
+              className={activeSection === 'History' ? styles.active : styles.notActive}
+            >
+              Recipe History
+            </div>
           </div>
           <div className={styles.seperator}></div>
           <div className={styles.pantrySection}>
@@ -101,6 +109,7 @@ if (!authenticated) {
             )}
             {activeSection === 'Allergens' && <AllergenInput />}
             {activeSection === 'Nutrition' && <NutritionInput/>}
+            {activeSection === 'History' && <RecipeHistory/>}
           </div>
         </div>
       </div>
