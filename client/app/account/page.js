@@ -1,5 +1,5 @@
 'use client';
-import { useRouter } from 'next/navigation';
+import { useRouter  } from 'next/navigation';
 import Navbar from "../components/navbar";
 import IngredientInput from './IngredientInput';
 import IngredientList from './IngredientList'
@@ -13,59 +13,60 @@ import { useState, useEffect } from 'react';
 
 const Pantry = () => {
 
-   const router = useRouter();
-   const [loading, setLoading] = useState(true);
-   const [authenticated, setAuthenticated] = useState(false);
-   const [activeSection, setActiveSection] = useState('Ingredients');
+  const router = useRouter();
+  const [loading, setLoading] = useState(true);
+  const [authenticated, setAuthenticated] = useState(false);
+  const [activeSection, setActiveSection] = useState('Pantry');
 
   const handleSectionClick = (section) => {
     setActiveSection(section);
+    router.push(`/account?section=${section.toLowerCase()}`);
   };
 
   useEffect(() => {
-    const token = localStorage.getItem('token');  
+    const token = localStorage.getItem('token');
 
     const verifyToken = async () => {
-        if (!token) {
-            setLoading(false);
-            router.push('/login');
-            return;
-        } else {
-            try {
-              //updated api route
-                const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/protected`, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,  
-                    },
-                });
+      if (!token) {
+        setLoading(false);
+        router.push('/login');
+        return;
+      } else {
+        try {
+          //updated api route
+          const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/protected`, {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+            },
+          });
 
-                if (response.ok) {
-                    const data = await response.json();
-                    console.log('Protected data:', data);
-                    setAuthenticated(true);  
-                } else {
-                    router.push('/login');
-                }
-            } catch (error) {
-                console.error('Error verifying token:', error);
-                router.push('/login');
-            } finally {
-                setLoading(false);  
-            }
+          if (response.ok) {
+            const data = await response.json();
+            console.log('Protected data:', data);
+            setAuthenticated(true);
+          } else {
+            router.push('/login');
+          }
+        } catch (error) {
+          console.error('Error verifying token:', error);
+          router.push('/login');
+        } finally {
+          setLoading(false);
         }
+      }
     };
 
     verifyToken();
-}, [router]);  
+  }, [router]);
 
-if (loading) {
-    return <div>Loading...</div>;  
-}
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
-if (!authenticated) {
-    return null;  
-} 
+  if (!authenticated) {
+    return null;
+  }
 
   return (
     <div>
@@ -75,8 +76,8 @@ if (!authenticated) {
         <div className={styles.pantryContent}>
           <div className={styles.sidebar}>
             <div
-              onClick={() => handleSectionClick('Ingredients')}
-              className={activeSection === 'Ingredients' ? styles.active : styles.notActive}
+              onClick={() => handleSectionClick('Pantry')}
+              className={activeSection === 'Pantry' ? styles.active : styles.notActive}
             >
               Pantry
             </div>
@@ -101,15 +102,15 @@ if (!authenticated) {
           </div>
           <div className={styles.seperator}></div>
           <div className={styles.pantrySection}>
-            {activeSection === 'Ingredients' && (
+            {activeSection === 'Pantry' && (
               <>
-                <IngredientInput /> 
+                <IngredientInput />
                 <IngredientList />
               </>
             )}
             {activeSection === 'Allergens' && <AllergenInput />}
-            {activeSection === 'Nutrition' && <NutritionInput/>}
-            {activeSection === 'History' && <RecipeHistory/>}
+            {activeSection === 'Nutrition' && <NutritionInput />}
+            {activeSection === 'History' && <RecipeHistory />}
           </div>
         </div>
       </div>

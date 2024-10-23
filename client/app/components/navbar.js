@@ -55,7 +55,7 @@ const Navbar = () => {
       <List>
         {[
           { text: 'Home', href: '/' },
-          { text: 'Account', href: '/account' },
+          { text: 'Account', href: '/account?section=pantry' },
           { text: 'Discover', href: '/discover' },
           { text: 'Recipes', href: '/recipe' }
         ].map(({ text, href }) => (
@@ -114,7 +114,6 @@ const Navbar = () => {
   );
 
 
-
   return (
     <div className={styles.navWrapper}>
       <Link className={styles.navTitle} href="/">
@@ -127,7 +126,7 @@ const Navbar = () => {
             <Link href="/" className={isActiveLink("/") ? styles.activeLink : ""}>
               Home
             </Link>
-            <Link href="/account" className={isActiveLink("/account") ? styles.activeLink : ""}>
+            <Link href="/account?section=pantry" className={isActiveLink("/account") ? styles.activeLink : ""}>
               Account
             </Link>
             <Link href="/recipe" className={isActiveLink("/recipe") ? styles.activeLink : ""}>
