@@ -3,12 +3,11 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import Navbar from '../components/navbar';
-import styles from './PlanPage.module.css';
+import styles from './account.module.css';
 import AccessTimeIcon from '@mui/icons-material/AccessTime'; // Importing the icon
 import LocalDiningIcon from '@mui/icons-material/LocalDining';
 
-const Plan = () => {
+const RecipeHistory = () => {
     const [loading, setLoading] = useState(true);
     const [recipes, setRecipes] = useState([]);
     const [error, setError] = useState(null);
@@ -76,31 +75,27 @@ const Plan = () => {
 
     return (
         <div>
-            <Navbar />
-            <div className={styles.planPageWrapper}>
-                <div className={styles.title}>
-                    <h1>Your Plan</h1>
-                </div>
-                <div className={styles.recipesContainer}>
-                    {recipes.length > 0 ? (
-                        recipes.map((recipe) => (
-                            <Link href={`/plan/${recipe.id}`} key={recipe.id} className={styles.recipeCard}>
-                                <img src={recipe.image} alt={recipe.title} className={styles.recipeImage} />
-                                <div className={styles.recipeTitleWrapper}>
-                                    <div className={styles.recipeTitle}>{recipe.title}</div>
-                                    <AccessTimeIcon className={styles.recipeClock} />{recipe.readyInMinutes} min
-                                    <LocalDiningIcon className={styles.recipeClock} />
-                                        {recipe.extendedIngredients?.length || 0} Ingredients
-                                </div>
-                            </Link>
-                        ))
-                    ) : (
-                        <p>No recipes in your plan.</p>
-                    )}
-                </div>
+            <div className={styles.header}>Your Recipe History</div>
+            <div className={styles.recipesContainer}>
+                {recipes?.length > 0 ? (
+                    recipes.map((recipe) => (
+                        <Link href={`/account/${recipe.id}`} key={recipe.id} className={styles.recipeCard}>
+                            <img src={recipe.image} alt={recipe.title} className={styles.recipeImage} />
+                            <div className={styles.recipeTitleWrapper}>
+                                <div className={styles.recipeTitle}>{recipe.title}</div>
+                                <AccessTimeIcon className={styles.recipeClock} />{recipe.readyInMinutes} min
+                                <LocalDiningIcon className={styles.recipeClock} />
+                                {recipe.extendedIngredients?.length || 0} Ingredients
+                            </div>
+                        </Link>
+                    ))
+                ) : (
+                    <p>No recipes in your plan.</p>
+                )}
             </div>
         </div>
+
     );
 };
 
-export default Plan;
+export default RecipeHistory;
