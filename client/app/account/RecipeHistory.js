@@ -79,7 +79,7 @@ const RecipeHistory = () => {
             <div className={styles.recipesContainer}>
                 {recipes?.length > 0 ? (
                     recipes.map((recipe) => (
-                        <Link href={`/plan/${recipe.id}`} key={recipe.id} className={styles.recipeCard}>
+                        <Link href={`/account/${recipe.id}`} key={recipe.id} className={styles.recipeCard}>
                             <img src={recipe.image} alt={recipe.title} className={styles.recipeImage} />
                             <div className={styles.recipeTitleWrapper}>
                                 <div className={styles.recipeTitle}>{recipe.title}</div>

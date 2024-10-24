@@ -55,7 +55,7 @@ const Login = () => {
         if (protectedResponse.ok) {
           const protectedData = await protectedResponse.json();
           console.log('Protected data:', protectedData);
-          window.location.href = "/discover";
+          window.location.href = "/account";
         } else {
           console.error('Failed to fetch protected data');
         }
