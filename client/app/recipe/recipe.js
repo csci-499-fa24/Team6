@@ -39,53 +39,46 @@ const RecipePage = () => {
         if (userIngredients.length === 0) return; // Wait until ingredients are fetched
 
         try {
+            const headers = {
+                'x-rapidapi-key': process.env.NEXT_PUBLIC_SPOONACULAR_API_KEY,
+                'x-rapidapi-host': 'spoonacular-recipe-food-nutrition-v1.p.rapidapi.com',
+            };
+
             const ingredients = userIngredients.join(',');
 
-            const response = await axios.get(`https://api.spoonacular.com/recipes/findByIngredients`, {
+            const response = await axios.get(`https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/findByIngredients`, {
                 params: {
-                    apiKey: process.env.NEXT_PUBLIC_SPOONACULAR_API_KEY,
                     ingredients: ingredients,
+                    ignorePantry: false,
                     number: 3
-                }
+                },
+                headers
+            });
+            
+            const basicRecipes = response.data;
+            setRecipes(basicRecipes)
+            const recipeIds = basicRecipes.map(recipe => recipe.id).join(',');
+
+            const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+            await delay(1000);
+            const recipeDetails = await axios.get(`https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/informationBulk`, {
+                params: {
+                    ids: recipeIds,
+                    includeNutrition: true,
+                },
+                headers
             });
 
-            const basicRecipes = response.data;
-            const detailedRecipes = [];
+            const combinedRecipes = basicRecipes.map(basicRecipe => {
+                const detailedRecipe = recipeDetails.data.find(detailed => detailed.id === basicRecipe.id);
+                return {
+                    ...basicRecipe,
+                    readyInMinutes: detailedRecipe ? detailedRecipe.readyInMinutes : null, // Add readyInMinutes
+                };
+            });
+    
+            setRecipes(combinedRecipes);
 
-            for (const recipe of basicRecipes) {
-                const recipeDetails = await axios.get(`https://api.spoonacular.com/recipes/${recipe.id}/information`, {
-                    params: {
-                        apiKey: process.env.NEXT_PUBLIC_SPOONACULAR_API_KEY,
-                        includeNutrition: true
-                    }
-                });
-
-                const detailedRecipe = recipeDetails.data;
-                const usedIngredients = [];
-                const missingIngredients = [];
-
-
-                detailedRecipe.extendedIngredients.forEach(ingredient => {
-                    if (userIngredients.includes(ingredient.name.toLowerCase())) {
-                        usedIngredients.push(ingredient.original);
-                    } else {
-                        missingIngredients.push(ingredient.original);
-                    }
-                });
-
-                const usedIngredientCount = usedIngredients.length;
-                const totalIngredientCount = detailedRecipe.extendedIngredients.length
-
-                detailedRecipes.push({
-                    ...detailedRecipe,
-                    usedIngredients,
-                    missingIngredients,
-                    usedIngredientCount,
-                    totalIngredientCount
-                });
-            }
-
-            setRecipes(detailedRecipes);
         } catch (error) {
             console.error('Error fetching recipes:', error);
             setError('Failed to fetch recipes.');
@@ -128,7 +121,7 @@ const RecipePage = () => {
                                     </div>
                                     <div className={styles.recipeInfoWrapper}>
                                         <div className={styles.recipeTime}><AccessTimeIcon className={styles.recipeClock} />{recipe.readyInMinutes} min</div>
-                                        <div className={styles.recipeIngredients}><LocalDiningIcon className={styles.recipeClock} />{recipe.usedIngredientCount}/{recipe.totalIngredientCount} Ingredients</div>
+                                        <div className={styles.recipeIngredients}><LocalDiningIcon className={styles.recipeClock} />{recipe.usedIngredientCount}/{recipe.usedIngredientCount + recipe.missedIngredientCount} Ingredients</div>
                                     </div>
                                 </Link>
                             ))
