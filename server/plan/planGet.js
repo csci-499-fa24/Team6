@@ -31,7 +31,6 @@ const authenticateToken = (req, res, next) => {
 
 router.get('/', authenticateToken, async (req, res) => {
     const user_id =  req.user.id;
-    const apiKey = process.env.NEXT_PUBLIC_SPOONACULAR_API_KEY;
 
     try {
         // Step 1: Retrieve all recipe_ids for the user
@@ -48,8 +47,13 @@ router.get('/', authenticateToken, async (req, res) => {
 
         // Step 2: Make API calls to Spoonacular for each recipe_id
         const recipeDetailsPromises = recipeIds.map(recipeId => {
-            const url = `https://api.spoonacular.com/recipes/${recipeId}/information?apiKey=${apiKey}`;
-            return axios.get(url);
+            const url = `https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/${recipeId}/information`;
+            return axios.get(url, {
+                headers: {
+                    'X-RapidAPI-Key': process.env.NEXT_PUBLIC_SPOONACULAR_API_KEY,
+                    'X-RapidAPI-Host': 'spoonacular-recipe-food-nutrition-v1.p.rapidapi.com'
+                }
+            });
         });
 
         // Step 3: Wait for all API calls to complete

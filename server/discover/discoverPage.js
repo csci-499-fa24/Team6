@@ -6,12 +6,14 @@ router.get('/random-recipes', async (req, res) => {
     const { number = 12, offset = 0, type, cuisine, diet, search } = req.query;
 
     try {
-        const apiKey = process.env.NEXT_PUBLIC_SPOONACULAR_API_KEY;
+        const headers = {
+            'x-rapidapi-key': process.env.NEXT_PUBLIC_SPOONACULAR_API_KEY,
+            'x-rapidapi-host': 'spoonacular-recipe-food-nutrition-v1.p.rapidapi.com',
+        };
 
         // If a search query or filters are provided, use the complexSearch endpoint
         if (search || type || cuisine || diet) {
             const searchParams = {
-                apiKey,
                 number,
                 offset,
                 query: search || '', 
@@ -22,7 +24,10 @@ router.get('/random-recipes', async (req, res) => {
                 sort: 'popularity', 
             };
 
-            const response = await axios.get('https://api.spoonacular.com/recipes/complexSearch', { params: searchParams });
+            const response = await axios.get(
+                'https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/complexSearch',
+                { params: searchParams, headers }
+            );
 
             if (response.status === 200) {
                 const formattedRecipes = response.data.results.map(recipe => ({
@@ -42,14 +47,13 @@ router.get('/random-recipes', async (req, res) => {
         } else {
             // If no search query or filters, fetch random recipes 
             const params = {
-                apiKey,
                 number,
                 offset,
                 addRecipeInformation: true,
                 fillIngredients: true,
             };
 
-            const response = await axios.get('https://api.spoonacular.com/recipes/random', { params });
+            const response = await axios.get('https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/random', { params, headers });
 
             if (response.status === 200) {
                 const formattedRecipes = response.data.recipes.map(recipe => ({
