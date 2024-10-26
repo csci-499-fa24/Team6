@@ -22,9 +22,12 @@ const RecipeDetail = ({ params }) => {
 
     const fetchRecipeDetails = async () => {
         try {
-            const recipeDetails = await axios.get(`https://api.spoonacular.com/recipes/${id}/information`, {
+            const recipeDetails = await axios.get(`https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/${id}/information`, {
+                headers: {
+                    'X-RapidAPI-Key': process.env.NEXT_PUBLIC_SPOONACULAR_API_KEY, 
+                    'X-RapidAPI-Host': 'spoonacular-recipe-food-nutrition-v1.p.rapidapi.com'
+                },
                 params: {
-                    apiKey: process.env.NEXT_PUBLIC_SPOONACULAR_API_KEY,
                     includeNutrition: true
                 }
             });

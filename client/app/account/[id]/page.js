@@ -25,11 +25,14 @@ const RecipeDetailPlan = ({ params }) => {
 
     const fetchRecipeDetail = async (recipeId) => {
         try {
-            const response = await axios.get(`https://api.spoonacular.com/recipes/${recipeId}/information`, {
-                params: {
-                    apiKey: process.env.NEXT_PUBLIC_SPOONACULAR_API_KEY,
-                    includeNutrition: true,
+            const response = await axios.get(`https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/${recipeId}/information`, {
+                headers: {
+                    'X-RapidAPI-Key': process.env.NEXT_PUBLIC_SPOONACULAR_API_KEY, 
+                    'X-RapidAPI-Host': 'spoonacular-recipe-food-nutrition-v1.p.rapidapi.com'
                 },
+                params: {
+                    includeNutrition: true,
+                }
             });
 
             setRecipe(response.data);

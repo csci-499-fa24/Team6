@@ -31,7 +31,6 @@ const authenticateToken = (req, res, next) => {
 // POST route to add or update ingredient
 router.get('/', authenticateToken, async (req, res) => {
     const user_id = req.user.id;
-    const apiKey = process.env.NEXT_PUBLIC_SPOONACULAR_API_KEY;
 
     try {
         // Fetch user nutritional goals
@@ -64,8 +63,21 @@ router.get('/', authenticateToken, async (req, res) => {
         // }
 
         const recipeDetailsPromises = recipeIds.map(recipeId => {
-            const url = `https://api.spoonacular.com/recipes/${recipeId}/nutritionWidget.json?apiKey=${apiKey}`;
-            return fetch(url).then(response => response.json());
+            const url = `https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/${recipeId}/nutritionWidget.json`;
+
+            return fetch(url, {
+                method: 'GET',
+                headers: {
+                    'X-RapidAPI-Host': 'spoonacular-recipe-food-nutrition-v1.p.rapidapi.com',
+                    'X-RapidAPI-Key': process.env.NEXT_PUBLIC_SPOONACULAR_API_KEY
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch data for recipe ID ${recipeId}`);
+                }
+                return response.json();
+            })
         });
 
         const recipeDetailsResponses = await Promise.all(recipeDetailsPromises);

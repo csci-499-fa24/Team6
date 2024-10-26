@@ -54,7 +54,7 @@ const RecipePage = () => {
                 },
                 headers
             });
-            
+
             const basicRecipes = response.data;
             setRecipes(basicRecipes)
             const recipeIds = basicRecipes.map(recipe => recipe.id).join(',');
@@ -73,10 +73,13 @@ const RecipePage = () => {
                 const detailedRecipe = recipeDetails.data.find(detailed => detailed.id === basicRecipe.id);
                 return {
                     ...basicRecipe,
-                    readyInMinutes: detailedRecipe ? detailedRecipe.readyInMinutes : null, // Add readyInMinutes
+                    readyInMinutes: detailedRecipe ? detailedRecipe.readyInMinutes : null, 
+                    instructions: detailedRecipe ? detailedRecipe.analyzedInstructions : null, 
+                    nutrition: detailedRecipe ? detailedRecipe.nutrition : null, 
+                    servings: detailedRecipe ? detailedRecipe.servings : null, 
                 };
             });
-    
+
             setRecipes(combinedRecipes);
 
         } catch (error) {
@@ -96,7 +99,7 @@ const RecipePage = () => {
             fetchRecipes(); // Fetch recipes after user ingredients are fetched
         }
     }, [userIngredients]);
-
+console.log(recipes)
     return (
         <div>
             <Navbar />
@@ -113,7 +116,14 @@ const RecipePage = () => {
                     <div className={styles.recipesContainer}>
                         {recipes.length > 0 ? (
                             recipes.map((recipe) => (
-                                <Link href={`/recipe/${recipe.id}`} key={recipe.id} className={styles.recipeCard}>
+                                <Link
+                                    href={{ pathname: `/recipe/${recipe.id}` }}
+                                    key={recipe.id}
+                                    className={styles.recipeCard}
+                                    onClick={() => {
+                                        localStorage.setItem('selectedRecipe', JSON.stringify(recipe)); 
+                                    }}
+                                >
                                     <img src={recipe.image} alt={recipe.title} className={styles.recipeImage} />
                                     <div className={styles.recipeTitleWrapper}>
                                         <div className={styles.recipeTitle} >{recipe.title}</div>

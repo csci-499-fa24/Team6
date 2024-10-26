@@ -28,7 +28,8 @@ const Register = () => {
       saturated_fat: '',
       fiber: '',
       sodium: '',
-      sugar: ''
+      sugar: '',
+      calories: '',
     }
   });
 
