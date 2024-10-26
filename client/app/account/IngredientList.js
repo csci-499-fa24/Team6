@@ -81,8 +81,13 @@ const IngredientList = () => {
     const fetchPossibleUnits = async (ingredient) => {
         // Fetch ingredients from Spoonacular API
         try {
-            const apiKey = process.env.NEXT_PUBLIC_SPOONACULAR_API_KEY;
-            const response = await fetch(`https://api.spoonacular.com/food/ingredients/autocomplete?query=${ingredient}&number=5&apiKey=${apiKey}&metaInformation=true`);
+            const response = await fetch(`https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/food/ingredients/autocomplete?query=${ingredient}&number=5&metaInformation=true`, {
+                method: 'GET',
+                headers: {
+                    'X-RapidAPI-Key': process.env.NEXT_PUBLIC_SPOONACULAR_API_KEY, 
+                    'X-RapidAPI-Host': 'spoonacular-recipe-food-nutrition-v1.p.rapidapi.com'
+                }
+            });
             const data = await response.json();
             const units = data[0]?.possibleUnits || [];
             setEditPossibleUnits(units);

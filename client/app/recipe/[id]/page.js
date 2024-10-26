@@ -15,104 +15,36 @@ import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 
 
 const RecipeDetails = () => {
-    const { id } = useParams(); // Get the recipe ID from the URL
-
     const [recipe, setRecipe] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [userIngredients, setUserIngredients] = useState([]); // State for user ingredients
-
-    // Fetch user ingredients from your API
-    const fetchUserIngredients = async () => {
-        try {
-            const token = localStorage.getItem('token');
-            const response = await fetch(process.env.NEXT_PUBLIC_SERVER_URL + '/api/user-ingredients', {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            const data = await response.json();
-            const ingredientNames = data.map(ingredient => ingredient.name.toLowerCase());
-            setUserIngredients(ingredientNames);
-        } catch (error) {
-            console.error('Error fetching user ingredients:', error);
-            setError('Failed to fetch user ingredients.');
-        }
-    };
-
-    // Fetch recipe details and match ingredients
-    const fetchRecipeDetails = async () => {
-        try {
-            const recipeDetails = await axios.get(`https://api.spoonacular.com/recipes/${id}/information`, {
-                params: {
-                    apiKey: process.env.NEXT_PUBLIC_SPOONACULAR_API_KEY,
-                    includeNutrition: true
-                }
-            });
-
-            const detailedRecipe = recipeDetails.data;
-            const usedIngredients = [];
-            const missingIngredients = [];
-
-            detailedRecipe.extendedIngredients.forEach(ingredient => {
-                if (userIngredients.includes(ingredient.name.toLowerCase())) {
-                    usedIngredients.push(ingredient.original);
-                } else {
-                    missingIngredients.push(ingredient.original);
-                }
-            });
-
-            const usedIngredientCount = usedIngredients.length;
-            const totalIngredientCount = detailedRecipe.extendedIngredients.length
-            const servings = detailedRecipe.servings
-
-            setRecipe({
-                ...detailedRecipe,
-                usedIngredients,
-                missingIngredients,
-                usedIngredientCount,
-                totalIngredientCount,
-                servings
-            });
-        } catch (error) {
-            console.error('Error fetching recipe details:', error);
-            setError(error.message);
-        } finally {
-            setLoading(false);
-        }
-    };
 
     useEffect(() => {
-        fetchUserIngredients(); // Fetch user ingredients when component mounts
+        const storedRecipe = localStorage.getItem('selectedRecipe');
+        if (storedRecipe) {
+            setRecipe(JSON.parse(storedRecipe));
+        }
+        else {
+            console.error('No recipe found in localStorage');
+            setError('No recipe details found.')
+        }
+        setLoading(false);
     }, []);
-
-    useEffect(() => {
-        if (userIngredients.length > 0) {
-            fetchRecipeDetails(); // Fetch recipe details once user ingredients are available
-        }
-    }, [userIngredients]);
 
     const renderIngredients = (ingredients, color = "#506264") => (
         <div>
             {ingredients.map((ingredient, i) => (
-                <div style={{ color: color }} className={styles.ingredient}>{ingredient}</div>
+                <div style={{ color: color }} className={styles.ingredient}>{ingredient.name}</div>
             ))}
         </div>
     );
 
     const renderInstructions = (instructions) => {
         if (instructions) {
-            const steps = instructions
-                .replace(/<\/?ol>/g, '')
-                .replace(/<\/?li>/g, '')
-                .replace(/&amp;/g, '&') // Decode &amp; to &
-                .split('.');
-
             return (
                 <ol className={styles.instructionList}>
-                    {steps.map((step, index) => (
-                        step.trim() && <li key={index}>{step.trim()}</li>
+                    {instructions[0].steps.map((stepObj, index) => (
+                        <li key={index}>{stepObj.step}</li>
                     ))}
                 </ol>
             );
@@ -140,7 +72,7 @@ const RecipeDetails = () => {
                         <img className={styles.recipeImage} src={recipe.image} alt={recipe.title} />
                         <div className={styles.recipeStatsWrapper} >
                             <div className={styles.recipeTime}><AccessTimeIcon className={styles.recipeClock} />{recipe.readyInMinutes} min</div>
-                            <div className={styles.recipeIngredients}><LocalDiningIcon className={styles.recipeClock} />{recipe.usedIngredientCount}/{recipe.totalIngredientCount} Ingredients</div>
+                            <div className={styles.recipeIngredients}><LocalDiningIcon className={styles.recipeClock} />{recipe.usedIngredientCount}/{recipe.usedIngredientCount + recipe.missedIngredientCount} Ingredients</div>
                             <div className={styles.servingSize}><PersonOutlineOutlinedIcon className={styles.recipeClock} />Serves {recipe.servings}</div>
                         </div>
                         <div className={styles.trackerWrapper}>
@@ -246,15 +178,14 @@ const RecipeDetails = () => {
                         <div className={styles.titleWrapper}>
                             <div className={styles.title}>Ingredients</div>
                             <div className={styles.titleButtons}>
-                                <FileDownloadOutlinedIcon className={styles.button}/>
-                                <LocalPrintshopOutlinedIcon className={styles.button}/>
+                                <FileDownloadOutlinedIcon className={styles.button} />
+                                <LocalPrintshopOutlinedIcon className={styles.button} />
                             </div>
                         </div>
                         <div className={styles.ingredientWrapper}>
                             {renderIngredients(recipe.usedIngredients)}
-                            {renderIngredients(recipe.missingIngredients, "red")}
+                            {renderIngredients(recipe.missedIngredients, "red")}
                         </div>
-
                         <div className={styles.title}>Instructions</div>
                         <div className={styles.instructionWrapper}>
                             {renderInstructions(recipe.instructions)}

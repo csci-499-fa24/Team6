@@ -11,7 +11,8 @@ const RegistrationStep4 = ({ currentStep, handlePrevStep, handleFinish, formData
         saturated_fat: '',
         fiber: '',
         sodium: '',
-        sugar: ''
+        sugar: '',
+        calories: ''
     });
 
     const NutritionList = [
@@ -22,6 +23,7 @@ const RegistrationStep4 = ({ currentStep, handlePrevStep, handleFinish, formData
         "Fiber",
         "Sodium",
         "Sugar",
+        "Calories",
     ];
 
     const handleInputChange = (event) => {
