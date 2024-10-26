@@ -99,7 +99,7 @@ const RecipePage = () => {
             fetchRecipes(); // Fetch recipes after user ingredients are fetched
         }
     }, [userIngredients]);
-console.log(recipes)
+
     return (
         <div>
             <Navbar />
