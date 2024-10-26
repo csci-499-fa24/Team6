@@ -39,8 +39,6 @@ const RecipeDetails = () => {
         </div>
     );
 
-    console.log(recipe)
-
     const renderInstructions = (instructions) => {
         if (instructions) {
             return (
