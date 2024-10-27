@@ -44,7 +44,7 @@ router.post('/', authenticateToken, async (req, res) => {
             fiber = $5, 
             sodium = $6, 
             sugar = $7,
-            calories = $8,
+            calories = $8
         WHERE user_id = $9
     `;
     await pool.query(updateQuery, [

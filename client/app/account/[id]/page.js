@@ -140,7 +140,7 @@ const RecipeDetailPlan = ({ params }) => {
                         {renderInstructions(recipe.instructions)}
                     </div>
                     <div className={styles.madeButton} onClick={handleRemoveRecipe}>
-                        <div className={styles.madeButtonText}>Remove from Plan</div>
+                        <div className={styles.madeButtonText}>Remove from history</div>
                     </div>
                 </div>
             </div>

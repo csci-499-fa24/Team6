@@ -169,7 +169,7 @@ const RecipeDetail = ({ params }) => {
                         {renderInstructions(recipe.instructions)}
                     </div>
                     <div className={styles.madeButton} onClick={handleAddRecipe}>
-                        <div className={styles.madeButtonText}>Add to Plan</div>
+                        <div className={styles.madeButtonText}>I Made This</div>
                     </div>
                 </div>
             </div>
