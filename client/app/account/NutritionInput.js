@@ -75,6 +75,8 @@ const NutritionInput = () => {
                 // Remove user_id and set goals
                 const filteredGoals = { ...goals };
                 delete filteredGoals.user_id;
+                const filteredConsumed = { ...consumed };
+                delete filteredConsumed.user_id;
                 setGoals(filteredGoals);
                 setConsumed(consumed);
             } catch (error) {
