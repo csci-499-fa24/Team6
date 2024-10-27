@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Button } from '@mui/material'; 
+import { Button } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import Navbar from "../components/navbar";
 import axios from 'axios';
@@ -21,7 +21,7 @@ const Discover = () => {
         type: '',
         cuisine: '',
         diet: '',
-        searchQuery: '' 
+        searchQuery: ''
     });
     const recipesPerPage = 12;
     const router = useRouter();
@@ -66,7 +66,7 @@ const Discover = () => {
                     type: filters.type || '',
                     cuisine: filters.cuisine || '',
                     diet: filters.diet || '',
-                    search: filters.searchQuery || '' 
+                    search: filters.searchQuery || ''
                 }
             });
 
@@ -94,8 +94,8 @@ const Discover = () => {
     };
 
     const handleSearchClick = () => {
-        setPage(1); 
-        fetchRecipes(); 
+        setPage(1);
+        fetchRecipes();
     };
 
     const handleNextPage = () => {
@@ -106,7 +106,7 @@ const Discover = () => {
         setPage(prevPage => (prevPage > 1 ? prevPage - 1 : prevPage));
     };
 
-    // Fetch random recipes on initial load 
+    // Fetch random recipes on initial load
     useEffect(() => {
         fetchRecipes();
     }, [page]);
@@ -116,8 +116,32 @@ const Discover = () => {
     }
 
     if (!authenticated) {
-        return null; 
+        return null;
     }
+
+    //add to favorites
+    const addToFavorites = async (recipeId) => {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert("You must be logged in to save favorites.");
+                return;
+            }
+
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/favorites`, {
+                recipeId
+            }, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            alert(response.data.message || 'Recipe added to your favorites!');
+        } catch (error) {
+            console.error('Error adding recipe to favorites:', error);
+            alert('Failed to add recipe to favorites.');
+        }
+    };
 
     return (
         <div className={styles.pageWrapper}>
@@ -143,9 +167,9 @@ const Discover = () => {
 
             {/* Filter Section */}
             <div className={styles.filtersContainer}>
-                <select 
-                    name="type" 
-                    value={filters.type} 
+                <select
+                    name="type"
+                    value={filters.type}
                     onChange={handleFilterChange}
                     className={styles.filterSelect}
                 >
@@ -156,9 +180,9 @@ const Discover = () => {
                     <option value="snack">Snack</option>
                 </select>
 
-                <select 
-                    name="cuisine" 
-                    value={filters.cuisine} 
+                <select
+                    name="cuisine"
+                    value={filters.cuisine}
                     onChange={handleFilterChange}
                     className={styles.filterSelect}
                 >
@@ -180,9 +204,9 @@ const Discover = () => {
                     <option value="vietnamese">Vietnamese</option>
                 </select>
 
-                <select 
-                    name="diet" 
-                    value={filters.diet} 
+                <select
+                    name="diet"
+                    value={filters.diet}
                     onChange={handleFilterChange}
                     className={styles.filterSelect}
                 >
@@ -206,7 +230,13 @@ const Discover = () => {
                             <img src={recipe.image} alt={recipe.title} className={styles.recipeImage} />
                             <div className={styles.recipeTitleWrapper}>
                                 <div className={styles.recipeTitle}>{recipe.title}</div>
-                                <FavoriteBorderIcon className={styles.recipeHeart} />
+                                <FavoriteBorderIcon
+                                            className={styles.recipeHeart}
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                addToFavorites(recipe.id);
+                                            }}
+                                        />
                             </div>
                             <div className={styles.recipeInfoWrapper}>
                                 <div className={styles.recipeTime}>
@@ -227,15 +257,15 @@ const Discover = () => {
 
             {/* Pagination */}
             <div className={styles.pagination}>
-                <button 
-                    onClick={handlePreviousPage} 
+                <button
+                    onClick={handlePreviousPage}
                     disabled={page === 1}
                     className={styles.paginationButton}
                 >
                     Previous
                 </button>
                 <span className={styles.pageNumber}>Page {page}</span>
-                <button 
+                <button
                     onClick={handleNextPage}
                     className={styles.paginationButton}
                 >

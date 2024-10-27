@@ -106,7 +106,7 @@ const RecipePage = () => {
                 recipeId
             }, {
                 headers: {
-                    'Authorization': `Bearer ${token}` // Corrected template literal
+                    'Authorization': `Bearer ${token}`
                 }
             });
 

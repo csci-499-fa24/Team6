@@ -1,9 +1,60 @@
 "use client";
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './favoriteinfo.module.css';
 
-const FavoriteInfo = ({ recipe, onClose }) => {
+const FavoriteInfo = ({ recipe, userId, onClose }) => {
+    const [ingredientStatus, setIngredientStatus] = useState({});
+    const [missingIngredients, setMissingIngredients] = useState([]);
+    const [hasMissingIngredients, setHasMissingIngredients] = useState(false);
+
+    useEffect(() => {
+        // Check each ingredient's status for the current user
+        const checkIngredients = async () => {
+            try {
+                const ingredientIds = recipe.extendedIngredients.map((ing) => ing.id);
+                const response = await fetch('/api/check-ingredients', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId, ingredientIds }),
+                });
+                const data = await response.json();
+                setIngredientStatus(data); // { [ingredientId]: true/false }
+            } catch (error) {
+                console.error('Error checking ingredients', error);
+            }
+        };
+
+        checkIngredients();
+    }, [recipe, userId]);
+
+    const handleUseRecipe = async () => {
+        console.log("Using recipe...");
+        try {
+            const response = await fetch('/api/use-recipe', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId, ingredients: recipe.extendedIngredients }),
+            });
+
+            const result = await response.json();
+            console.log('Response:', result); // Log the response
+
+            if (result.missingIngredients && result.missingIngredients.length > 0) {
+                // If there are missing ingredients, display them
+                console.log('Missing ingredients:', result.missingIngredients); // Log missing ingredients
+                setMissingIngredients(result.missingIngredients);
+                setHasMissingIngredients(true);
+            } else {
+                // Close the pop-up if the recipe was successfully used
+                console.log('Recipe used successfully'); // Log success
+                onClose();
+            }
+        } catch (error) {
+            console.error('Error using recipe:', error);
+        }
+    };
+
     if (!recipe) return null;
 
     return (
@@ -13,44 +64,69 @@ const FavoriteInfo = ({ recipe, onClose }) => {
                     &times;
                 </button>
                 <h2>{recipe.title}</h2>
+
                 <img src={recipe.image} alt={recipe.title} className={styles.recipeImage} />
 
-                {/* Dietary Labels */}
-                {recipe.diets && recipe.diets.length > 0 && (
-                    <p><strong>Dietary Labels:</strong> {recipe.diets.join(", ")}</p>
-                )}
+                <div className={styles.dietaryLabels}>
+                    <p><strong>Dietary Labels:</strong> {recipe.diets.join(', ') || 'N/A'}</p>
+                </div>
 
-                {/* Nutrition Info */}
-                {recipe.nutrition?.nutrients && (
-                    <div>
-                        <strong>Nutrition Info:</strong>
+                <div className={styles.nutritionInfo}>
+                    <strong>Nutrition:</strong>
+                    <ul>
+                        {recipe.nutrition?.nutrients.map((nutrient) => (
+                            <li key={nutrient.name}>
+                                {nutrient.name}: {nutrient.amount} {nutrient.unit}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+
+                <div>
+                    <strong>Ingredients:</strong>
+                    <ul>
+                        {recipe.extendedIngredients?.map((ingredient) => (
+                            <li
+                                key={ingredient.id}
+                                style={{ color: ingredientStatus[ingredient.id] ? 'black' : 'red' }}
+                            >
+                                {ingredient.original}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+
+                <p><strong>Cooking Time:</strong> {recipe.readyInMinutes} minutes</p>
+
+                <div className={styles.instructions}>
+                    <strong>Instructions:</strong>
+                    <ol>
+                        {recipe.instructions
+                            ? recipe.instructions.split('. ').map((step, index) => (
+                                  <li key={index}>{step.trim()}.</li>
+                              ))
+                            : 'No instructions available.'}
+                    </ol>
+                </div>
+
+                {/* Display missing ingredients if any */}
+                {hasMissingIngredients && (
+                    <div className={styles.missingIngredients}>
+                        <strong>Missing Ingredients:</strong>
                         <ul>
-                            {recipe.nutrition.nutrients.map((nutrient) => (
-                                <li key={nutrient.name}>
-                                    {nutrient.name}: {nutrient.amount} {nutrient.unit}
-                                </li>
+                            {missingIngredients.map((ingredient) => (
+                                <li key={ingredient.id}>{ingredient.name}</li>
                             ))}
                         </ul>
                     </div>
                 )}
 
-                {/* Cooking Instructions */}
-                {recipe.analyzedInstructions?.length > 0 ? (
-                    <div>
-                        <strong>Instructions:</strong>
-                        <ol>
-                            {recipe.analyzedInstructions[0].steps.map((step) => (
-                                <li key={step.number}>{step.step}</li>
-                            ))}
-                        </ol>
-                    </div>
-                ) : (
-                    <p>No instructions available.</p>
-                )}
-
-                <p>
-                    <strong>Cooking Time:</strong> {recipe.readyInMinutes} minutes
-                </p>
+                {/* Use Recipe Button */}
+                <div className={styles.buttonContainer}>
+                    <button className={styles.useRecipeButton} onClick={handleUseRecipe}>
+                        Use Recipe
+                    </button>
+                </div>
             </div>
         </div>
     );
