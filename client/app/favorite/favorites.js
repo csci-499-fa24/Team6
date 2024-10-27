@@ -35,6 +35,30 @@
 //         }
 //     };
 
+
+//     const removeFavoriteRecipe = async (recipeId, token) => {
+//         try {
+//             const response = await fetch(process.env.NEXT_PUBLIC_SERVER_URL + '/api/favorites', {
+//                 method: 'DELETE',
+//                 headers: {
+//                     'Content-Type': 'application/json',
+//                     Authorization: `Bearer ${token}`,
+//                 },
+//                 body: JSON.stringify({ recipeId }),
+//             });
+
+//             if (!response.ok) {
+//                 throw new Error('Failed to remove favorite.');
+//             }
+
+//             setFavorites((prevFavorites) =>
+//                 prevFavorites.filter((recipe) => recipe.id !== recipeId)
+//             );
+//         } catch (error) {
+//             console.error('Error removing favorite recipe:', error);
+//         }
+//     };
+
 //     useEffect(() => {
 //         const token = localStorage.getItem('token');
 
@@ -70,7 +94,10 @@
 //                                 <img src={recipe.image} alt={recipe.title} className={styles.recipeImage} />
 //                                 <div className={styles.recipeTitleWrapper}>
 //                                     <div className={styles.recipeTitle}>{recipe.title}</div>
-//                                     <FavoriteIcon className={styles.recipeHeart} />
+//                                     <FavoriteIcon
+//                                         className={styles.recipeHeart}
+//                                         onClick={() => removeFavoriteRecipe(recipe.id, localStorage.getItem('token'))}
+//                                     />
 //                                 </div>
 //                                 <div className={styles.recipeInfoWrapper}>
 //                                     <div className={styles.recipeTime}>
@@ -95,6 +122,8 @@
 
 // export default FavoritePage;
 
+
+
 "use client";
 
 import React, { useState, useEffect } from 'react';
@@ -103,9 +132,11 @@ import styles from './favorite.module.css';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import LocalDiningIcon from '@mui/icons-material/LocalDining';
+import FavoriteInfo from './favoriteInfo';
 
 const FavoritePage = () => {
     const [favorites, setFavorites] = useState([]);
+    const [selectedRecipe, setSelectedRecipe] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -168,13 +199,16 @@ const FavoritePage = () => {
         fetchFavoriteRecipes(token);
     }, []);
 
-    if (loading) {
-        return <div>Loading...</div>;
-    }
+    const handleRecipeClick = (recipe) => {
+        setSelectedRecipe(recipe); // Show recipe details in pop-up
+    };
 
-    if (error) {
-        return <div>Error: {error}</div>;
-    }
+    const closeRecipeInfo = () => {
+        setSelectedRecipe(null); // Close pop-up
+    };
+
+    if (loading) return <div>Loading...</div>;
+    if (error) return <div>Error: {error}</div>;
 
     return (
         <div>
@@ -187,13 +221,20 @@ const FavoritePage = () => {
                 <div className={styles.recipesContainer}>
                     {favorites.length > 0 ? (
                         favorites.map((recipe) => (
-                            <div key={recipe.id} className={styles.recipeCard}>
+                            <div
+                                key={recipe.id}
+                                className={styles.recipeCard}
+                                onClick={() => handleRecipeClick(recipe)}
+                            >
                                 <img src={recipe.image} alt={recipe.title} className={styles.recipeImage} />
                                 <div className={styles.recipeTitleWrapper}>
                                     <div className={styles.recipeTitle}>{recipe.title}</div>
                                     <FavoriteIcon
                                         className={styles.recipeHeart}
-                                        onClick={() => removeFavoriteRecipe(recipe.id, localStorage.getItem('token'))}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            removeFavoriteRecipe(recipe.id, localStorage.getItem('token'));
+                                        }}
                                     />
                                 </div>
                                 <div className={styles.recipeInfoWrapper}>
@@ -213,6 +254,9 @@ const FavoritePage = () => {
                     )}
                 </div>
             </div>
+
+            {/* Display FavoriteInfo component when a recipe is selected */}
+            {selectedRecipe && <FavoriteInfo recipe={selectedRecipe} onClose={closeRecipeInfo} />}
         </div>
     );
 };

@@ -150,7 +150,7 @@ const RecipePage = () => {
                                         <FavoriteBorderIcon
                                             className={styles.recipeHeart}
                                             onClick={(e) => {
-                                                e.preventDefault(); // Prevents the link from triggering when clicking the icon
+                                                e.preventDefault();
                                                 addToFavorites(recipe.id);
                                             }}
                                         />
