@@ -38,9 +38,10 @@ const RecipeDetails = () => {
             ))}
         </div>
     );
+    console.log(recipe)
 
     const renderInstructions = (instructions) => {
-        if (instructions) {
+        if (instructions[0]) {
             return (
                 <ol className={styles.instructionList}>
                     {instructions[0].steps.map((stepObj, index) => (

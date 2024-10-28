@@ -1,8 +1,7 @@
 'use client';
 import { useRouter  } from 'next/navigation';
 import Navbar from "../components/navbar";
-import IngredientInput from './IngredientInput';
-import IngredientList from './IngredientList'
+import IngredientInput from './IngredientInput'
 import NutritionInput from "./NutritionInput";
 import AllergenInput from "./AllergenInput";
 import RecipeHistory from './RecipeHistory';
@@ -72,7 +71,6 @@ const Pantry = () => {
     <div>
       <Navbar />
       <div className={styles.pageWrapper}>
-        <div className={styles.title}>Welcome to your pantry</div>
         <div className={styles.pantryContent}>
           <div className={styles.sidebar}>
             <div
@@ -105,7 +103,6 @@ const Pantry = () => {
             {activeSection === 'Pantry' && (
               <>
                 <IngredientInput />
-                <IngredientList />
               </>
             )}
             {activeSection === 'Allergens' && <AllergenInput />}
