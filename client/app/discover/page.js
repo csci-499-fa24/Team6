@@ -303,6 +303,7 @@ const Discover = () => {
         diet: '',
         searchQuery: ''
     });
+    const [userFavorites, setUserFavorites] = useState([]);
     const recipesPerPage = 12;
     const router = useRouter();
 
@@ -334,6 +335,21 @@ const Discover = () => {
             verifyToken();
         }
     }, [router]);
+
+    // Fetch user favorites
+    const fetchUserFavorites = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/favorites`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            setUserFavorites(response.data.favorites);
+        } catch (error) {
+            console.error('Error fetching favorites:', error);
+        }
+    };
 
     // Fetch random or filtered recipes when the page loads or user clicks search
     const fetchRecipes = async () => {
@@ -386,10 +402,43 @@ const Discover = () => {
         setPage(prevPage => (prevPage > 1 ? prevPage - 1 : prevPage));
     };
 
-    // Fetch random recipes on initial load
+    const toggleFavorite = async (recipeId) => {
+        const token = localStorage.getItem('token');
+        const isFavorite = userFavorites.includes(recipeId);
+
+        try {
+            const response = isFavorite
+                ? await axios.delete(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/favorites`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                    data: { recipeId }
+                  })
+                : await axios.post(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/favorites`, { recipeId }, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                  });
+
+            console.log('Response:', response.data);
+
+            setUserFavorites(prevFavorites =>
+                isFavorite
+                ? prevFavorites.filter(id => id !== recipeId)
+                : [...prevFavorites, recipeId]
+            );
+        } catch (error) {
+            console.error('Error updating favorites:', error.response ? error.response.data : error.message);
+        }
+    };
+
+    // Fetch random recipes and user favorites on initial load
     useEffect(() => {
         fetchRecipes();
-    }, [page]);
+        if (authenticated) {
+            fetchUserFavorites();
+        }
+    }, [page, authenticated]);
 
     if (loading) {
         return <div>Loading...</div>;
@@ -482,45 +531,33 @@ const Discover = () => {
             <div className={styles.recipesContainer}>
                 {recipes.length > 0 ? (
                     recipes.map((recipe) => (
-                        <Link href={`/discover/${recipe.id}`} key={recipe.id} className={styles.recipeCard}>
-                            <img src={recipe.image} alt={recipe.title} className={styles.recipeImage} />
-                            <div className={styles.recipeTitleWrapper}>
-                                <div className={styles.recipeTitle}>{recipe.title}</div>
-                                <FavoriteBorderIcon className={styles.recipeHeart} />
-                            </div>
-                            <div className={styles.recipeInfoWrapper}>
-                                <div className={styles.recipeTime}>
-                                    <AccessTimeIcon className={styles.recipeClock} />
-                                    {recipe.readyInMinutes} min
+                        <div key={recipe.id} className={styles.recipeCard}>
+                            <Link href={`/discover/${recipe.id}`}>
+                                <img src={recipe.image} alt={recipe.title} className={styles.recipeImage} />
+                                <div className={styles.recipeTitleWrapper}>
+                                    <div className={styles.recipeTitle}>{recipe.title}</div>
+                                    <div className={styles.recipeDetails}>
+                                        <AccessTimeIcon /> <span>{recipe.cookingTime} min</span>
+                                        <LocalDiningIcon /> <span>{recipe.servings} servings</span>
+                                    </div>
                                 </div>
-                                <div className={styles.recipeIngredients}>
-                                    <LocalDiningIcon className={styles.recipeClock} />
-                                    {recipe.totalIngredients} Ingredients
-                                </div>
+                            </Link>
+                            <div className={styles.favoriteIcon} onClick={() => toggleFavorite(recipe.id)}>
+                                <FavoriteBorderIcon
+                                    style={{ color: Array.isArray(userFavorites) && userFavorites.includes(recipe.id) ? 'red' : 'gray' }}
+                                />
                             </div>
-                        </Link>
+                        </div>
                     ))
                 ) : (
-                    <p className={styles.noRecipes}>No recipes found.</p>
+                    <div>No recipes found.</div>
                 )}
             </div>
 
-            {/* Pagination */}
+            {/* Pagination Buttons */}
             <div className={styles.pagination}>
-                <button
-                    onClick={handlePreviousPage}
-                    disabled={page === 1}
-                    className={styles.paginationButton}
-                >
-                    Previous
-                </button>
-                <span className={styles.pageNumber}>Page {page}</span>
-                <button
-                    onClick={handleNextPage}
-                    className={styles.paginationButton}
-                >
-                    Next
-                </button>
+                <Button disabled={page === 1} onClick={handlePreviousPage}>Previous</Button>
+                <Button onClick={handleNextPage}>Next</Button>
             </div>
         </div>
     );

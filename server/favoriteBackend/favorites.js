@@ -77,6 +77,7 @@ router.delete('/', authenticateToken, async (req, res) => {
     }
 });
 
+
 // Map and get all recipes
 router.get('/', authenticateToken, async (req, res) => {
     const user_id = req.user.id;
@@ -117,5 +118,6 @@ router.get('/', authenticateToken, async (req, res) => {
         res.status(500).json({ message: 'Failed to retrieve favorite recipes.' });
     }
 });
+
 
 module.exports = router;
