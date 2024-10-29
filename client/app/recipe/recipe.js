@@ -42,15 +42,15 @@ const RecipePage = () => {
         }
     };
 
-    // Fetch recipes based on the user's ingredients
     const fetchRecipes = async () => {
-        if (userIngredients.length === 0) return;
+        if (userIngredients.length === 0) return; // Wait until ingredients are fetched
 
         try {
             const headers = {
                 'x-rapidapi-key': process.env.NEXT_PUBLIC_SPOONACULAR_API_KEY,
                 'x-rapidapi-host': 'spoonacular-recipe-food-nutrition-v1.p.rapidapi.com',
             };
+
             const ingredients = userIngredients.join(',');
 
             const response = await axios.get(`https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/findByIngredients`, {
@@ -67,7 +67,32 @@ const RecipePage = () => {
             });
 
             const basicRecipes = response.data;
-            setRecipes(basicRecipes);
+            setRecipes(basicRecipes)
+            const recipeIds = basicRecipes.map(recipe => recipe.id).join(',');
+
+            const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+            await delay(1000);
+            const recipeDetails = await axios.get(`https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/informationBulk`, {
+                params: {
+                    ids: recipeIds,
+                    includeNutrition: true,
+                },
+                headers
+            });
+
+            const combinedRecipes = basicRecipes.map(basicRecipe => {
+                const detailedRecipe = recipeDetails.data.find(detailed => detailed.id === basicRecipe.id);
+                return {
+                    ...basicRecipe,
+                    readyInMinutes: detailedRecipe ? detailedRecipe.readyInMinutes : null, 
+                    instructions: detailedRecipe ? detailedRecipe.analyzedInstructions : null, 
+                    nutrition: detailedRecipe ? detailedRecipe.nutrition : null, 
+                    servings: detailedRecipe ? detailedRecipe.servings : null, 
+                };
+            });
+
+            setRecipes(combinedRecipes);
+
         } catch (error) {
             console.error('Error fetching recipes:', error);
             setError('Failed to fetch recipes.');
