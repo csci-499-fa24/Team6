@@ -83,9 +83,10 @@ const RecipeHistory = () => {
                             <img src={recipe.image} alt={recipe.title} className={styles.recipeImage} />
                             <div className={styles.recipeTitleWrapper}>
                                 <div className={styles.recipeTitle}>{recipe.title}</div>
-                                <AccessTimeIcon className={styles.recipeClock} />{recipe.readyInMinutes} min
-                                <LocalDiningIcon className={styles.recipeClock} />
-                                {recipe.extendedIngredients?.length || 0} Ingredients
+                            </div>
+                            <div className={styles.recipeInfoWrapper}>
+                                <div className={styles.recipeTime}><AccessTimeIcon className={styles.recipeClock} />{recipe.readyInMinutes} min</div>
+                                <div className={styles.recipeIngredients}><LocalDiningIcon className={styles.recipeClock} />{recipe.extendedIngredients?.length || 0} Ingredients</div>
                             </div>
                         </Link>
                     ))

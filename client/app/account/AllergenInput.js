@@ -93,10 +93,9 @@ const AllergenInput = () => {
 
     return (
         <div className={styles.allergiesWrapper}>
-            <div className={styles.header}>Add an allergen</div>
             <div className={styles.addAllergy}>
                 <div className={styles.allergyInput}>
-                    <div className={styles.textfieldLabel}>Allergy</div>
+                    <div className={styles.textfieldLabel}>Add an allergen</div>
                     <CustomTextField
                         value={allergy}
                         onChange={(event) => setAllergy(event.target.value)}

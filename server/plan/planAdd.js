@@ -51,23 +51,23 @@ router.post('/', authenticateToken, async (req, res) => {
 
 
         let totalNutrients = {
-            calories: 0,
             protein: 0,
             carbohydrates: 0,
             total_fat: 0,
             saturated_fat: 0,
             fiber: 0,
             sodium: 0,
-            sugar: 0
+            sugar: 0,
+            calories: 0,
         };
 
         const url = `https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/${recipeId}/nutritionWidget.json`;
         const response = await fetch(url, {
             method: 'GET',
-                headers: {
-                    'X-RapidAPI-Host': 'spoonacular-recipe-food-nutrition-v1.p.rapidapi.com',
-                    'X-RapidAPI-Key': process.env.NEXT_PUBLIC_SPOONACULAR_API_KEY
-                }
+            headers: {
+                'X-RapidAPI-Host': 'spoonacular-recipe-food-nutrition-v1.p.rapidapi.com',
+                'X-RapidAPI-Key': process.env.NEXT_PUBLIC_SPOONACULAR_API_KEY
+            }
         });
 
         const detail = await response.json();
@@ -104,7 +104,7 @@ router.post('/', authenticateToken, async (req, res) => {
             }
         });
 
-        
+
         const checkIntake = await pool.query(
             'SELECT * FROM user_intake WHERE user_id = $1',
             [user_id]
@@ -116,22 +116,22 @@ router.post('/', authenticateToken, async (req, res) => {
                   (user_id, protein, carbohydrates, total_fat, saturated_fat, fiber, sodium, sugar, calories) 
                  VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
                 [
-                  user_id,
-                  totalNutrients.protein,
-                  totalNutrients.carbohydrates,
-                  totalNutrients.total_fat,
-                  totalNutrients.saturated_fat,
-                  totalNutrients.fiber,
-                  totalNutrients.sodium,
-                  totalNutrients.sugar,
-                  totalNutrients.calories
+                    user_id,
+                    totalNutrients.protein,
+                    totalNutrients.carbohydrates,
+                    totalNutrients.total_fat,
+                    totalNutrients.saturated_fat,
+                    totalNutrients.fiber,
+                    totalNutrients.sodium,
+                    totalNutrients.sugar,
+                    totalNutrients.calories
                 ]
-              );
+            );
         }
 
         else {
             const existingData = checkIntake.rows[0];
-            
+
             const updatedNutrients = {
                 protein: existingData.protein ? existingData.protein + totalNutrients.protein : totalNutrients.protein,
                 carbohydrates: existingData.carbohydrates ? existingData.carbohydrates + totalNutrients.carbohydrates : totalNutrients.carbohydrates,
@@ -142,29 +142,29 @@ router.post('/', authenticateToken, async (req, res) => {
                 sugar: existingData.sugar ? existingData.sugar + totalNutrients.sugar : totalNutrients.sugar,
                 calories: existingData.calories ? existingData.calories + totalNutrients.calories : totalNutrients.calories
             };
-            
+
             // Update the row in the database
             await pool.query(
                 `UPDATE user_intake SET 
-                calories = $2, 
-                protein = $3, 
-                carbohydrates = $4, 
-                total_fat = $5, 
-                saturated_fat = $6, 
-                fiber = $7, 
-                sodium = $8, 
-                sugar = $9 
+                protein = $2, 
+                carbohydrates = $3, 
+                total_fat = $4, 
+                saturated_fat = $5, 
+                fiber = $6, 
+                sodium = $7, 
+                sugar = $8,
+                calories = $9,  
                 WHERE user_id = $1`,
                 [
-                user_id,
-                updatedNutrients.calories,
-                updatedNutrients.protein,
-                updatedNutrients.carbohydrates,
-                updatedNutrients.total_fat,
-                updatedNutrients.saturated_fat,
-                updatedNutrients.fiber,
-                updatedNutrients.sodium,
-                updatedNutrients.sugar
+                    user_id,
+                    updatedNutrients.protein,
+                    updatedNutrients.carbohydrates,
+                    updatedNutrients.total_fat,
+                    updatedNutrients.saturated_fat,
+                    updatedNutrients.fiber,
+                    updatedNutrients.sodium,
+                    updatedNutrients.sugar,
+                    updatedNutrients.calories,
                 ]
             );
         }

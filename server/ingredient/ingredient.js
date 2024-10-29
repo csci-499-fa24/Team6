@@ -28,9 +28,24 @@ const authenticateToken = (req, res, next) => {
     });
 };
 
+const fetchPossibleUnits = async (ingredientName) => {
+    try {
+        const response = await fetch(`https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/food/ingredients/autocomplete?query=${ingredientName}&number=5&metaInformation=true`, {
+            method: 'GET',
+            headers: {
+                'X-RapidAPI-Key': process.env.NEXT_PUBLIC_SPOONACULAR_API_KEY,
+                'X-RapidAPI-Host': 'spoonacular-recipe-food-nutrition-v1.p.rapidapi.com'
+            }
+        });
+        const data = await response.json();
+    } catch (error) {
+        console.error('Error fetching ingredients:', error);
+    }
+};
+
 // POST route to add or update ingredient
 router.post('/', authenticateToken, async (req, res) => {
-    const { ingredient_name, amount, unit } = req.body; // Expecting unit in the request body
+    const { ingredient_name, amount, unit, possibleUnits } = req.body; // Expecting unit in the request body
     const user_id = req.user.id; // Get user_id from token
 
     try {
@@ -48,6 +63,7 @@ router.post('/', authenticateToken, async (req, res) => {
             ingredient_id = ingredientQuery.rows[0].ingredient_id;
         } else {
             // Insert the ingredient if it doesn't exist
+            fetchPossibleUnits(ingredient_name)
             const insertQuery = await pool.query(
                 'INSERT INTO ingredients (name) VALUES ($1) RETURNING ingredient_id',
                 [lowerCaseIngredientName]
@@ -65,7 +81,7 @@ router.post('/', authenticateToken, async (req, res) => {
         if (userIngredientQuery.rows.length > 0) {
             if (amount > 0) {
                 await pool.query(
-                    'UPDATE user_ingredient SET amount = $1, unit = $2 WHERE user_id = $3 AND ingredient_id = $4',
+                    'UPDATE user_ingredient SET amount = $1, unit = $2, WHERE user_id = $3 AND ingredient_id = $4',
                     [amount, unit, user_id, ingredient_id]
                 );
                 return res.status(200).json({ message: 'Ingredient updated successfully!' });
@@ -81,8 +97,8 @@ router.post('/', authenticateToken, async (req, res) => {
             // If the ingredient doesn't exist and amount > 0, add it to the user_ingredient table
             if (amount > 0) {
                 await pool.query(
-                    'INSERT INTO user_ingredient (user_id, ingredient_id, amount, unit) VALUES ($1, $2, $3, $4)',
-                    [user_id, ingredient_id, amount, unit]
+                    'INSERT INTO user_ingredient (user_id, ingredient_id, amount, unit, possible_units) VALUES ($1, $2, $3, $4, $5)',
+                    [user_id, ingredient_id, amount, unit, possibleUnits]
                 );
                 return res.status(200).json({ message: 'Ingredient added successfully!' });
             } else {
