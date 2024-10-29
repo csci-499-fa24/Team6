@@ -202,17 +202,22 @@
 }
 
 .searchButton {
-    background-color: #EC4A27 !important; 
-    border-radius: 25px !important; 
-    height: 3rem !important; 
-    padding: 0 1em !important; 
-    color: white !important; 
-    border: none !important; 
-    font-weight: 600 !important; 
+    background-color: #EC4A27 !important;
+    border-radius: 25px !important;
+    height: 3rem !important;
+    padding: 0 1em !important;
+    color: white !important;
+    border: none !important;
+    font-weight: 600 !important;
     cursor: pointer;
     transition: background-color 0.3s ease !important;
 }
 
 .searchButton:hover {
-    background-color: rgb(233, 69, 15) !important; 
+    background-color: rgb(233, 69, 15) !important;
+}
+
+.favoriteIconRed {
+    color: red;
+    cursor: pointer;
 }

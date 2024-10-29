@@ -105,5 +105,31 @@ router.get('/', authenticateToken, async (req, res) => {
     }
 });
 
+router.delete('/:recipeId', authenticateToken, async (req, res) => {
+    const recipeId = req.params.recipeId;
+    const user_id = req.user.id;
+
+    try {
+        const dbFavorites = await pool.query(
+            'SELECT * FROM user_favorites WHERE user_id = $1 AND recipe_id = $2',
+            [user_id, recipeId]
+        );
+
+        if (dbFavorites.rows.length === 0) {
+            return res.status(404).json({ message: 'Recipe not found in favorites.' });
+        }
+
+        await pool.query(
+            'DELETE FROM user_favorites WHERE user_id = $1 AND recipe_id = $2',
+            [user_id, recipeId]
+        );
+
+        res.status(200).json({ message: 'Recipe removed from your favorites.' });
+    } catch (error) {
+        console.error('Error removing recipe from favorites:', error);
+        res.status(500).json({ message: 'Failed to remove recipe from favorites.' });
+    }
+});
+
 
 module.exports = router;
