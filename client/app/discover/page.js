@@ -17,10 +17,12 @@ const Discover = () => {
     const [error, setError] = useState(null);
     const [page, setPage] = useState(1);
     const [authenticated, setAuthenticated] = useState(false);
+    const [userAllergens, setUserAllergens] = useState([]);
     const [filters, setFilters] = useState({
         type: '',
         cuisine: '',
         diet: '',
+        allergens: [],
         searchQuery: '' 
     });
     const recipesPerPage = 12;
@@ -42,6 +44,7 @@ const Discover = () => {
 
                     if (response.status === 200) {
                         setAuthenticated(true);
+                        fetchUserAllergens();
                     } else {
                         router.push('/login');
                     }
@@ -55,6 +58,36 @@ const Discover = () => {
         }
     }, [router]);
 
+    const fetchUserAllergens = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/allergies`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            if (response.ok) {
+                const data = await response.json();
+                setUserAllergens(data.allergies);
+            }
+        } catch (error) {
+            console.error('Error fetching allergens:', error);
+        }
+    };
+
+    const handleAllergenChange = (allergen) => {
+        setFilters(prevFilters => {
+            const updatedAllergens = prevFilters.allergens.includes(allergen)
+                ? prevFilters.allergens.filter(a => a !== allergen)
+                : [...prevFilters.allergens, allergen];
+            
+            return {
+                ...prevFilters,
+                allergens: updatedAllergens
+            };
+        });
+    };
+
     // Fetch random or filtered recipes when the page loads or user clicks search
     const fetchRecipes = async () => {
         setLoading(true);
@@ -66,7 +99,8 @@ const Discover = () => {
                     type: filters.type || '',
                     cuisine: filters.cuisine || '',
                     diet: filters.diet || '',
-                    search: filters.searchQuery || '' 
+                    search: filters.searchQuery || '',
+                    intolerances: filters.allergens.join(',')
                 }
             });
 
@@ -195,6 +229,26 @@ const Discover = () => {
                     <option value="paleo">Paleo</option>
                     <option value="primal">Primal</option>
                     <option value="whole30">Whole30</option>
+                </select>
+
+                <select
+                    name="allergens"
+                    value={filters.allergens}
+                    onChange={(e) => {
+                        const value = e.target.value;
+                        setFilters(prev => ({
+                            ...prev,
+                            allergens: value ? [value] : []
+                        }));
+                    }}
+                    className={styles.filterSelect}
+                >
+                    <option value="">Select Allergen</option>
+                    {userAllergens.map((allergen) => (
+                        <option key={allergen} value={allergen}>
+                            {allergen}
+                        </option>
+                    ))}
                 </select>
             </div>
 
