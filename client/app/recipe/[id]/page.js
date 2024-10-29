@@ -13,23 +13,49 @@ import { CustomCircularProgress } from '../../components/customComponents'
 import LocalPrintshopOutlinedIcon from '@mui/icons-material/LocalPrintshopOutlined';
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 
-
 const RecipeDetails = () => {
     const [recipe, setRecipe] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        const storedRecipe = localStorage.getItem('selectedRecipe');
+        const storedRecipe = JSON.parse(localStorage.getItem('selectedRecipe'));
         if (storedRecipe) {
-            setRecipe(JSON.parse(storedRecipe));
+            setRecipe(storedRecipe);
+            // Check if instructions or nutrients are missing
+            if (!storedRecipe.instructions || !storedRecipe.nutrition?.nutrients) {
+                fetchRecipeDetails(storedRecipe.id);
+            } else {
+                setLoading(false);
+            }
+        } else {
+            setError('No recipe details found.');
+            setLoading(false);
         }
-        else {
-            console.error('No recipe found in localStorage');
-            setError('No recipe details found.')
-        }
-        setLoading(false);
     }, []);
+
+    const fetchRecipeDetails = async (id) => {
+        try {
+            const recipeDetails = await axios.get(`https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/${id}/information`, {
+                headers: {
+                    'X-RapidAPI-Key': process.env.NEXT_PUBLIC_SPOONACULAR_API_KEY,
+                    'X-RapidAPI-Host': 'spoonacular-recipe-food-nutrition-v1.p.rapidapi.com'
+                },
+                params: {
+                    includeNutrition: true
+                }
+            });
+            setRecipe((prevRecipe) => ({
+                ...prevRecipe,
+                instructions: recipeDetails.data.analyzedInstructions,
+                nutrition: recipeDetails.data.nutrition
+            }));
+        } catch (error) {
+            setError(error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const renderIngredients = (ingredients, color = "#506264") => (
         <div>
@@ -38,27 +64,28 @@ const RecipeDetails = () => {
             ))}
         </div>
     );
-    console.log(recipe)
 
     const renderInstructions = (instructions) => {
-        if (instructions[0]) {
-            return (
-                <ol className={styles.instructionList}>
-                    {instructions[0].steps.map((stepObj, index) => (
-                        <li key={index}>{stepObj.step}</li>
-                    ))}
-                </ol>
-            );
-        } else {
+        if (!instructions || instructions.length === 0 || !instructions[0].steps) {
             return <p>No instructions available.</p>;
         }
+        return (
+            <ol className={styles.instructionList}>
+                {instructions[0].steps.map((stepObj, index) => (
+                    <li key={index}>{stepObj.step}</li>
+                ))}
+            </ol>
+        );
     };
 
     const getRoundedNutrientAmount = (nutrientName) => {
+        if (!recipe || !recipe.nutrition || !recipe.nutrition.nutrients) {
+            return 0;
+        }
         const nutrient = recipe.nutrition.nutrients.find(n => n.name === nutrientName);
         return nutrient ? `${Math.round(nutrient.amount)} ${nutrient.unit}` : 0;
     };
-
+    
     return (
         <div>
             <Navbar />
