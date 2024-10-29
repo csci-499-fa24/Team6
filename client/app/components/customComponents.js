@@ -23,7 +23,7 @@ export const CustomTextField = styled(TextField)(({ }) => ({
     color: '#EC4A27',
   },
   '& .MuiOutlinedInput-root': {
-    backgroundColor: 'White',
+    backgroundColor: 'White !important',
     borderRadius: '10px',
 
     '& fieldset': {
@@ -39,7 +39,7 @@ export const CustomTextField = styled(TextField)(({ }) => ({
     '& input': {
       fontFamily: 'Inter',
       color: 'black !important',
-      backgroundColor: 'White',
+      backgroundColor: 'White !important',
       borderRadius: '10px',
       fontSize: '.65vw',
       '@media (max-width: 600px)': {
@@ -59,7 +59,7 @@ export const CustomTextField = styled(TextField)(({ }) => ({
 }));
 
 export const CustomDropdown = styled(Select)({
-  backgroundColor: 'white',
+  backgroundColor: 'white !important',
   borderRadius: '10px',
   '& .MuiOutlinedInput-notchedOutline': {
     border: '2px solid #E0E0E0',
