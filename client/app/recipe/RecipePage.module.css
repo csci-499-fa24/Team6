@@ -1,7 +1,6 @@
 .recipePageWrapper {
     width: 100%;
     min-height: 100vh;
-    background: linear-gradient(135deg, rgba(255,240,220,0.8) 0%, rgba(255,220,255,0.8) 100%);
 }
 
 .title {
