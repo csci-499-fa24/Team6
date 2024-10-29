@@ -52,7 +52,7 @@ router.get('/random-recipes', async (req, res) => {
                 offset,
                 addRecipeInformation: true,
                 fillIngredients: true,
-                intolerances: intolerances || '', // Add intolerances parameter for random recipes
+                intolerances: intolerances || '', 
             };
 
             const response = await axios.get('https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/random', { params, headers });
