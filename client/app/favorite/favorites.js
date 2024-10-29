@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState, useEffect } from 'react';
 import Navbar from '../components/navbar';
 import styles from './favorite.module.css';
@@ -127,7 +126,6 @@ const FavoritePage = () => {
                     )}
                 </div>
             </div>
-
             {/* Display FavoriteInfo component when a recipe is selected */}
             {selectedRecipe && <FavoriteInfo recipe={selectedRecipe} onClose={closeRecipeInfo} />}
         </div>

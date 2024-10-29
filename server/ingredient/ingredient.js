@@ -113,7 +113,7 @@ router.post('/', authenticateToken, async (req, res) => {
     }
 });
 
-//favoritepage use recipe
+//favoritepage use recipe, still need to configure
 router.post('/use-recipe', async (req, res) => {
     const { userId, recipe } = req.body;
 

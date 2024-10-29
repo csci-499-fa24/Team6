@@ -21,7 +21,7 @@ const { initializeCronJobs } = require('./email_noti/cronJobs');
 const app = express();
 const registerRoute = require('./register');
 const discoverRoutes = require('./discover/discoverPage');
-const favoritesRouter = require('./favoriteBackend/favorites');
+const favoriteRoutes = require('./favoriteBackend/favorites');
 
 
 const corsOptions = {
@@ -69,7 +69,7 @@ app.use('/api/plan/user-recipes', planGetRoute);
 app.use('/api/plan/remove-recipe', planRemoveRoute);
 app.use('/api/nutrition-get', nutritionGetRoute);
 app.use('/api/nutrition-update', nutritionUpdateRoute);
-app.use('/api/favorites', favoritesRouter);
+app.use('/api/favorites', favoriteRoutes);
 
 
 // User login route

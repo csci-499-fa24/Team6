@@ -112,9 +112,9 @@ const RecipePage = () => {
 
                 {/* Filter Section */}
                 <div className={styles.filtersContainer}>
-                    <select 
-                        name="type" 
-                        value={filters.type} 
+                    <select
+                        name="type"
+                        value={filters.type}
                         onChange={handleFilterChange}
                         className={styles.filterSelect}
                     >
@@ -125,9 +125,9 @@ const RecipePage = () => {
                         <option value="snack">Snack</option>
                     </select>
 
-                    <select 
-                        name="cuisine" 
-                        value={filters.cuisine} 
+                    <select
+                        name="cuisine"
+                        value={filters.cuisine}
                         onChange={handleFilterChange}
                         className={styles.filterSelect}
                     >
@@ -149,9 +149,9 @@ const RecipePage = () => {
                         <option value="vietnamese">Vietnamese</option>
                     </select>
 
-                    <select 
-                        name="diet" 
-                        value={filters.diet} 
+                    <select
+                        name="diet"
+                        value={filters.diet}
                         onChange={handleFilterChange}
                         className={styles.filterSelect}
                     >
@@ -180,7 +180,7 @@ const RecipePage = () => {
                                     key={recipe.id}
                                     className={styles.recipeCard}
                                     onClick={() => {
-                                        localStorage.setItem('selectedRecipe', JSON.stringify(recipe)); 
+                                        localStorage.setItem('selectedRecipe', JSON.stringify(recipe));
                                     }}
                                 >
                                     <img src={recipe.image} alt={recipe.title} className={styles.recipeImage} />
@@ -202,15 +202,15 @@ const RecipePage = () => {
 
                 {/* Pagination */}
                 <div className={styles.pagination}>
-                    <button 
-                        onClick={handlePreviousPage} 
+                    <button
+                        onClick={handlePreviousPage}
                         disabled={page === 1}
                         className={styles.paginationButton}
                     >
                         Previous
                     </button>
                     <span className={styles.pageNumber}>Page {page}</span>
-                    <button 
+                    <button
                         onClick={handleNextPage}
                         className={styles.paginationButton}
                     >
