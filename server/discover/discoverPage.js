@@ -14,12 +14,12 @@ router.get('/random-recipes', async (req, res) => {
                 apiKey,
                 number,
                 offset,
-                query: search || '', 
-                type: type || '', 
-                cuisine: cuisine || '', 
-                diet: diet || '', 
+                query: search || '',
+                type: type || '',
+                cuisine: cuisine || '',
+                diet: diet || '',
                 addRecipeInformation: true,
-                sort: 'popularity', 
+                sort: 'popularity',
             };
 
             const response = await axios.get('https://api.spoonacular.com/recipes/complexSearch', { params: searchParams });
@@ -40,7 +40,7 @@ router.get('/random-recipes', async (req, res) => {
             }
 
         } else {
-            // If no search query or filters, fetch random recipes 
+            // If no search query or filters, fetch random recipes
             const params = {
                 apiKey,
                 number,

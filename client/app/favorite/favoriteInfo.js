@@ -38,16 +38,14 @@ const FavoriteInfo = ({ recipe, userId, onClose }) => {
             });
 
             const result = await response.json();
-            console.log('Response:', result); // Log the response
+            console.log('Response:', result);
 
             if (result.missingIngredients && result.missingIngredients.length > 0) {
-                // If there are missing ingredients, display them
-                console.log('Missing ingredients:', result.missingIngredients); // Log missing ingredients
+                console.log('Missing ingredients:', result.missingIngredients);
                 setMissingIngredients(result.missingIngredients);
                 setHasMissingIngredients(true);
             } else {
-                // Close the pop-up if the recipe was successfully used
-                console.log('Recipe used successfully'); // Log success
+                console.log('Recipe used successfully');
                 onClose();
             }
         } catch (error) {
