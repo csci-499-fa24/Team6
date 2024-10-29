@@ -34,29 +34,6 @@ const RecipeDetails = () => {
         }
     }, []);
 
-    const fetchRecipeDetails = async (id) => {
-        try {
-            const recipeDetails = await axios.get(`https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/${id}/information`, {
-                headers: {
-                    'X-RapidAPI-Key': process.env.NEXT_PUBLIC_SPOONACULAR_API_KEY,
-                    'X-RapidAPI-Host': 'spoonacular-recipe-food-nutrition-v1.p.rapidapi.com'
-                },
-                params: {
-                    includeNutrition: true
-                }
-            });
-            setRecipe((prevRecipe) => ({
-                ...prevRecipe,
-                instructions: recipeDetails.data.analyzedInstructions,
-                nutrition: recipeDetails.data.nutrition
-            }));
-        } catch (error) {
-            setError(error.message);
-        } finally {
-            setLoading(false);
-        }
-    };
-
     const renderIngredients = (ingredients, color = "#506264") => (
         <div>
             {ingredients.map((ingredient, i) => (
