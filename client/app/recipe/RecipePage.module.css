@@ -1,6 +1,7 @@
 .recipePageWrapper {
     width: 100%;
-    height: 100%;
+    min-height: 100vh;
+    background: linear-gradient(135deg, rgba(255,240,220,0.8) 0%, rgba(255,220,255,0.8) 100%);
 }
 
 .title {
@@ -20,6 +21,26 @@
     color: #727878;
 }
 
+.filtersContainer {
+    display: flex;
+    gap: 1em;
+    margin: 2em 8em;
+}
+
+.filterSelect {
+    padding: 0.5em 1em;
+    border-radius: 7px;
+    border: 1px solid rgba(171, 169, 231, 0.3);
+    background-color: white;
+    color: #506264;
+    cursor: pointer;
+    font-size: 0.9em;
+}
+
+.filterSelect:hover {
+    border-color: rgba(171, 169, 231, 0.5);
+}
+
 .recipesContainer {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -36,6 +57,7 @@
     width: 16.4vw;
     cursor: pointer;
     text-decoration: none;
+    transition: all 0.3s ease;
 }
 
 .recipeCard:hover {
@@ -47,7 +69,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    color:#506264;
+    color: #506264;
 }
 
 .recipeTitle {
@@ -64,7 +86,7 @@
     height: 75%;
     width: 100%;
     border-radius: 10px;
-    object-fit:cover;
+    object-fit: cover;
 }
 
 .recipeInfoWrapper {
@@ -100,13 +122,54 @@
 
 .recipeClock {
     font-size: 1.4em !important;
-    margin-right: .3em
+    margin-right: .3em;
 }
 
 .recipeHeart {
     font-size: 1.3em !important;
+    transition: color 0.3s ease;
+}
 
-    &:hover {
-        color: #EC4A27;
-    }
+.recipeHeart:hover {
+    color: #EC4A27;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1em;
+    margin: 2em 0;
+    padding-bottom: 2em;
+}
+
+.paginationButton {
+    padding: 0.5em 1em;
+    border: none;
+    border-radius: 7px;
+    background-color: rgba(171, 169, 231, 0.3);
+    color: #506264;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.paginationButton:hover:not(:disabled) {
+    background-color: rgba(171, 169, 231, 0.5);
+}
+
+.paginationButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.pageNumber {
+    color: #506264;
+    font-weight: 600;
+}
+
+.noRecipes {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: #506264;
+    font-size: 1.2em;
 }
