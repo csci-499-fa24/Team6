@@ -31,7 +31,6 @@ const authenticateToken = (req, res, next) => {
 
 router.get('/', authenticateToken, async (req, res) => {
     const user_id =  req.user.id;
-    const apiKey = process.env.NEXT_PUBLIC_SPOONACULAR_API_KEY;
 
     try {
         // Step 1: Retrieve all recipe_ids for the user
@@ -46,19 +45,22 @@ router.get('/', authenticateToken, async (req, res) => {
             return res.status(200).json({ recipes: [], message: 'No recipes found for this user.' });
         }
 
-        // Step 2: Make API calls to Spoonacular for each recipe_id
-        const recipeDetailsPromises = recipeIds.map(recipeId => {
-            const url = `https://api.spoonacular.com/recipes/${recipeId}/information?apiKey=${apiKey}`;
-            return axios.get(url);
-        });
+        const recipeIdsString = recipeIds.join(',');
 
-        // Step 3: Wait for all API calls to complete
-        const recipeDetailsResponses = await Promise.all(recipeDetailsPromises);
+        const options = {
+            method: 'GET',
+            url: 'https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/informationBulk',
+            params: { ids: recipeIdsString },
+            headers: {
+                'x-rapidapi-key': process.env.NEXT_PUBLIC_SPOONACULAR_API_KEY,
+                'x-rapidapi-host': 'spoonacular-recipe-food-nutrition-v1.p.rapidapi.com'
+            }
+        };
 
-        // Step 4: Extract data from the API responses
-        const recipes = recipeDetailsResponses.map(response => response.data);
+        const response = await axios.request(options);
+        const recipes = response.data;
 
-        // Step 5: Send the recipes back to the user
+
         res.status(200).json({ recipes });
     } catch (error) {
         console.error('Error retrieving recipes:', error);

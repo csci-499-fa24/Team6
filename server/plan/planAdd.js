@@ -49,10 +49,131 @@ router.post('/', authenticateToken, async (req, res) => {
             [user_id, recipeId]
         );
 
-        res.status(201).json({ message: 'Recipe added to your plan.' });
+
+        let totalNutrients = {
+            protein: 0,
+            carbohydrates: 0,
+            total_fat: 0,
+            saturated_fat: 0,
+            fiber: 0,
+            sodium: 0,
+            sugar: 0,
+            calories: 0,
+        };
+
+        const url = `https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/${recipeId}/nutritionWidget.json`;
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'X-RapidAPI-Host': 'spoonacular-recipe-food-nutrition-v1.p.rapidapi.com',
+                'X-RapidAPI-Key': process.env.NEXT_PUBLIC_SPOONACULAR_API_KEY
+            }
+        });
+
+        const detail = await response.json();
+        const nutrients = detail.nutrients;
+
+        nutrients.forEach(nutrient => {
+            switch (nutrient.name) {
+                case "Calories":
+                    totalNutrients.calories += nutrient.amount;
+                    break;
+                case "Protein":
+                    totalNutrients.protein += nutrient.amount;
+                    break;
+                case "Carbohydrates":
+                    totalNutrients.carbohydrates += nutrient.amount;
+                    break;
+                case "Fat":
+                    totalNutrients.total_fat += nutrient.amount;
+                    break;
+                case "Saturated Fat":
+                    totalNutrients.saturated_fat += nutrient.amount;
+                    break;
+                case "Fiber":
+                    totalNutrients.fiber += nutrient.amount;
+                    break;
+                case "Sodium":
+                    totalNutrients.sodium += nutrient.amount;
+                    break;
+                case "Sugar":
+                    totalNutrients.sugar += nutrient.amount;
+                    break;
+                default:
+                    break; // Ignore other nutrients
+            }
+        });
+
+
+        const checkIntake = await pool.query(
+            'SELECT * FROM user_intake WHERE user_id = $1',
+            [user_id]
+        );
+
+        if (checkIntake.rows.length < 1) {
+            await pool.query(
+                `INSERT INTO user_intake 
+                  (user_id, protein, carbohydrates, total_fat, saturated_fat, fiber, sodium, sugar, calories) 
+                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+                [
+                    user_id,
+                    totalNutrients.protein,
+                    totalNutrients.carbohydrates,
+                    totalNutrients.total_fat,
+                    totalNutrients.saturated_fat,
+                    totalNutrients.fiber,
+                    totalNutrients.sodium,
+                    totalNutrients.sugar,
+                    totalNutrients.calories
+                ]
+            );
+        }
+
+        else {
+            const existingData = checkIntake.rows[0];
+
+            const updatedNutrients = {
+                protein: existingData.protein ? existingData.protein + totalNutrients.protein : totalNutrients.protein,
+                carbohydrates: existingData.carbohydrates ? existingData.carbohydrates + totalNutrients.carbohydrates : totalNutrients.carbohydrates,
+                total_fat: existingData.total_fat ? existingData.total_fat + totalNutrients.total_fat : totalNutrients.total_fat,
+                saturated_fat: existingData.saturated_fat ? existingData.saturated_fat + totalNutrients.saturated_fat : totalNutrients.saturated_fat,
+                fiber: existingData.fiber ? existingData.fiber + totalNutrients.fiber : totalNutrients.fiber,
+                sodium: existingData.sodium ? existingData.sodium + totalNutrients.sodium : totalNutrients.sodium,
+                sugar: existingData.sugar ? existingData.sugar + totalNutrients.sugar : totalNutrients.sugar,
+                calories: existingData.calories ? existingData.calories + totalNutrients.calories : totalNutrients.calories
+            };
+
+            // Update the row in the database
+            await pool.query(
+                `UPDATE user_intake SET 
+                protein = $2, 
+                carbohydrates = $3, 
+                total_fat = $4, 
+                saturated_fat = $5, 
+                fiber = $6, 
+                sodium = $7, 
+                sugar = $8,
+                calories = $9,  
+                WHERE user_id = $1`,
+                [
+                    user_id,
+                    updatedNutrients.protein,
+                    updatedNutrients.carbohydrates,
+                    updatedNutrients.total_fat,
+                    updatedNutrients.saturated_fat,
+                    updatedNutrients.fiber,
+                    updatedNutrients.sodium,
+                    updatedNutrients.sugar,
+                    updatedNutrients.calories,
+                ]
+            );
+        }
+
+
+        res.status(201).json({ message: 'Recipe added to your history.' });
     } catch (error) {
         console.error('Error adding recipe to plan:', error);
-        res.status(500).json({ message: 'Failed to add recipe to plan.' });
+        res.status(500).json({ message: 'Failed to add recipe to history.' });
     }
 });
 module.exports = router;

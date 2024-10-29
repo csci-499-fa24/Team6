@@ -43,8 +43,9 @@ router.post('/', authenticateToken, async (req, res) => {
             saturated_fat = $4, 
             fiber = $5, 
             sodium = $6, 
-            sugar = $7
-        WHERE user_id = $8
+            sugar = $7,
+            calories = $8
+        WHERE user_id = $9
     `;
     await pool.query(updateQuery, [
         goals.protein === '' ? null : goals.protein, // if empty string, set to null
@@ -54,6 +55,7 @@ router.post('/', authenticateToken, async (req, res) => {
         goals.fiber === '' ? null : goals.fiber,
         goals.sodium === '' ? null : goals.sodium,
         goals.sugar === '' ? null : goals.sugar,
+        goals.calories == '' ? null: goals.calories,
         user_id
     ]);
 

@@ -5,59 +5,59 @@ import styles from './account.module.css';
 import { CustomTextField, CustomCircularProgress } from "../components/customComponents.js";
 
 const colorMapping = {
-    calories: { 
-      title: 'Calories', 
-      progressColor: '#74DE72', 
-      backgroundColor: '#C3F5C2' 
+    protein: {
+        title: 'Protein',
+        progressColor: '#72B1F1',
+        backgroundColor: '#B6D9FC'
     },
-    protein: { 
-      title: 'Protein', 
-      progressColor: '#72B1F1', 
-      backgroundColor: '#B6D9FC' 
+    total_fat: {
+        title: 'Total Fat',
+        progressColor: '#EC4A27',
+        backgroundColor: '#F5AD9D'
     },
-    total_fat: { 
-      title: 'Total Fat', 
-      progressColor: '#EC4A27', 
-      backgroundColor: '#F5AD9D' 
+    saturated_fat: {
+        title: 'Saturated Fat',
+        progressColor: '#FF6D99',
+        backgroundColor: '#F5C5CE'
     },
-    saturated_fat: { 
-      title: 'Saturated Fat', 
-      progressColor: '#FF6D99', 
-      backgroundColor: '#F5C5CE' 
+    carbohydrates: {
+        title: 'Carbohydrates',
+        progressColor: '#EBB06C',
+        backgroundColor: '#FFCF96'
     },
-    carbohydrates: { 
-      title: 'Carbohydrates', 
-      progressColor: '#EBB06C', 
-      backgroundColor: '#FFCF96' 
+    fiber: {
+        title: 'Fiber',
+        progressColor: '#7D975C',
+        backgroundColor: '#C1CBB9'
     },
-    fiber: { 
-      title: 'Fiber', 
-      progressColor: '#7D975C', 
-      backgroundColor: '#C1CBB9' 
+    sugar: {
+        title: 'Sugar',
+        progressColor: '#8893F2',
+        backgroundColor: '#C9C8FF'
     },
-    sugar: { 
-      title: 'Sugar', 
-      progressColor: '#8893F2', 
-      backgroundColor: '#C9C8FF' 
+    sodium: {
+        title: 'Sodium',
+        progressColor: '#9474A3',
+        backgroundColor: '#CBA6DD'
     },
-    sodium: { 
-      title: 'Sodium', 
-      progressColor: '#9474A3', 
-      backgroundColor: '#CBA6DD' 
-    },
-  };
-  
+    calories: {
+        title: 'Calories',
+        progressColor: '#74DE72',
+        backgroundColor: '#C3F5C2'
+    }
+};
+
 
 const NutritionInput = () => {
     const [goals, setGoals] = useState({
-        calories: '',
         protein: '',
         carbohydrates: '',
         total_fat: '',
         saturated_fat: '',
         fiber: '',
         sodium: '',
-        sugar: ''
+        sugar: '',
+        calories: '',
     });
     const [consumed, setConsumed] = useState(null);
 
@@ -75,6 +75,8 @@ const NutritionInput = () => {
                 // Remove user_id and set goals
                 const filteredGoals = { ...goals };
                 delete filteredGoals.user_id;
+                const filteredConsumed = { ...consumed };
+                delete filteredConsumed.user_id;
                 setGoals(filteredGoals);
                 setConsumed(consumed);
             } catch (error) {
@@ -95,12 +97,12 @@ const NutritionInput = () => {
 
     const handleSaveGoals = async () => {
         const token = localStorage.getItem('token');
-    
+
         // Convert empty strings to null before sending to the backend
         const cleanedGoals = Object.fromEntries(
             Object.entries(goals).map(([key, value]) => [key, value === "" ? null : value])
         );
-    
+
         try {
             const response = await fetch(process.env.NEXT_PUBLIC_SERVER_URL + '/api/nutrition-update', {
                 method: 'POST',
@@ -126,11 +128,12 @@ const NutritionInput = () => {
             console.error("Error saving nutritional goals", error);
         }
     };
-    
+
 
     if (!consumed) {
         return <div>Loading...</div>;
     }
+
 
     const NutritionalGoals = Object.keys(goals).filter((key) => goals[key] !== null);
 
@@ -152,8 +155,8 @@ const NutritionInput = () => {
                             <div style={{ marginLeft: '1.5em' }}>grams</div>
                         </div>
                     ))}
-                    <div onClick={handleSaveGoals} className={styles.saveButton}>Save Changes</div>
                 </div>
+                <div onClick={handleSaveGoals} className={styles.saveButton}>Save Changes</div>
             </div>
 
             <div className={styles.trackerSection}>
@@ -164,12 +167,14 @@ const NutritionInput = () => {
                             <div className={styles.trackerVisual}>
                                 <div className={styles.trackerItemTitle}>{colorMapping[nutrient]?.title || nutrient} </div>
                                 <CustomCircularProgress
-                                    value={(consumed[nutrient] / goals[nutrient]) * 100 || 0}
-                                    progressColor={colorMapping[nutrient]?.progressColor || '#74DE72'} 
+                                    value={Math.min(((consumed[nutrient] ?? 0) / goals[nutrient]) * 100, 100)}
+                                    progressColor={colorMapping[nutrient]?.progressColor || '#74DE72'}
                                     backgroundColor={colorMapping[nutrient]?.backgroundColor || '#C3F5C2'}
                                 />
                             </div>
-                            <div className={styles.data}>
+                            <div
+                                className={`${styles.data} ${((consumed[nutrient] ?? 0) / goals[nutrient]) * 100 > 100 ? styles.exceeded : ''}`}
+                            >
                                 {consumed[nutrient] || 0} / {goals[nutrient] || 0} g
                             </div>
                         </div>

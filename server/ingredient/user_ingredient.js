@@ -36,7 +36,7 @@ router.post('/', authenticateToken, async (req, res) => {
     try {
         // First query: Get the ingredient_id, amount, and unit from user_ingredient
         const userIngredientsQuery = await pool.query(
-            'SELECT ingredient_id, amount, unit FROM user_ingredient WHERE user_id = $1',
+            'SELECT ingredient_id, amount, unit, possible_units FROM user_ingredient WHERE user_id = $1',
             [user_id]
         );
 
@@ -64,7 +64,8 @@ router.post('/', authenticateToken, async (req, res) => {
                 name: ingredientName ? ingredientName.name : 'Unknown ingredient',  // Ensure we handle missing names gracefully
                 amount: ing.amount,
                 unit: ing.unit,
-                ingredient_id: ing.ingredient_id
+                ingredient_id: ing.ingredient_id,
+                possible_units: ing.possible_units
             };
         });
 

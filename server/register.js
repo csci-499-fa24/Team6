@@ -59,14 +59,14 @@ router.post('/', async (req, res) => {
 
         // Insert or update nutritional goals
         if (nutritionalGoals) {
-            const { protein, carbohydrates, total_fat, saturated_fat, fiber, sodium, sugar } = nutritionalGoals;
+            const { protein, carbohydrates, total_fat, saturated_fat, fiber, sodium, sugar, calories } = nutritionalGoals;
             
             // Convert empty strings to null before inserting
             const cleanValue = (value) => (value === '' ? null : value);
 
             const upsertNutritionQuery = `
                 INSERT INTO user_nutritional_goals 
-                (user_id, protein, carbohydrates, total_fat, saturated_fat, fiber, sodium, sugar)
+                (user_id, protein, carbohydrates, total_fat, saturated_fat, fiber, sodium, sugar, calories)
                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
                 ON CONFLICT (user_id) 
                 DO UPDATE SET 
@@ -76,7 +76,8 @@ router.post('/', async (req, res) => {
                     saturated_fat = EXCLUDED.saturated_fat,
                     fiber = EXCLUDED.fiber,
                     sodium = EXCLUDED.sodium,
-                    sugar = EXCLUDED.sugar
+                    sugar = EXCLUDED.sugar,
+                    calories = EXCLUDED.calories
             `;
             await db.query(upsertNutritionQuery, [
                 userId,
@@ -86,7 +87,8 @@ router.post('/', async (req, res) => {
                 cleanValue(saturated_fat),
                 cleanValue(fiber),
                 cleanValue(sodium),
-                cleanValue(sugar)
+                cleanValue(sugar),
+                cleanValue(calories),
             ]);
         }
 
