@@ -1,5 +1,5 @@
 'use client';
-import { useRouter  } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import Navbar from "../components/navbar";
 import IngredientInput from './IngredientInput'
 import NutritionInput from "./NutritionInput";
@@ -70,45 +70,42 @@ const Pantry = () => {
   return (
     <div>
       <Navbar />
-      <div className={styles.pageWrapper}>
-        <div className={styles.pantryContent}>
-          <div className={styles.sidebar}>
-            <div
-              onClick={() => handleSectionClick('Pantry')}
-              className={activeSection === 'Pantry' ? styles.active : styles.notActive}
-            >
-              Pantry
-            </div>
-            <div
-              onClick={() => handleSectionClick('Allergens')}
-              className={activeSection === 'Allergens' ? styles.active : styles.notActive}
-            >
-              Allergens
-            </div>
-            <div
-              onClick={() => handleSectionClick('Nutrition')}
-              className={activeSection === 'Nutrition' ? styles.active : styles.notActive}
-            >
-              Nutrition
-            </div>
-            <div
-              onClick={() => handleSectionClick('History')}
-              className={activeSection === 'History' ? styles.active : styles.notActive}
-            >
-              Recipe History
-            </div>
+      <div className={styles.pantryContent}>
+        <div className={styles.sidebar}>
+          <div
+            onClick={() => handleSectionClick('Pantry')}
+            className={activeSection === 'Pantry' ? styles.active : styles.notActive}
+          >
+            Pantry
           </div>
-          <div className={styles.seperator}></div>
-          <div className={styles.pantrySection}>
-            {activeSection === 'Pantry' && (
-              <>
-                <IngredientInput />
-              </>
-            )}
-            {activeSection === 'Allergens' && <AllergenInput />}
-            {activeSection === 'Nutrition' && <NutritionInput />}
-            {activeSection === 'History' && <RecipeHistory />}
+          <div
+            onClick={() => handleSectionClick('Allergens')}
+            className={activeSection === 'Allergens' ? styles.active : styles.notActive}
+          >
+            Allergens
           </div>
+          <div
+            onClick={() => handleSectionClick('Nutrition')}
+            className={activeSection === 'Nutrition' ? styles.active : styles.notActive}
+          >
+            Nutrition
+          </div>
+          <div
+            onClick={() => handleSectionClick('History')}
+            className={activeSection === 'History' ? styles.active : styles.notActive}
+          >
+            Recipe History
+          </div>
+        </div>
+        <div className={styles.pantrySection}>
+          {activeSection === 'Pantry' && (
+            <>
+              <IngredientInput />
+            </>
+          )}
+          {activeSection === 'Allergens' && <AllergenInput />}
+          {activeSection === 'Nutrition' && <NutritionInput />}
+          {activeSection === 'History' && <RecipeHistory />}
         </div>
       </div>
     </div>

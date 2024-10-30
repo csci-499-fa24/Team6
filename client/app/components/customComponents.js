@@ -12,7 +12,7 @@ export const CustomTextField = styled(TextField)(({ }) => ({
     '@media (min-width: 650px) and (max-width: 2000px)': {
       fontSize: '13px',
     },
-    '@media (min-width: 499px) and (max-width: 650px)': { 
+    '@media (min-width: 499px) and (max-width: 650px)': {
       fontSize: '13px',
     },
     '@media screen and (max-width: 499px)': {
@@ -48,7 +48,7 @@ export const CustomTextField = styled(TextField)(({ }) => ({
       '@media (min-width: 650px) and (max-width: 2000px)': {
         fontSize: '12px',
       },
-      '@media (min-width: 499px) and (max-width: 650px)': { 
+      '@media (min-width: 499px) and (max-width: 650px)': {
         fontSize: '10px',
       },
       '@media screen and (max-width: 499px)': {
@@ -61,6 +61,18 @@ export const CustomTextField = styled(TextField)(({ }) => ({
 export const CustomDropdown = styled(Select)({
   backgroundColor: 'white !important',
   borderRadius: '10px',
+  '@media (max-width: 600px)': {
+    fontSize: '3vw',
+  },
+  '@media (min-width: 650px) and (max-width: 2000px)': {
+    fontSize: '13px',
+  },
+  '@media (min-width: 499px) and (max-width: 650px)': {
+    fontSize: '13px',
+  },
+  '@media screen and (max-width: 499px)': {
+    fontSize: '12px',
+  },
   '& .MuiOutlinedInput-notchedOutline': {
     border: '2px solid #E0E0E0',
     borderRadius: '10px',
@@ -76,10 +88,13 @@ export const CustomDropdown = styled(Select)({
 
   '&.MuiInputBase-root': {
     fontFamily: 'Inter',
-    '@media (min-width: 650px) and (max-width: 2000px)': {
-      fontSize: '13px',
+    '@media (max-width: 600px)': {
+      fontSize: '2.6vw',
     },
-    '@media (min-width: 498px) and (max-width: 650px)': { 
+    '@media (min-width: 650px) and (max-width: 2000px)': {
+      fontSize: '12px',
+    },
+    '@media (min-width: 498px) and (max-width: 650px)': {
       fontSize: '10px',
     },
     '@media screen and (max-width: 499px)': {
