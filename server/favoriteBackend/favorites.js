@@ -98,7 +98,7 @@ router.get('/', authenticateToken, async (req, res) => {
         const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
         const recipeDetailsPromises = recipeIds.map(async (recipeId, index) => {
-            await delay(index * 1000); // Delay by 1 second for each request
+            await delay(index * 1000);
             const url = `https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/${recipeId}/information`;
             return axios.get(url, {
                 headers: {

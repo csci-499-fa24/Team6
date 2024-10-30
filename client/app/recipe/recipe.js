@@ -7,7 +7,6 @@ import axios from 'axios';
 import styles from './RecipePage.module.css';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import FavoriteIcon from '@mui/icons-material/Favorite';
 import LocalDiningIcon from '@mui/icons-material/LocalDining';
 import { Button } from '@mui/material';
 
@@ -23,7 +22,6 @@ const RecipePage = () => {
     });
     const [page, setPage] = useState(1);
     const recipesPerPage = 12; // Display 12 recipes per page
-    const [favoriteRecipes, setFavoriteRecipes] = useState([]); // State to track favorite recipes
 
     // Fetch user ingredients from your API
     const fetchUserIngredients = async () => {
@@ -44,15 +42,15 @@ const RecipePage = () => {
         }
     };
 
-    // Fetch recipes based on the user's ingredients
     const fetchRecipes = async () => {
-        if (userIngredients.length === 0) return;
+        if (userIngredients.length === 0) return; // Wait until ingredients are fetched
 
         try {
             const headers = {
                 'x-rapidapi-key': process.env.NEXT_PUBLIC_SPOONACULAR_API_KEY,
                 'x-rapidapi-host': 'spoonacular-recipe-food-nutrition-v1.p.rapidapi.com',
             };
+
             const ingredients = userIngredients.join(',');
 
             const response = await axios.get(`https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/findByIngredients`, {
@@ -69,55 +67,37 @@ const RecipePage = () => {
             });
 
             const basicRecipes = response.data;
-            setRecipes(basicRecipes);
+            setRecipes(basicRecipes)
+            const recipeIds = basicRecipes.map(recipe => recipe.id).join(',');
+
+            const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+            await delay(1000);
+            const recipeDetails = await axios.get(`https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/informationBulk`, {
+                params: {
+                    ids: recipeIds,
+                    includeNutrition: true,
+                },
+                headers
+            });
+
+            const combinedRecipes = basicRecipes.map(basicRecipe => {
+                const detailedRecipe = recipeDetails.data.find(detailed => detailed.id === basicRecipe.id);
+                return {
+                    ...basicRecipe,
+                    readyInMinutes: detailedRecipe ? detailedRecipe.readyInMinutes : null,
+                    instructions: detailedRecipe ? detailedRecipe.analyzedInstructions : null,
+                    nutrition: detailedRecipe ? detailedRecipe.nutrition : null,
+                    servings: detailedRecipe ? detailedRecipe.servings : null,
+                };
+            });
+
+            setRecipes(combinedRecipes);
+
         } catch (error) {
             console.error('Error fetching recipes:', error);
             setError('Failed to fetch recipes.');
         } finally {
             setLoading(false);
-        }
-    };
-
-    const fetchFavorites = async () => {
-        const token = localStorage.getItem('token');
-        try {
-            const response = await axios.get(process.env.NEXT_PUBLIC_SERVER_URL + '/api/favorites', {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            const favoriteIds = response.data.recipes.map(recipe => recipe.id);
-            setFavoriteRecipes(favoriteIds);
-        } catch (error) {
-            console.error('Error fetching favorites:', error);
-        }
-    };
-
-    const toggleFavorite = async (recipeId) => {
-        const token = localStorage.getItem('token');
-        const isFavorited = favoriteRecipes.includes(recipeId);
-
-        try {
-            if (isFavorited) {
-                await axios.delete(process.env.NEXT_PUBLIC_SERVER_URL + '/api/favorites', {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    },
-                    data: { recipeId }
-                });
-                setFavoriteRecipes(prev => prev.filter(id => id !== recipeId)); // Remove from favorites
-            } else {
-                await axios.post(process.env.NEXT_PUBLIC_SERVER_URL + '/api/favorites', {
-                    recipeId
-                }, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-                setFavoriteRecipes(prev => [...prev, recipeId]); // Add to favorites
-            }
-        } catch (error) {
-            console.error('Error toggling favorite:', error);
         }
     };
 
@@ -130,10 +110,6 @@ const RecipePage = () => {
             fetchRecipes();
         }
     }, [userIngredients, filters, page]);
-
-    useEffect(() => {
-        fetchFavorites(); // Fetch favorites on mount
-    }, []);
 
     const handleFilterChange = (e) => {
         setFilters({
@@ -235,38 +211,36 @@ const RecipePage = () => {
                                     <img src={recipe.image} alt={recipe.title} className={styles.recipeImage} />
                                     <div className={styles.recipeTitleWrapper}>
                                         <div className={styles.recipeTitle}>{recipe.title}</div>
-                                        <div onClick={(e) => {
-                                            e.stopPropagation();
-                                            toggleFavorite(recipe.id);
-                                        }}>
-                                            {favoriteRecipes.includes(recipe.id) ? (
-                                                <FavoriteIcon className={styles.recipeHeart} />
-                                            ) : (
-                                                <FavoriteBorderIcon className={styles.recipeHeart} />
-                                            )}
-                                        </div>
+                                        <FavoriteBorderIcon className={styles.recipeHeart} />
                                     </div>
-                                    <div className={styles.recipeDetails}>
-                                        <AccessTimeIcon className={styles.recipeDetailIcon} />
-                                        <span>{recipe.readyInMinutes} min</span>
-                                        <LocalDiningIcon className={styles.recipeDetailIcon} />
-                                        <span>{recipe.servings} servings</span>
+                                    <div className={styles.recipeInfoWrapper}>
+                                        <div className={styles.recipeTime}><AccessTimeIcon className={styles.recipeClock} />{recipe.readyInMinutes} min</div>
+                                        <div className={styles.recipeIngredients}><LocalDiningIcon className={styles.recipeClock} />{recipe.usedIngredientCount}/{recipe.usedIngredientCount + recipe.missedIngredientCount} Ingredients</div>
                                     </div>
                                 </Link>
                             ))
                         ) : (
-                            <p>No recipes found.</p>
+                            <p>No recipes found for your ingredients.</p>
                         )}
                     </div>
                 )}
 
+                {/* Pagination */}
                 <div className={styles.pagination}>
-                    <Button onClick={handlePreviousPage} disabled={page === 1}>
+                    <button
+                        onClick={handlePreviousPage}
+                        disabled={page === 1}
+                        className={styles.paginationButton}
+                    >
                         Previous
-                    </Button>
-                    <Button onClick={handleNextPage}>
+                    </button>
+                    <span className={styles.pageNumber}>Page {page}</span>
+                    <button
+                        onClick={handleNextPage}
+                        className={styles.paginationButton}
+                    >
                         Next
-                    </Button>
+                    </button>
                 </div>
             </div>
         </div>

@@ -13,9 +13,9 @@ const FavoritePage = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    // Fetch user's favorite recipes
     const fetchFavoriteRecipes = async (token) => {
         try {
+            await new Promise((resolve) => setTimeout(resolve, 500));
             const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/favorites`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -38,6 +38,7 @@ const FavoritePage = () => {
 
     const removeFavoriteRecipe = async (recipeId, token) => {
         try {
+            await new Promise((resolve) => setTimeout(resolve, 500));
             const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/favorites`, {
                 method: 'DELETE',
                 headers: {
