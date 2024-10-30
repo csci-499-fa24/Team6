@@ -17,13 +17,14 @@ const Discover = () => {
     const [error, setError] = useState(null);
     const [page, setPage] = useState(1);
     const [authenticated, setAuthenticated] = useState(false);
+    const [userAllergens, setUserAllergens] = useState([]);
     const [filters, setFilters] = useState({
         type: '',
         cuisine: '',
         diet: '',
+        allergens: [],
         searchQuery: ''
     });
-    const [userFavorites, setUserFavorites] = useState([]);
     const recipesPerPage = 12;
     const router = useRouter();
 
@@ -43,6 +44,7 @@ const Discover = () => {
 
                     if (response.status === 200) {
                         setAuthenticated(true);
+                        fetchUserAllergens();
                     } else {
                         router.push('/login');
                     }
@@ -56,19 +58,34 @@ const Discover = () => {
         }
     }, [router]);
 
-    // Fetch user favorites
-    const fetchUserFavorites = async () => {
+    const fetchUserAllergens = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/favorites`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/allergies`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             });
-            setUserFavorites(response.data.favorites);
+            if (response.ok) {
+                const data = await response.json();
+                setUserAllergens(data.allergies);
+            }
         } catch (error) {
-            console.error('Error fetching favorites:', error);
+            console.error('Error fetching allergens:', error);
         }
+    };
+
+    const handleAllergenChange = (allergen) => {
+        setFilters(prevFilters => {
+            const updatedAllergens = prevFilters.allergens.includes(allergen)
+                ? prevFilters.allergens.filter(a => a !== allergen)
+                : [...prevFilters.allergens, allergen];
+
+            return {
+                ...prevFilters,
+                allergens: updatedAllergens
+            };
+        });
     };
 
     // Fetch random or filtered recipes when the page loads or user clicks search
@@ -82,7 +99,8 @@ const Discover = () => {
                     type: filters.type || '',
                     cuisine: filters.cuisine || '',
                     diet: filters.diet || '',
-                    search: filters.searchQuery || ''
+                    search: filters.searchQuery || '',
+                    intolerances: filters.allergens.join(',')
                 }
             });
 
@@ -122,43 +140,10 @@ const Discover = () => {
         setPage(prevPage => (prevPage > 1 ? prevPage - 1 : prevPage));
     };
 
-    const toggleFavorite = async (recipeId) => {
-        const token = localStorage.getItem('token');
-        const isFavorite = userFavorites.includes(recipeId);
-
-        try {
-            const response = isFavorite
-                ? await axios.delete(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/favorites`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                    data: { recipeId }
-                  })
-                : await axios.post(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/favorites`, { recipeId }, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                  });
-
-            console.log('Response:', response.data);
-
-            setUserFavorites(prevFavorites =>
-                isFavorite
-                ? prevFavorites.filter(id => id !== recipeId)
-                : [...prevFavorites, recipeId]
-            );
-        } catch (error) {
-            console.error('Error updating favorites:', error.response ? error.response.data : error.message);
-        }
-    };
-
-    // Fetch random recipes and user favorites on initial load
+    // Fetch random recipes on initial load
     useEffect(() => {
         fetchRecipes();
-        if (authenticated) {
-            fetchUserFavorites();
-        }
-    }, [page, authenticated]);
+    }, [page]);
 
     if (loading) {
         return <div>Loading...</div>;
@@ -245,39 +230,71 @@ const Discover = () => {
                     <option value="primal">Primal</option>
                     <option value="whole30">Whole30</option>
                 </select>
+
+                <select
+                    name="allergens"
+                    value={filters.allergens}
+                    onChange={(e) => {
+                        const value = e.target.value;
+                        setFilters(prev => ({
+                            ...prev,
+                            allergens: value ? [value] : []
+                        }));
+                    }}
+                    className={styles.filterSelect}
+                >
+                    <option value="">Select Allergen</option>
+                    {userAllergens.map((allergen) => (
+                        <option key={allergen} value={allergen}>
+                            {allergen}
+                        </option>
+                    ))}
+                </select>
             </div>
 
             {/* Recipe Grid */}
             <div className={styles.recipesContainer}>
                 {recipes.length > 0 ? (
                     recipes.map((recipe) => (
-                        <div key={recipe.id} className={styles.recipeCard}>
-                            <Link href={`/discover/${recipe.id}`}>
-                                <img src={recipe.image} alt={recipe.title} className={styles.recipeImage} />
-                                <div className={styles.recipeTitleWrapper}>
-                                    <div className={styles.recipeTitle}>{recipe.title}</div>
-                                    <div className={styles.recipeDetails}>
-                                        <AccessTimeIcon /> <span>{recipe.cookingTime} min</span>
-                                        <LocalDiningIcon /> <span>{recipe.servings} servings</span>
-                                    </div>
-                                </div>
-                            </Link>
-                            <div className={styles.favoriteIcon} onClick={() => toggleFavorite(recipe.id)}>
-                                <FavoriteBorderIcon
-                                    style={{ color: Array.isArray(userFavorites) && userFavorites.includes(recipe.id) ? 'red' : 'gray' }}
-                                />
+                        <Link href={`/discover/${recipe.id}`} key={recipe.id} className={styles.recipeCard}>
+                            <img src={recipe.image} alt={recipe.title} className={styles.recipeImage} />
+                            <div className={styles.recipeTitleWrapper}>
+                                <div className={styles.recipeTitle}>{recipe.title}</div>
+                                <FavoriteBorderIcon className={styles.recipeHeart} />
                             </div>
-                        </div>
+                            <div className={styles.recipeInfoWrapper}>
+                                <div className={styles.recipeTime}>
+                                    <AccessTimeIcon className={styles.recipeClock} />
+                                    {recipe.readyInMinutes} min
+                                </div>
+                                <div className={styles.recipeIngredients}>
+                                    <LocalDiningIcon className={styles.recipeClock} />
+                                    {recipe.totalIngredients} Ingredients
+                                </div>
+                            </div>
+                        </Link>
                     ))
                 ) : (
-                    <div>No recipes found.</div>
+                    <p className={styles.noRecipes}>No recipes found.</p>
                 )}
             </div>
 
-            {/* Pagination Buttons */}
+            {/* Pagination */}
             <div className={styles.pagination}>
-                <Button disabled={page === 1} onClick={handlePreviousPage}>Previous</Button>
-                <Button onClick={handleNextPage}>Next</Button>
+                <button
+                    onClick={handlePreviousPage}
+                    disabled={page === 1}
+                    className={styles.paginationButton}
+                >
+                    Previous
+                </button>
+                <span className={styles.pageNumber}>Page {page}</span>
+                <button
+                    onClick={handleNextPage}
+                    className={styles.paginationButton}
+                >
+                    Next
+                </button>
             </div>
         </div>
     );

@@ -28,6 +28,9 @@ router.post('/', authenticateToken, async (req, res) => {
     const { recipeId } = req.body;
     const user_id = req.user.id;
 
+    console.log('Recipe ID:', recipeId); // Debugging line
+    console.log('User ID:', user_id); // Debugging line
+
     try {
         const existingFavorite = await pool.query(
             'SELECT * FROM user_favorites WHERE user_id = $1 AND recipe_id = $2',
@@ -116,6 +119,24 @@ router.get('/', authenticateToken, async (req, res) => {
     } catch (error) {
         console.error('Error retrieving favorite recipes:', error);
         res.status(500).json({ message: 'Failed to retrieve favorite recipes.' });
+    }
+});
+
+router.delete('/:recipeId', async (req, res) => {
+    const { recipeId } = req.params;
+    const token = req.headers.authorization?.split(' ')[1]; // Extract token
+    if (!token) return res.status(401).send('Unauthorized');
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET); // Verify token
+        const userId = decoded.userId; // Get userId from token
+
+        // Remove from favorites
+        await db.query('DELETE FROM user_favorites WHERE user_id = $1 AND recipe_id = $2', [userId, recipeId]);
+        return res.status(200).send({ message: 'Recipe removed from favorites!' });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).send('Server error.');
     }
 });
 

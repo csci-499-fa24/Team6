@@ -67,7 +67,7 @@ const RecipePage = () => {
             });
 
             const basicRecipes = response.data;
-            setRecipes(basicRecipes)
+            setRecipes(basicRecipes);
             const recipeIds = basicRecipes.map(recipe => recipe.id).join(',');
 
             const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
@@ -124,6 +124,71 @@ const RecipePage = () => {
 
     const handlePreviousPage = () => {
         setPage(prevPage => (prevPage > 1 ? prevPage - 1 : prevPage));
+    };
+
+    const addAndRemoveFavorites = async (recipeId) => {
+        try {
+            const token = localStorage.getItem('token');
+
+            // Check if the recipe is already in favorites
+            const checkResponse = await axios.get(
+                `${process.env.NEXT_PUBLIC_SERVER_URL}/api/favorites`,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
+
+            const isFavorite = checkResponse.data.recipes.some(recipe => recipe.id === recipeId);
+
+            if (isFavorite) {
+                // If it is already in favorites, remove it
+                const response = await axios.delete(
+                    `${process.env.NEXT_PUBLIC_SERVER_URL}/api/favorites`,
+                    {
+                        data: { recipeId },
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                );
+
+                if (response.status === 200) {
+                    alert(`Recipe ${recipeId} removed from favorites.`);
+                }
+            } else {
+                // If not in favorites, add it
+                const response = await axios.post(
+                    `${process.env.NEXT_PUBLIC_SERVER_URL}/api/favorites`,
+                    { recipeId },
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                );
+
+                if (response.status === 201) {
+                    alert(`Recipe ${recipeId} added to favorites!`);
+                }
+            }
+        } catch (error) {
+            if (error.response && error.response.data) {
+                const message = error.response.data.message;
+                if (message === 'Recipe already in favorites.') {
+                    alert(`Recipe ${recipeId} is already in favorites.`);
+                } else {
+                    alert('An error occurred while adding/removing from favorites: ' + message);
+                }
+            } else {
+                console.error('Error adding/removing recipe to favorites:', error);
+                alert('An unexpected error occurred. Please try again later.');
+            }
+        }
     };
 
     return (
@@ -200,47 +265,46 @@ const RecipePage = () => {
                     <div className={styles.recipesContainer}>
                         {recipes.length > 0 ? (
                             recipes.map((recipe) => (
-                                <Link
-                                    href={{ pathname: `/recipe/${recipe.id}` }}
-                                    key={recipe.id}
-                                    className={styles.recipeCard}
-                                    onClick={() => {
-                                        localStorage.setItem('selectedRecipe', JSON.stringify(recipe));
-                                    }}
-                                >
-                                    <img src={recipe.image} alt={recipe.title} className={styles.recipeImage} />
-                                    <div className={styles.recipeTitleWrapper}>
-                                        <div className={styles.recipeTitle}>{recipe.title}</div>
-                                        <FavoriteBorderIcon className={styles.recipeHeart} />
-                                    </div>
-                                    <div className={styles.recipeInfoWrapper}>
-                                        <div className={styles.recipeTime}><AccessTimeIcon className={styles.recipeClock} />{recipe.readyInMinutes} min</div>
-                                        <div className={styles.recipeIngredients}><LocalDiningIcon className={styles.recipeClock} />{recipe.usedIngredientCount}/{recipe.usedIngredientCount + recipe.missedIngredientCount} Ingredients</div>
-                                    </div>
-                                </Link>
+                                <div key={recipe.id} className={styles.recipeCard}>
+                                    <Link
+                                        href={{ pathname: `/recipe/${recipe.id}` }}
+                                        onClick={() => {
+                                            localStorage.setItem('selectedRecipe', JSON.stringify(recipe));
+                                        }}
+                                    >
+                                        <img src={recipe.image} alt={recipe.title} className={styles.recipeImage} />
+                                        <div className={styles.recipeTitleWrapper}>
+                                            <div className={styles.recipeTitle}>{recipe.title}</div>
+                                        </div>
+                                        <div className={styles.recipeInfoWrapper}>
+                                            <div className={styles.recipeTime}>
+                                                <AccessTimeIcon className={styles.recipeClock} />
+                                                {recipe.readyInMinutes} min
+                                            </div>
+                                            <div className={styles.recipeIngredients}>
+                                                <LocalDiningIcon className={styles.recipeClock} />
+                                                {recipe.usedIngredientCount}/{recipe.totalIngredientCount} Ingredients
+                                            </div>
+                                        </div>
+                                    </Link>
+                                    <Button onClick={() => addAndRemoveFavorites(recipe.id)}>
+                                        <FavoriteBorderIcon className={styles.favoriteIcon} />
+                                    </Button>
+                                </div>
                             ))
                         ) : (
-                            <p>No recipes found for your ingredients.</p>
+                            <p>No recipes found.</p>
                         )}
                     </div>
                 )}
 
-                {/* Pagination */}
                 <div className={styles.pagination}>
-                    <button
-                        onClick={handlePreviousPage}
-                        disabled={page === 1}
-                        className={styles.paginationButton}
-                    >
+                    <Button onClick={handlePreviousPage} disabled={page === 1}>
                         Previous
-                    </button>
-                    <span className={styles.pageNumber}>Page {page}</span>
-                    <button
-                        onClick={handleNextPage}
-                        className={styles.paginationButton}
-                    >
+                    </Button>
+                    <Button onClick={handleNextPage}>
                         Next
-                    </button>
+                    </Button>
                 </div>
             </div>
         </div>
