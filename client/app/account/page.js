@@ -5,6 +5,7 @@ import IngredientInput from './IngredientInput'
 import NutritionInput from "./NutritionInput";
 import AllergenInput from "./AllergenInput";
 import RecipeHistory from './RecipeHistory';
+import Profile from './Profile';
 
 import React from "react";
 import styles from './account.module.css';
@@ -97,6 +98,12 @@ const Pantry = () => {
             >
               Recipe History
             </div>
+            <div
+              onClick={() => handleSectionClick('Profile')}
+              className={activeSection === 'Profile' ? styles.active : styles.notActive}
+            >
+              Profile
+            </div>
           </div>
           <div className={styles.seperator}></div>
           <div className={styles.pantrySection}>
@@ -108,6 +115,7 @@ const Pantry = () => {
             {activeSection === 'Allergens' && <AllergenInput />}
             {activeSection === 'Nutrition' && <NutritionInput />}
             {activeSection === 'History' && <RecipeHistory />}
+            {activeSection === 'Profile' && <Profile />}
           </div>
         </div>
       </div>
