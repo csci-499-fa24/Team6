@@ -126,7 +126,9 @@ const RecipePage = () => {
         setPage(prevPage => (prevPage > 1 ? prevPage - 1 : prevPage));
     };
 
-    const addAndRemoveFavorites = async (recipeId) => {
+    const addAndRemoveFavorites = async (recipeId, e) => {
+        e.stopPropagation();
+        e.preventDefault();
         try {
             const token = localStorage.getItem('token');
 
@@ -265,35 +267,30 @@ const RecipePage = () => {
                     <div className={styles.recipesContainer}>
                         {recipes.length > 0 ? (
                             recipes.map((recipe) => (
-                                <div key={recipe.id} className={styles.recipeCard}>
-                                    <Link
-                                        href={{ pathname: `/recipe/${recipe.id}` }}
-                                        onClick={() => {
-                                            localStorage.setItem('selectedRecipe', JSON.stringify(recipe));
-                                        }}
-                                    >
-                                        <img src={recipe.image} alt={recipe.title} className={styles.recipeImage} />
-                                        <div className={styles.recipeTitleWrapper}>
-                                            <div className={styles.recipeTitle}>{recipe.title}</div>
-                                        </div>
-                                        <div className={styles.recipeInfoWrapper}>
-                                            <div className={styles.recipeTime}>
-                                                <AccessTimeIcon className={styles.recipeClock} />
-                                                {recipe.readyInMinutes} min
-                                            </div>
-                                            <div className={styles.recipeIngredients}>
-                                                <LocalDiningIcon className={styles.recipeClock} />
-                                                {recipe.usedIngredientCount}/{recipe.totalIngredientCount} Ingredients
-                                            </div>
-                                        </div>
-                                    </Link>
-                                    <Button onClick={() => addAndRemoveFavorites(recipe.id)}>
-                                        <FavoriteBorderIcon className={styles.favoriteIcon} />
-                                    </Button>
-                                </div>
+                                <Link
+                                    href={{ pathname: `/recipe/${recipe.id}` }}
+                                    key={recipe.id}
+                                    className={styles.recipeCard}
+                                    onClick={() => {
+                                        localStorage.setItem('selectedRecipe', JSON.stringify(recipe));
+                                    }}
+                                >
+                                    <img src={recipe.image} alt={recipe.title} className={styles.recipeImage} />
+                                    <div className={styles.recipeTitleWrapper}>
+                                        <div className={styles.recipeTitle}>{recipe.title}</div>
+                                        <FavoriteBorderIcon
+                                            className={styles.favoriteIcon}
+                                            onClick={(e) => addAndRemoveFavorites(recipe.id, e)}
+                                        />
+                                    </div>
+                                    <div className={styles.recipeInfoWrapper}>
+                                        <div className={styles.recipeTime}><AccessTimeIcon className={styles.recipeClock} />{recipe.readyInMinutes} min</div>
+                                        <div className={styles.recipeIngredients}><LocalDiningIcon className={styles.recipeClock} />{recipe.usedIngredientCount}/{recipe.usedIngredientCount + recipe.missedIngredientCount} Ingredients</div>
+                                    </div>
+                                </Link>
                             ))
                         ) : (
-                            <p>No recipes found.</p>
+                            <p>No recipes found for your ingredients.</p>
                         )}
                     </div>
                 )}
