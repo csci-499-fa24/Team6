@@ -1,17 +1,16 @@
 'use client';
-import { useRouter  } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import Navbar from "../components/navbar";
-import IngredientInput from './IngredientInput'
+import IngredientInput from './IngredientInput';
 import NutritionInput from "./NutritionInput";
 import AllergenInput from "./AllergenInput";
 import RecipeHistory from './RecipeHistory';
+import Settings from './Settings'; // Import the new Settings component
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styles from './account.module.css';
-import { useState, useEffect } from 'react';
 
 const Pantry = () => {
-
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [authenticated, setAuthenticated] = useState(false);
@@ -32,7 +31,6 @@ const Pantry = () => {
         return;
       } else {
         try {
-          //updated api route
           const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/protected`, {
             method: 'GET',
             headers: {
@@ -97,17 +95,20 @@ const Pantry = () => {
             >
               Recipe History
             </div>
+            <div
+              onClick={() => handleSectionClick('Settings')}
+              className={activeSection === 'Settings' ? styles.active : styles.notActive}
+            >
+              Settings
+            </div>
           </div>
           <div className={styles.seperator}></div>
           <div className={styles.pantrySection}>
-            {activeSection === 'Pantry' && (
-              <>
-                <IngredientInput />
-              </>
-            )}
+            {activeSection === 'Pantry' && <IngredientInput />}
             {activeSection === 'Allergens' && <AllergenInput />}
             {activeSection === 'Nutrition' && <NutritionInput />}
             {activeSection === 'History' && <RecipeHistory />}
+            {activeSection === 'Settings' && <Settings />} {/* Conditionally render Settings */}
           </div>
         </div>
       </div>
