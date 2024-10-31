@@ -5,7 +5,8 @@ import IngredientInput from './IngredientInput';
 import NutritionInput from "./NutritionInput";
 import AllergenInput from "./AllergenInput";
 import RecipeHistory from './RecipeHistory';
-import Settings from './Settings'; // Import the new Settings component
+import Settings from './Settings'; 
+import Profile from './Profile'; 
 
 import React, { useState, useEffect } from "react";
 import styles from './account.module.css';
@@ -101,6 +102,12 @@ const Pantry = () => {
             >
               Settings
             </div>
+            <div
+              onClick={() => handleSectionClick('Profile')}
+              className={activeSection === 'Profile' ? styles.active : styles.notActive}
+            >
+              Profile
+            </div>
           </div>
           <div className={styles.seperator}></div>
           <div className={styles.pantrySection}>
@@ -108,7 +115,8 @@ const Pantry = () => {
             {activeSection === 'Allergens' && <AllergenInput />}
             {activeSection === 'Nutrition' && <NutritionInput />}
             {activeSection === 'History' && <RecipeHistory />}
-            {activeSection === 'Settings' && <Settings />} {/* Conditionally render Settings */}
+            {activeSection === 'Settings' && <Settings />} 
+            {activeSection === 'Profile' && <Profile />} 
           </div>
         </div>
       </div>
