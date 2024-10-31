@@ -153,7 +153,7 @@ router.post('/', authenticateToken, async (req, res) => {
                 fiber = $6, 
                 sodium = $7, 
                 sugar = $8,
-                calories = $9,  
+                calories = $9  
                 WHERE user_id = $1`,
                 [
                     user_id,

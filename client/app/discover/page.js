@@ -23,7 +23,7 @@ const Discover = () => {
         cuisine: '',
         diet: '',
         allergens: [],
-        searchQuery: ''
+        searchQuery: '' 
     });
     const recipesPerPage = 12;
     const router = useRouter();
@@ -80,7 +80,6 @@ const Discover = () => {
             const updatedAllergens = prevFilters.allergens.includes(allergen)
                 ? prevFilters.allergens.filter(a => a !== allergen)
                 : [...prevFilters.allergens, allergen];
-
             return {
                 ...prevFilters,
                 allergens: updatedAllergens

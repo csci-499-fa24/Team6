@@ -62,7 +62,7 @@ const RecipeDetails = () => {
         const nutrient = recipe.nutrition.nutrients.find(n => n.name === nutrientName);
         return nutrient ? `${Math.round(nutrient.amount)} ${nutrient.unit}` : 0;
     };
-
+    
     return (
         <div>
             <Navbar />

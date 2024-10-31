@@ -83,7 +83,6 @@ const NutritionInput = () => {
                 console.error("Error fetching nutrition data", error);
             }
         };
-
         fetchNutritionData();
     }, []);
 
