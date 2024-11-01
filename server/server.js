@@ -18,6 +18,8 @@ const nutritionGetRoute = require('./nutrition/nutritionGet');
 const nutritionUpdateRoute = require('./nutrition/nutritionUpdate');
 const { body, validationResult } = require('express-validator');
 const { initializeCronJobs } = require('./email_noti/cronJobs');
+const userUpdateRoutes = require('./user/userUpdate'); // Import the user routes
+
 const app = express();
 const registerRoute = require('./register');
 const discoverRoutes = require('./discover/discoverPage');
@@ -70,6 +72,8 @@ app.use('/api/plan/remove-recipe', planRemoveRoute);
 app.use('/api/nutrition-get', nutritionGetRoute);
 app.use('/api/nutrition-update', nutritionUpdateRoute);
 app.use('/api/favorites', favoriteRoutes);
+app.use('/api/user', userUpdateRoutes); // Register the route for user-related actions
+
 
 
 // User login route

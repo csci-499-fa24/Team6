@@ -1,4 +1,3 @@
-// EditableField.js
 import { useState } from 'react';
 import styles from './Settings.module.css';
 
@@ -11,6 +10,7 @@ const EditableField = ({ label, value, onSave, isPassword = false, separator = f
         uppercase: false,
         specialChar: false,
     });
+    const [successMessage, setSuccessMessage] = useState(''); // New state for success message
 
     const validatePassword = (password) => {
         setValidationStatus({
@@ -20,17 +20,50 @@ const EditableField = ({ label, value, onSave, isPassword = false, separator = f
         });
     };
 
-    const handleSave = () => {
+    const handleSave = async () => {
         if (isPassword && newValue !== confirmValue) {
             alert('Passwords do not match');
             return;
         }
+
         if (label === "Phone Number" && !/^\d{3}-\d{3}-\d{4}$/.test(newValue)) {
             alert('Invalid phone number format. Use XXX-XXX-XXXX');
             return;
         }
-        onSave(newValue);
-        setIsEditing(false);
+
+        if (label === "Email") {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/user/update-email`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ email: newValue })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    alert(errorData.message || 'Failed to update email');
+                    return;
+                }
+
+                // Display the success message after updating
+                setSuccessMessage('Saved Successfully ✓');
+                onSave(newValue);
+                setIsEditing(false);
+
+                // Clear the success message after a delay
+                setTimeout(() => setSuccessMessage(''), 3000);
+            } catch (error) {
+                console.error('Error updating email:', error);
+                alert('An error occurred while updating email');
+            }
+        } else {
+            onSave(newValue);
+            setIsEditing(false);
+        }
     };
 
     return (
@@ -76,7 +109,11 @@ const EditableField = ({ label, value, onSave, isPassword = false, separator = f
                 ) : (
                     <div className={styles.displayContainer}>
                         <span className={styles.exampleText}>{value}</span>
-                        <button onClick={() => setIsEditing(true)} className={styles.bubbleButton}>Edit</button>
+                        {successMessage ? (
+                            <span className={styles.successMessage}>{successMessage}</span>
+                        ) : (
+                            <button onClick={() => setIsEditing(true)} className={styles.bubbleButton}>Edit</button>
+                        )}
                     </div>
                 )}
             </div>
