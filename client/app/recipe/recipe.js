@@ -67,7 +67,7 @@ const RecipePage = () => {
             });
 
             const basicRecipes = response.data;
-            setRecipes(basicRecipes)
+            setRecipes(basicRecipes);
             const recipeIds = basicRecipes.map(recipe => recipe.id).join(',');
 
             const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
@@ -84,10 +84,10 @@ const RecipePage = () => {
                 const detailedRecipe = recipeDetails.data.find(detailed => detailed.id === basicRecipe.id);
                 return {
                     ...basicRecipe,
-                    readyInMinutes: detailedRecipe ? detailedRecipe.readyInMinutes : null, 
-                    instructions: detailedRecipe ? detailedRecipe.analyzedInstructions : null, 
-                    nutrition: detailedRecipe ? detailedRecipe.nutrition : null, 
-                    servings: detailedRecipe ? detailedRecipe.servings : null, 
+                    readyInMinutes: detailedRecipe ? detailedRecipe.readyInMinutes : null,
+                    instructions: detailedRecipe ? detailedRecipe.analyzedInstructions : null,
+                    nutrition: detailedRecipe ? detailedRecipe.nutrition : null,
+                    servings: detailedRecipe ? detailedRecipe.servings : null,
                 };
             });
 
@@ -126,6 +126,73 @@ const RecipePage = () => {
         setPage(prevPage => (prevPage > 1 ? prevPage - 1 : prevPage));
     };
 
+    const addAndRemoveFavorites = async (recipeId, e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        try {
+            const token = localStorage.getItem('token');
+
+            // Check if the recipe is already in favorites
+            const checkResponse = await axios.get(
+                `${process.env.NEXT_PUBLIC_SERVER_URL}/api/favorites`,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
+
+            const isFavorite = checkResponse.data.recipes.some(recipe => recipe.id === recipeId);
+
+            if (isFavorite) {
+                // If it is already in favorites, remove it
+                const response = await axios.delete(
+                    `${process.env.NEXT_PUBLIC_SERVER_URL}/api/favorites`,
+                    {
+                        data: { recipeId },
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                );
+
+                if (response.status === 200) {
+                    alert(`Recipe ${recipeId} removed from favorites.`);
+                }
+            } else {
+                // If not in favorites, add it
+                const response = await axios.post(
+                    `${process.env.NEXT_PUBLIC_SERVER_URL}/api/favorites`,
+                    { recipeId },
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                );
+
+                if (response.status === 201) {
+                    alert(`Recipe ${recipeId} added to favorites!`);
+                }
+            }
+        } catch (error) {
+            if (error.response && error.response.data) {
+                const message = error.response.data.message;
+                if (message === 'Recipe already in favorites.') {
+                    alert(`Recipe ${recipeId} is already in favorites.`);
+                } else {
+                    alert('An error occurred while adding/removing from favorites: ' + message);
+                }
+            } else {
+                console.error('Error adding/removing recipe to favorites:', error);
+                alert('An unexpected error occurred. Please try again later.');
+            }
+        }
+    };
+
     return (
         <div>
             <Navbar />
@@ -137,9 +204,9 @@ const RecipePage = () => {
 
                 {/* Filter Section */}
                 <div className={styles.filtersContainer}>
-                    <select 
-                        name="type" 
-                        value={filters.type} 
+                    <select
+                        name="type"
+                        value={filters.type}
                         onChange={handleFilterChange}
                         className={styles.filterSelect}
                     >
@@ -150,9 +217,9 @@ const RecipePage = () => {
                         <option value="snack">Snack</option>
                     </select>
 
-                    <select 
-                        name="cuisine" 
-                        value={filters.cuisine} 
+                    <select
+                        name="cuisine"
+                        value={filters.cuisine}
                         onChange={handleFilterChange}
                         className={styles.filterSelect}
                     >
@@ -174,9 +241,9 @@ const RecipePage = () => {
                         <option value="vietnamese">Vietnamese</option>
                     </select>
 
-                    <select 
-                        name="diet" 
-                        value={filters.diet} 
+                    <select
+                        name="diet"
+                        value={filters.diet}
                         onChange={handleFilterChange}
                         className={styles.filterSelect}
                     >
@@ -205,13 +272,16 @@ const RecipePage = () => {
                                     key={recipe.id}
                                     className={styles.recipeCard}
                                     onClick={() => {
-                                        localStorage.setItem('selectedRecipe', JSON.stringify(recipe)); 
+                                        localStorage.setItem('selectedRecipe', JSON.stringify(recipe));
                                     }}
                                 >
                                     <img src={recipe.image} alt={recipe.title} className={styles.recipeImage} />
                                     <div className={styles.recipeTitleWrapper}>
                                         <div className={styles.recipeTitle}>{recipe.title}</div>
-                                        <FavoriteBorderIcon className={styles.recipeHeart} />
+                                        <FavoriteBorderIcon
+                                            className={styles.favoriteIcon}
+                                            onClick={(e) => addAndRemoveFavorites(recipe.id, e)}
+                                        />
                                     </div>
                                     <div className={styles.recipeInfoWrapper}>
                                         <div className={styles.recipeTime}><AccessTimeIcon className={styles.recipeClock} />{recipe.readyInMinutes} min</div>
@@ -225,22 +295,13 @@ const RecipePage = () => {
                     </div>
                 )}
 
-                {/* Pagination */}
                 <div className={styles.pagination}>
-                    <button 
-                        onClick={handlePreviousPage} 
-                        disabled={page === 1}
-                        className={styles.paginationButton}
-                    >
+                    <Button onClick={handlePreviousPage} disabled={page === 1}>
                         Previous
-                    </button>
-                    <span className={styles.pageNumber}>Page {page}</span>
-                    <button 
-                        onClick={handleNextPage}
-                        className={styles.paginationButton}
-                    >
+                    </Button>
+                    <Button onClick={handleNextPage}>
                         Next
-                    </button>
+                    </Button>
                 </div>
             </div>
         </div>

@@ -22,7 +22,7 @@ router.get('/random-recipes', async (req, res) => {
                 diet: diet || '', 
                 intolerances: intolerances || '', // Add intolerances parameter
                 addRecipeInformation: true,
-                sort: 'popularity', 
+                sort: 'popularity',
             };
 
             const response = await axios.get(
@@ -46,7 +46,7 @@ router.get('/random-recipes', async (req, res) => {
             }
 
         } else {
-            // If no search query or filters, fetch random recipes 
+            // If no search query or filters, fetch random recipes
             const params = {
                 number,
                 offset,
