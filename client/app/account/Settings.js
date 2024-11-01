@@ -1,4 +1,3 @@
-// Settings.js
 'use client';
 import { useState } from 'react';
 import styles from './Settings.module.css';
