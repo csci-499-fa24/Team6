@@ -12,6 +12,7 @@ import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined
 import { CustomCircularProgress } from '../../components/customComponents'
 import LocalPrintshopOutlinedIcon from '@mui/icons-material/LocalPrintshopOutlined';
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
+import jsPDF from 'jspdf';
 
 const RecipeDetails = () => {
     const [recipe, setRecipe] = useState(null);
@@ -62,7 +63,19 @@ const RecipeDetails = () => {
         const nutrient = recipe.nutrition.nutrients.find(n => n.name === nutrientName);
         return nutrient ? `${Math.round(nutrient.amount)} ${nutrient.unit}` : 0;
     };
-    
+
+    const generatePDF = () => {
+        const doc = new jsPDF();
+        const margin = 10; // Define side margin
+        const pageWidth = doc.internal.pageSize.getWidth() - margin * 2;
+        const columnWidth = pageWidth / 2; // Divide page into two columns
+        let verticalOffset = 15;
+        doc.setFont("Courier", "normal");
+        
+        // Save PDF
+        doc.save(`${recipe.title}.pdf`);
+    };
+
     return (
         <div>
             <Navbar />
@@ -183,7 +196,7 @@ const RecipeDetails = () => {
                         <div className={styles.titleWrapper}>
                             <div className={styles.title}>Ingredients</div>
                             <div className={styles.titleButtons}>
-                                <FileDownloadOutlinedIcon className={styles.button} />
+                                <FileDownloadOutlinedIcon className={styles.button} onClick={generatePDF} />
                                 <LocalPrintshopOutlinedIcon className={styles.button} />
                             </div>
                         </div>
