@@ -1,5 +1,6 @@
 const express = require('express');
 const pool = require('../db'); // Database connection
+const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const router = express.Router();
 
@@ -55,7 +56,6 @@ router.put('/update-email', authenticateToken, async (req, res) => {
     }
 
     try {
-        // Fetch the current user details to confirm identity
         const userDetailsQuery = `
             SELECT up.first_name, up.last_name, u.email AS previous_email, up.phone 
             FROM users u
@@ -69,12 +69,9 @@ router.put('/update-email', authenticateToken, async (req, res) => {
         }
 
         const userDetails = userDetailsResult.rows[0];
-
-        // Proceed with updating the email
         const updateEmailQuery = 'UPDATE users SET email = $1 WHERE user_id = $2 RETURNING email';
         const updateResult = await pool.query(updateEmailQuery, [email, userId]);
 
-        // Log the updated user information, including identifiable details
         console.log('Updated email information:', JSON.stringify({
             user_id: userId,
             name: `${userDetails.first_name} ${userDetails.last_name}`,
@@ -90,4 +87,99 @@ router.put('/update-email', authenticateToken, async (req, res) => {
     }
 });
 
+// Endpoint to update user password
+router.put('/update-password', authenticateToken, async (req, res) => {
+    const { password } = req.body;
+    const userId = req.user.id;
+
+    if (!password) {
+        return res.status(400).json({ message: 'Password is required' });
+    }
+
+    try {
+        const currentPasswordQuery = 'SELECT password FROM users WHERE user_id = $1';
+        const currentPasswordResult = await pool.query(currentPasswordQuery, [userId]);
+
+        if (currentPasswordResult.rows.length === 0) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        const currentHashedPassword = currentPasswordResult.rows[0].password;
+
+        const isSamePassword = await bcrypt.compare(password, currentHashedPassword);
+        if (isSamePassword) {
+            return res.status(400).json({ message: 'Password cannot be the same as your last password' });
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const userDetailsQuery = `
+            SELECT up.first_name, up.last_name, u.email AS previous_email, up.phone 
+            FROM users u
+            JOIN user_profiles up ON u.user_id = up.user_id
+            WHERE u.user_id = $1
+        `;
+        const userDetailsResult = await pool.query(userDetailsQuery, [userId]);
+
+        if (userDetailsResult.rows.length === 0) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        const userDetails = userDetailsResult.rows[0];
+
+        const updatePasswordQuery = 'UPDATE users SET password = $1 WHERE user_id = $2 RETURNING user_id';
+        const updateResult = await pool.query(updatePasswordQuery, [hashedPassword, userId]);
+
+        console.log(`Password updated successfully for user: ${userId} (${userDetails.first_name} ${userDetails.last_name})`);
+
+        res.status(200).json({ message: 'Password updated successfully' });
+    } catch (error) {
+        console.error('Error updating password:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+// Endpoint to update user phone number
+router.put('/update-phone', authenticateToken, async (req, res) => {
+    const { phone } = req.body;
+    const userId = req.user.id;
+
+    const phonePattern = /^\d{3}-\d{3}-\d{4}$/; // Expected format: 123-456-7890
+    if (!phonePattern.test(phone)) {
+        return res.status(400).json({ message: 'Invalid phone number format. Use XXX-XXX-XXXX' });
+    }
+
+    try {
+        const userDetailsQuery = `
+            SELECT up.first_name, up.last_name, u.email, up.phone AS previous_phone 
+            FROM users u
+            JOIN user_profiles up ON u.user_id = up.user_id
+            WHERE u.user_id = $1
+        `;
+        const userDetailsResult = await pool.query(userDetailsQuery, [userId]);
+
+        if (userDetailsResult.rows.length === 0) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        const userDetails = userDetailsResult.rows[0];
+        const updatePhoneQuery = 'UPDATE user_profiles SET phone = $1 WHERE user_id = $2 RETURNING phone';
+        const updateResult = await pool.query(updatePhoneQuery, [phone, userId]);
+
+        console.log('Updated phone information:', JSON.stringify({
+            user_id: userId,
+            name: `${userDetails.first_name} ${userDetails.last_name}`,
+            previous_phone: userDetails.previous_phone,
+            new_phone: updateResult.rows[0].phone,
+            email: userDetails.email
+        }, null, 2));
+
+        res.status(200).json({ message: 'Phone number updated successfully', phone: updateResult.rows[0].phone });
+    } catch (error) {
+        console.error('Error updating phone number:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
 module.exports = router;
+
