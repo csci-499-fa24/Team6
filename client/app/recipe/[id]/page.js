@@ -12,6 +12,7 @@ import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined
 import { CustomCircularProgress } from '../../components/customComponents'
 import LocalPrintshopOutlinedIcon from '@mui/icons-material/LocalPrintshopOutlined';
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
+import jsPDF from 'jspdf';
 
 const RecipeDetails = () => {
     const [recipe, setRecipe] = useState(null);
@@ -62,7 +63,104 @@ const RecipeDetails = () => {
         const nutrient = recipe.nutrition.nutrients.find(n => n.name === nutrientName);
         return nutrient ? `${Math.round(nutrient.amount)} ${nutrient.unit}` : 0;
     };
-    
+
+    const generatePDF = () => {
+        const doc = new jsPDF();
+        const margin = 10; // Define side margin
+        const pageWidth = doc.internal.pageSize.getWidth() - margin * 2;
+        const columnWidth = pageWidth / 2; // Divide page into two columns
+        let verticalOffset = 15;
+        doc.setFont("Courier", "normal");
+
+        // Title
+        doc.setFontSize(16);
+        const titleLines = doc.splitTextToSize(recipe.title, pageWidth); // Split title if it exceeds the page width
+        titleLines.forEach((line, index) => {
+            doc.text(line, margin, verticalOffset + (index * 10)); // Move vertical position down for each line
+            doc.setLineWidth(0.5);
+            doc.line(margin, verticalOffset + (index * 10) + 2, margin + doc.getTextWidth(line), verticalOffset + (index * 10) + 2); // Underline each title line
+        });
+        verticalOffset += titleLines.length * 10;
+
+        // Recipe details
+        doc.setFontSize(12);
+        doc.text(`Ready in: ${recipe.readyInMinutes} minutes`, margin, verticalOffset);
+        verticalOffset += 10;
+        doc.text(`Serves: ${recipe.servings} people`, margin, verticalOffset);
+        verticalOffset += 10;
+
+        // Ingredients & Missing Ingredients side by side
+        // Ingredients Title
+        const startY = verticalOffset;
+        doc.text('Ingredients:', margin, verticalOffset);
+        doc.setLineWidth(0.5);
+        doc.line(margin, verticalOffset + 2, margin + doc.getTextWidth('Ingredients:'), verticalOffset + 2); // Underline Ingredients title
+        verticalOffset += 10;
+
+        // Missing Ingredients Title
+        const missingIngredientsOffset = margin + columnWidth; // Start missing ingredients on the right side
+        const missingIngredientsY = startY; // Save the y position for missing ingredients title
+        doc.text('Missing Ingredients:', missingIngredientsOffset, missingIngredientsY);
+        doc.setLineWidth(0.5);
+        doc.line(missingIngredientsOffset, missingIngredientsY + 2, missingIngredientsOffset + doc.getTextWidth('Missing Ingredients:'), missingIngredientsY + 2); // Underline Missing Ingredients title
+
+        // Track vertical offsets for both sections
+        let ingredientsVerticalOffset = verticalOffset;
+        let missingIngredientsVerticalOffset = verticalOffset;
+
+        // List of Ingredients
+        recipe.usedIngredients.forEach((ingredient) => {
+            const lines = doc.splitTextToSize(`[ ] ${ingredient.name}`, columnWidth - margin);  // Split the ingredient line if it exceeds the page width
+            lines.forEach((line) => {
+                if (ingredientsVerticalOffset > doc.internal.pageSize.getHeight() - margin) { // if the line goes off the page, make a new page and reset y position
+                    doc.addPage();
+                    ingredientsVerticalOffset = 15;
+                }
+                doc.text(line, margin, ingredientsVerticalOffset);
+                ingredientsVerticalOffset += 10;
+            });
+        });
+
+        // List of Missing Ingredients
+        verticalOffset = startY + 10; // Reset vertical offset for missing ingredients
+        recipe.missedIngredients.forEach((ingredient) => {
+            const lines = doc.splitTextToSize(`[ ] ${ingredient.name}`, columnWidth - margin);  // Split the ingredient line if it exceeds the page width
+            lines.forEach((line) => {
+                if (missingIngredientsVerticalOffset > doc.internal.pageSize.getHeight() - margin) { // if the line goes off the page, make a new page and reset y position
+                    doc.addPage();
+                    missingIngredientsVerticalOffset = 15;
+                }
+                doc.text(line, missingIngredientsOffset, missingIngredientsVerticalOffset);
+                missingIngredientsVerticalOffset += 10;
+            });
+        });
+
+        // Set the offset to the taller section for instructions
+        verticalOffset = Math.max(ingredientsVerticalOffset, missingIngredientsVerticalOffset) - 10; // Add space before instructions
+
+        // Instructions
+        verticalOffset += 10;
+        doc.text('Instructions:', margin, verticalOffset);
+        doc.setLineWidth(0.5);
+        doc.line(margin, verticalOffset + 2, margin + doc.getTextWidth('Instructions:'), verticalOffset + 2); // Underline Instructions title
+        verticalOffset += 10;
+
+        recipe.instructions[0].steps.forEach((step, index) => {
+            const lines = doc.splitTextToSize(`${index + 1}. ${step.step}`, pageWidth);  // Split the instruction line if it exceeds the page width
+            lines.forEach((line) => {
+                if (verticalOffset > doc.internal.pageSize.getHeight() - margin) { // if the line goes off the page, make a new page and reset y position
+                    doc.addPage();
+                    verticalOffset = 15;
+                }
+                doc.text(line, margin, verticalOffset);
+                verticalOffset += 10;
+            });
+        });
+
+        // Save PDF
+        doc.save(`${recipe.title}.pdf`);
+    };
+
     return (
         <div>
             <Navbar />
@@ -183,7 +281,7 @@ const RecipeDetails = () => {
                         <div className={styles.titleWrapper}>
                             <div className={styles.title}>Ingredients</div>
                             <div className={styles.titleButtons}>
-                                <FileDownloadOutlinedIcon className={styles.button} />
+                                <FileDownloadOutlinedIcon className={styles.button} onClick={generatePDF} />
                                 <LocalPrintshopOutlinedIcon className={styles.button} />
                             </div>
                         </div>
