@@ -166,3 +166,17 @@
     margin-left: 8px;
 }
 
+
+.errorMessage {
+    display: flex;
+    align-items: center;
+    color: #e63946; /* A red color for error */
+    font-size: 0.85rem; /* Smaller font size */
+    margin-top: 0.5rem;
+}
+
+.errorMessage .icon {
+    margin-right: 0.4rem; /* Space between icon and text */
+    font-size: 1rem; /* Icon size */
+}
+

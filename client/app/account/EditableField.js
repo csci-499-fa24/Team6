@@ -9,29 +9,109 @@ const EditableField = ({ label, value, onSave, isPassword = false, separator = f
         length: false,
         uppercase: false,
         specialChar: false,
+        number: false,
     });
-    const [successMessage, setSuccessMessage] = useState(''); // New state for success message
+    const [successMessage, setSuccessMessage] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
 
     const validatePassword = (password) => {
+        const specialCharPattern = /[!@#$%^&*(),.?":{}|<>]/;
+        const numberPattern = /[0-9]/;
+
         setValidationStatus({
             length: password.length >= 8,
             uppercase: /[A-Z]/.test(password),
-            specialChar: /[!@#$%^&*(),.?":{}|<>]/.test(password),
+            specialChar: specialCharPattern.test(password),
+            number: numberPattern.test(password),
         });
     };
 
+    const formatPhoneNumber = (phone) => {
+        const cleaned = phone.replace(/\D/g, ''); // Remove non-numeric characters
+        if (cleaned.length === 10) {
+            return `${cleaned.slice(0, 3)}-${cleaned.slice(3, 6)}-${cleaned.slice(6)}`;
+        }
+        return null; // Invalid if not exactly 10 digits
+    };
+
     const handleSave = async () => {
-        if (isPassword && newValue !== confirmValue) {
-            alert('Passwords do not match');
-            return;
-        }
+        setErrorMessage(''); // Clear any previous error messages
 
-        if (label === "Phone Number" && !/^\d{3}-\d{3}-\d{4}$/.test(newValue)) {
-            alert('Invalid phone number format. Use XXX-XXX-XXXX');
-            return;
-        }
+        if (isPassword) {
+            if (newValue !== confirmValue) {
+                setErrorMessage('Passwords do not match');
+                return;
+            }
 
-        if (label === "Email") {
+            validatePassword(newValue);
+
+            if (!Object.values(validationStatus).every((status) => status)) {
+                setErrorMessage('Password does not meet all requirements.');
+                return;
+            }
+
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/user/update-password`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ password: newValue })
+                });
+
+                const responseData = await response.json();
+
+                if (!response.ok) {
+                    setErrorMessage(responseData.message || 'Failed to update password');
+                    return;
+                }
+
+                setSuccessMessage('Saved Successfully ✓');
+                onSave('********'); // Reset display to asterisks
+                setIsEditing(false);
+
+                setTimeout(() => setSuccessMessage(''), 3000); // Clear success message after a delay
+            } catch (error) {
+                console.error('Error updating password:', error);
+                setErrorMessage('An error occurred while updating password');
+            }
+        } else if (label === "Phone Number") {
+            const formattedPhone = formatPhoneNumber(newValue);
+            if (!formattedPhone) {
+                setErrorMessage('Invalid phone number. Please enter a 10-digit number.');
+                return;
+            }
+
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/user/update-phone`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ phone: formattedPhone })
+                });
+
+                const responseData = await response.json();
+
+                if (!response.ok) {
+                    setErrorMessage(responseData.message || 'Failed to update phone number');
+                    return;
+                }
+
+                setSuccessMessage('Saved Successfully ✓');
+                onSave(formattedPhone); // Display formatted phone number
+                setIsEditing(false);
+
+                setTimeout(() => setSuccessMessage(''), 3000); // Clear success message after a delay
+            } catch (error) {
+                console.error('Error updating phone number:', error);
+                setErrorMessage('An error occurred while updating phone number');
+            }
+        } else {
             try {
                 const token = localStorage.getItem('token');
                 const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/user/update-email`, {
@@ -43,26 +123,22 @@ const EditableField = ({ label, value, onSave, isPassword = false, separator = f
                     body: JSON.stringify({ email: newValue })
                 });
 
+                const responseData = await response.json();
+
                 if (!response.ok) {
-                    const errorData = await response.json();
-                    alert(errorData.message || 'Failed to update email');
+                    setErrorMessage(responseData.message || 'Failed to update email');
                     return;
                 }
 
-                // Display the success message after updating
                 setSuccessMessage('Saved Successfully ✓');
                 onSave(newValue);
                 setIsEditing(false);
 
-                // Clear the success message after a delay
-                setTimeout(() => setSuccessMessage(''), 3000);
+                setTimeout(() => setSuccessMessage(''), 3000); // Clear success message after a delay
             } catch (error) {
                 console.error('Error updating email:', error);
-                alert('An error occurred while updating email');
+                setErrorMessage('An error occurred while updating email');
             }
-        } else {
-            onSave(newValue);
-            setIsEditing(false);
         }
     };
 
@@ -99,7 +175,10 @@ const EditableField = ({ label, value, onSave, isPassword = false, separator = f
                                         {validationStatus.uppercase ? '✓' : '✗'} At least one uppercase letter
                                     </li>
                                     <li style={{ color: validationStatus.specialChar ? 'green' : 'red' }}>
-                                        {validationStatus.specialChar ? '✓' : '✗'} At least one special character
+                                        {validationStatus.specialChar ? '✓' : '✗'} At least one special character (e.g., !@#$%^&)
+                                    </li>
+                                    <li style={{ color: validationStatus.number ? 'green' : 'red' }}>
+                                        {validationStatus.number ? '✓' : '✗'} At least one number
                                     </li>
                                 </ul>
                             </>
@@ -114,6 +193,11 @@ const EditableField = ({ label, value, onSave, isPassword = false, separator = f
                         ) : (
                             <button onClick={() => setIsEditing(true)} className={styles.bubbleButton}>Edit</button>
                         )}
+                    </div>
+                )}
+                {errorMessage && (
+                    <div className={styles.errorMessage}>
+                        <span className={styles.icon}>⚠️</span> {errorMessage}
                     </div>
                 )}
             </div>
