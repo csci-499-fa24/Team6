@@ -1,13 +1,40 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styles from './Settings.module.css';
 import EditableField from './EditableField';
 
 const Settings = () => {
     const [activeTab, setActiveTab] = useState('Account Info');
-    const [email, setEmail] = useState('user@example.com');
-    const [password, setPassword] = useState('********');
-    const [phoneNumber, setPhoneNumber] = useState('123-456-7890');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('********'); // This can remain a placeholder
+    const [phoneNumber, setPhoneNumber] = useState('');
+
+    useEffect(() => {
+        // Fetch user profile information on component load
+        const fetchUserData = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/user/profile`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    setEmail(data.email); // Set the actual email from the backend
+                    setPhoneNumber(data.phone); // Set the actual phone number from the backend
+                } else {
+                    console.error('Failed to fetch user data');
+                }
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+            }
+        };
+
+        fetchUserData();
+    }, []);
 
     const renderTabContent = () => {
         switch (activeTab) {
