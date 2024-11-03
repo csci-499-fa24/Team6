@@ -55,6 +55,23 @@ router.put('/update-email', authenticateToken, async (req, res) => {
         return res.status(400).json({ message: 'Email is required' });
     }
 
+    //Must follow email format
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email)) {
+        return res.status(400).json({ message: 'Invalid email format' });
+    }
+
+    //Adding check for existing account with email
+    try {
+        const emailExists = await pool.query('SELECT user_id FROM users WHERE email = $1', [email]);
+        if (emailExists.rows.length > 0 && emailExists.rows[0].user_id !== userId) {
+            return res.status(409).json({ message: 'Email is already associated with another account' });
+        }
+    } catch (error) {
+        console.error('Error checking email:', error);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+
     try {
         const userDetailsQuery = `
             SELECT up.first_name, up.last_name, u.email AS previous_email, up.phone 
@@ -145,9 +162,28 @@ router.put('/update-phone', authenticateToken, async (req, res) => {
     const userId = req.user.id;
 
     const phonePattern = /^\d{3}-\d{3}-\d{4}$/; // Expected format: 123-456-7890
-    if (!phonePattern.test(phone)) {
-        return res.status(400).json({ message: 'Invalid phone number format. Use XXX-XXX-XXXX' });
+    if (!phonePattern.test(phone) && !/^\d{10}$/.test(phone)) {
+        return res.status(400).json({ message: 'Invalid phone number format. Use XXX-XXX-XXXX or XXXXXXXXXX' });
     }
+
+    // Normalize the phone number to digits only for consistent checking
+    const normalizedPhone = phone.replace(/\D/g, '');
+
+    try {
+        const phoneExists = await pool.query(`
+            SELECT user_id FROM user_profiles 
+            WHERE REPLACE(phone, '-', '') = $1 OR phone = $1
+        `, [normalizedPhone]);
+
+        if (phoneExists.rows.length > 0 && phoneExists.rows[0].user_id !== userId) {
+            return res.status(409).json({ message: 'Phone number is already associated with another account' });
+        }
+    } catch (error) {
+        console.error('Error checking phone number:', error);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+
+    // Continue with the existing phone update logic
 
     try {
         const userDetailsQuery = `
