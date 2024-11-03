@@ -162,13 +162,19 @@ router.put('/update-phone', authenticateToken, async (req, res) => {
     const userId = req.user.id;
 
     const phonePattern = /^\d{3}-\d{3}-\d{4}$/; // Expected format: 123-456-7890
-    if (!phonePattern.test(phone)) {
-        return res.status(400).json({ message: 'Invalid phone number format. Use XXX-XXX-XXXX' });
+    if (!phonePattern.test(phone) && !/^\d{10}$/.test(phone)) {
+        return res.status(400).json({ message: 'Invalid phone number format. Use XXX-XXX-XXXX or XXXXXXXXXX' });
     }
 
-    //Adding check for existing account with phone number
+    // Normalize the phone number to digits only for consistent checking
+    const normalizedPhone = phone.replace(/\D/g, '');
+
     try {
-        const phoneExists = await pool.query('SELECT user_id FROM user_profiles WHERE phone = $1', [phone]);
+        const phoneExists = await pool.query(`
+            SELECT user_id FROM user_profiles 
+            WHERE REPLACE(phone, '-', '') = $1 OR phone = $1
+        `, [normalizedPhone]);
+
         if (phoneExists.rows.length > 0 && phoneExists.rows[0].user_id !== userId) {
             return res.status(409).json({ message: 'Phone number is already associated with another account' });
         }
@@ -176,6 +182,8 @@ router.put('/update-phone', authenticateToken, async (req, res) => {
         console.error('Error checking phone number:', error);
         return res.status(500).json({ message: 'Internal server error' });
     }
+
+    // Continue with the existing phone update logic
 
     try {
         const userDetailsQuery = `
