@@ -32,6 +32,7 @@ router.post('/', authenticateToken, async (req, res) => {
     const { ingredients } = req.body;
     const user_id = req.user.id;
 
+
     for (const ingredient of ingredients) {
         // Retrieve the ingredient_id for the current ingredient name
         const ingredientResult = await pool.query(
