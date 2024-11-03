@@ -56,6 +56,37 @@ const RecipeDetails = () => {
         );
     };
 
+    const handleAdd = async() => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            router.push('/login');
+            return;
+        }
+
+        try {
+            await fetch(process.env.NEXT_PUBLIC_SERVER_URL + '/api/plan/add-recipe', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({ recipeId: recipe.id })
+            });
+            
+            await fetch(process.env.NEXT_PUBLIC_SERVER_URL + '/api/discover/auto-remove', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({ ingredients: recipe.usedIngredients })
+            });
+
+        } catch (error) {
+            console.error('Error adding recipe:', error);
+        }
+    };
+
     const getRoundedNutrientAmount = (nutrientName) => {
         if (!recipe || !recipe.nutrition || !recipe.nutrition.nutrients) {
             return 0;
@@ -293,7 +324,7 @@ const RecipeDetails = () => {
                         <div className={styles.instructionWrapper}>
                             {renderInstructions(recipe.instructions)}
                         </div>
-                        <div className={styles.madeButton}>
+                        <div className={styles.madeButton} onClick={handleAdd}>
                             <div className={styles.madeButtonText}>Cooked</div>
                         </div>
                     </div>
