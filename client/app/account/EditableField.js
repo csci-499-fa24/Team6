@@ -14,6 +14,12 @@ const EditableField = ({ label, value, onSave, isPassword = false, separator = f
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
+    const handleCancel = () => {
+        setNewValue(value); 
+        setIsEditing(false);
+        setErrorMessage(''); 
+    };
+
     const validatePassword = (password) => {
         const specialCharPattern = /[!@#$%^&*(),.?":{}|<>]/;
         const numberPattern = /[0-9]/;
@@ -183,7 +189,10 @@ const EditableField = ({ label, value, onSave, isPassword = false, separator = f
                                 </ul>
                             </>
                         )}
-                        <button onClick={handleSave} className={styles.bubbleButton}>Save</button>
+                        <div className={styles.buttonContainer}>
+                            <button onClick={handleSave} className={styles.bubbleButton}>Save</button>
+                            <button onClick={handleCancel} className={styles.cancelButton}>Cancel</button>
+                        </div>
                     </div>
                 ) : (
                     <div className={styles.displayContainer}>
