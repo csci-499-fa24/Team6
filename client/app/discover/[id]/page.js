@@ -1,15 +1,15 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';  
+import { useParams, useRouter } from 'next/navigation';
 import axios from 'axios';
 import Navbar from '../../components/navbar';
-import styles from './RecipeDetail.module.css';  
+import styles from './RecipeDetail.module.css';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'; 
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import LocalDiningIcon from '@mui/icons-material/LocalDining';
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
-import { CustomCircularProgress } from '../../components/customComponents';  
+import { CustomCircularProgress } from '../../components/customComponents';
 import LocalPrintshopOutlinedIcon from '@mui/icons-material/LocalPrintshopOutlined';
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 
@@ -24,7 +24,7 @@ const RecipeDetail = ({ params }) => {
         try {
             const recipeDetails = await axios.get(`https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/${id}/information`, {
                 headers: {
-                    'X-RapidAPI-Key': process.env.NEXT_PUBLIC_SPOONACULAR_API_KEY, 
+                    'X-RapidAPI-Key': process.env.NEXT_PUBLIC_SPOONACULAR_API_KEY,
                     'X-RapidAPI-Host': 'spoonacular-recipe-food-nutrition-v1.p.rapidapi.com'
                 },
                 params: {
@@ -60,6 +60,16 @@ const RecipeDetail = ({ params }) => {
                 },
                 body: JSON.stringify({ recipeId: id })
             });
+
+            await fetch(process.env.NEXT_PUBLIC_SERVER_URL + '/api/discover/auto-remove', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({ ingredients: recipe.extendedIngredients })
+            });
+
         } catch (error) {
             console.error('Error adding recipe:', error);
         }

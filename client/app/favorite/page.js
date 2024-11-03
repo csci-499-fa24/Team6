@@ -26,8 +26,6 @@ const Page = () => {
                     });
 
                     if (response.ok) {
-                        const data = await response.json();
-                        console.log('Protected data:', data);
                         setAuthenticated(true);
                     } else {
                         router.push('/login');
@@ -54,7 +52,7 @@ const Page = () => {
 
     return (
         <div>
-            <FavoritePage /> {/* Render the FavoritePage component */}
+            <FavoritePage />
         </div>
     );
 };

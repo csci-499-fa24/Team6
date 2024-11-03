@@ -18,9 +18,13 @@ const nutritionGetRoute = require('./nutrition/nutritionGet');
 const nutritionUpdateRoute = require('./nutrition/nutritionUpdate');
 const { body, validationResult } = require('express-validator');
 const { initializeCronJobs } = require('./email_noti/cronJobs');
+const userRoutes = require('./user/user'); 
+
 const app = express();
 const registerRoute = require('./register');
 const discoverRoutes = require('./discover/discoverPage');
+const favoriteRoutes = require('./favoriteBackend/favorites');
+const autoRoute = require('./discover/autoRemove');
 
 
 const corsOptions = {
@@ -68,6 +72,10 @@ app.use('/api/plan/user-recipes', planGetRoute);
 app.use('/api/plan/remove-recipe', planRemoveRoute);
 app.use('/api/nutrition-get', nutritionGetRoute);
 app.use('/api/nutrition-update', nutritionUpdateRoute);
+app.use('/api/favorites', favoriteRoutes);
+app.use('/api/discover/auto-remove', autoRoute);
+app.use('/api/user', userRoutes);
+
 
 
 // User login route
@@ -160,10 +168,12 @@ app.get('/get-low-ingredients', async (req, res) => {
 });
 
 
-module.exports = app;
+if (process.env.NODE_ENV !== 'test') {
+    const port = process.env.PORT || 8080;
+    app.listen(port, () => {
+        console.log(`Server started on port ${port}`);
+        initializeCronJobs();
+    });
+}
 
-const port = process.env.PORT || 8080;
-app.listen(port, () => {
-    console.log(`Server started on port ${port}`);
-    initializeCronJobs();
-});
+module.exports = app;

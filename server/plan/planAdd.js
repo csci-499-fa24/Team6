@@ -39,15 +39,19 @@ router.post('/', authenticateToken, async (req, res) => {
             [user_id, recipeId]
         );
 
+        let add = true;
         if (checkQuery.rows.length > 0) {
-            return res.status(400).json({ message: 'Recipe is already in your plan.' });
+            //return res.status(400).json({ message: 'Recipe is already in your plan.' });
+            add = false;
         }
 
         // Insert the recipe into the user_recipes table
-        const insertQuery = await pool.query(
-            'INSERT INTO user_recipes (user_id, recipe_id) VALUES ($1, $2)',
-            [user_id, recipeId]
-        );
+        if (add) {
+            const insertQuery = await pool.query(
+                'INSERT INTO user_recipes (user_id, recipe_id) VALUES ($1, $2)',
+                [user_id, recipeId]
+            );
+        }
 
 
         let totalNutrients = {

@@ -1,0 +1,199 @@
+/* Settings.module.css */
+
+.settingsWrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.settingsCard {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 2rem;
+    border-radius: 20px;
+    max-width: 600px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15), 0 12px 40px rgba(0, 0, 0, 0.1);
+}
+
+.profilePicture {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 1rem;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid #f0c497;
+}
+
+.profilePicture img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.tabs {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+}
+
+.tabButton {
+    background: none;
+    border: none;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font-size: 1rem;
+    color: #666;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.activeTab {
+    color: #ff6b6b;
+    border-bottom: 2px solid #ff6b6b;
+}
+
+.accountInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    text-align: left;
+}
+
+.editableField {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    position: relative;
+}
+
+.label {
+    font-weight: bold;
+    margin-bottom: 0.2rem;
+}
+
+.exampleText {
+    color: #888;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.displayContainer {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
+}
+
+.input {
+    width: 100%;
+    max-width: 400px;
+    padding: 0.5rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    margin-bottom: 0.5rem;
+}
+
+.passwordRules {
+    list-style: none;
+    padding: 0;
+    margin-top: 0.5rem;
+}
+
+.passwordRules li {
+    font-size: 0.9rem;
+    color: #888;
+    margin-bottom: 0.3rem;
+    display: flex;
+    align-items: center;
+}
+
+.passwordRules li.valid {
+    color: green;
+}
+
+.bubbleButton {
+    background-color: #ff6b6b;
+    color: white;
+    border: none;
+    padding: 0.3rem 0.8rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+
+.separator {
+    height: 1px;
+    background-color: #ddd;
+    margin: 1rem 0;
+    width: 100%;
+}
+
+.saveButton {
+    background: #ff6b6b;
+    color: white;
+    padding: 0.75rem 2rem;
+    border: none;
+    border-radius: 25px;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-top: 1.5rem;
+    transition: background-color 0.3s ease;
+}
+
+.saveButton:hover {
+    background-color: #ff4a4a;
+}
+
+.privacyRow, .notificationRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0.5rem 0;
+    width: 100%; /* Ensures full width for alignment */
+}
+
+.successMessage {
+    color: green;
+    font-size: 0.9rem;
+    margin-left: 8px;
+}
+
+
+.errorMessage {
+    display: flex;
+    align-items: center;
+    color: #e63946; /* A red color for error */
+    font-size: 0.85rem; /* Smaller font size */
+    margin-top: 0.5rem;
+}
+
+.errorMessage .icon {
+    margin-right: 0.4rem; /* Space between icon and text */
+    font-size: 1rem; /* Icon size */
+}
+
+.cancelButton {
+    background-color: #ccc;
+    color: #333;
+    border: none;
+    padding: 0.3rem 0.8rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    margin-left: 0.5rem;
+}
+
+.buttonContainer {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+

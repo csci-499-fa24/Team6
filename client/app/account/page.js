@@ -1,17 +1,18 @@
 'use client';
 import { useRouter } from 'next/navigation';
+
 import Navbar from "../components/navbar";
-import IngredientInput from './IngredientInput'
+import IngredientInput from './IngredientInput';
 import NutritionInput from "./NutritionInput";
 import AllergenInput from "./AllergenInput";
 import RecipeHistory from './RecipeHistory';
+import Settings from './Settings'; 
+import Profile from './Profile'; 
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styles from './account.module.css';
-import { useState, useEffect } from 'react';
 
 const Pantry = () => {
-
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [authenticated, setAuthenticated] = useState(false);
@@ -32,7 +33,6 @@ const Pantry = () => {
         return;
       } else {
         try {
-          //updated api route
           const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/protected`, {
             method: 'GET',
             headers: {
@@ -96,6 +96,18 @@ const Pantry = () => {
           >
             Recipe History
           </div>
+          <div
+              onClick={() => handleSectionClick('Settings')}
+              className={activeSection === 'Settings' ? styles.active : styles.notActive}
+            >
+              Settings
+            </div>
+            <div
+              onClick={() => handleSectionClick('Profile')}
+              className={activeSection === 'Profile' ? styles.active : styles.notActive}
+            >
+              Profile
+            </div>
         </div>
         <div className={styles.pantrySection}>
           {activeSection === 'Pantry' && (
@@ -106,6 +118,8 @@ const Pantry = () => {
           {activeSection === 'Allergens' && <AllergenInput />}
           {activeSection === 'Nutrition' && <NutritionInput />}
           {activeSection === 'History' && <RecipeHistory />}
+          {activeSection === 'Settings' && <Settings />} 
+          {activeSection === 'Profile' && <Profile />} 
         </div>
       </div>
     </div>

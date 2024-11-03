@@ -1,6 +1,6 @@
 const express = require('express');
 const pool = require('../db');
-const router = express.Router(); // Use express Router
+const router = express.Router();
 const jwt = require("jsonwebtoken");
 
 // Middleware to authenticate token
@@ -109,6 +109,72 @@ router.post('/', authenticateToken, async (req, res) => {
 
     } catch (err) {
         console.error('Error adding or updating ingredient:', err);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+//favoritepage use recipe, still need to configure
+router.post('/use-recipe', async (req, res) => {
+    const { userId, recipe } = req.body;
+
+    if (!userId || !recipe || !recipe.extendedIngredients) {
+        return res.status(400).json({ message: 'Missing userId or recipe data' });
+    }
+
+    const missingIngredients = [];
+
+    try {
+        const ingredientChecks = recipe.extendedIngredients.map(async (ingredient) => {
+            const ingredientId = ingredient.id;
+            const amountNeeded = ingredient.amount;
+
+            const userIngredientQuery = await pool.query(
+                'SELECT * FROM user_ingredient WHERE user_id = $1 AND ingredient_id = $2',
+                [userId, ingredientId]
+            );
+
+            if (userIngredientQuery.rows.length > 0) {
+                const userIngredient = userIngredientQuery.rows[0];
+                const currentAmount = userIngredient.amount;
+
+                // Check if there is enough of the ingredient
+                if (currentAmount < amountNeeded) {
+                    missingIngredients.push({
+                        ingredientId,
+                        ingredientName: ingredient.original,
+                        needed: amountNeeded,
+                        available: currentAmount,
+                    });
+                }
+            } else {
+                missingIngredients.push({
+                    ingredientId,
+                    ingredientName: ingredient.original,
+                    needed: amountNeeded,
+                    available: 0,
+                });
+            }
+        });
+
+        await Promise.all(ingredientChecks);
+
+        if (missingIngredients.length > 0) {
+            return res.status(400).json({ message: 'Missing ingredients', missingIngredients });
+        }
+
+        for (const ingredient of recipe.extendedIngredients) {
+            const ingredientId = ingredient.id;
+            const amountNeeded = ingredient.amount;
+
+            await pool.query(
+                'UPDATE user_ingredient SET amount = amount - $1 WHERE user_id = $2 AND ingredient_id = $3',
+                [amountNeeded, userId, ingredientId]
+            );
+        }
+
+        return res.status(200).json({ message: 'Recipe used successfully!' });
+    } catch (err) {
+        console.error('Error using recipe:', err);
         return res.status(500).json({ message: 'Internal server error' });
     }
 });
