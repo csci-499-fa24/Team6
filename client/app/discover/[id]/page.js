@@ -60,6 +60,16 @@ const RecipeDetail = ({ params }) => {
                 },
                 body: JSON.stringify({ recipeId: id })
             });
+
+            await fetch(process.env.NEXT_PUBLIC_SERVER_URL + '/api/discover/auto-remove', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({ ingredients: recipe.extendedIngredients })
+            });
+
         } catch (error) {
             console.error('Error adding recipe:', error);
         }

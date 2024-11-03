@@ -24,6 +24,7 @@ const app = express();
 const registerRoute = require('./register');
 const discoverRoutes = require('./discover/discoverPage');
 const favoriteRoutes = require('./favoriteBackend/favorites');
+const autoRoute = require('./discover/autoRemove');
 
 
 const corsOptions = {
@@ -72,6 +73,7 @@ app.use('/api/plan/remove-recipe', planRemoveRoute);
 app.use('/api/nutrition-get', nutritionGetRoute);
 app.use('/api/nutrition-update', nutritionUpdateRoute);
 app.use('/api/favorites', favoriteRoutes);
+app.use('/api/discover/auto-remove', autoRoute);
 app.use('/api/user', userRoutes);
 
 
