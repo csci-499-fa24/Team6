@@ -6,8 +6,7 @@ import IngredientInput from './IngredientInput';
 import NutritionInput from "./NutritionInput";
 import AllergenInput from "./AllergenInput";
 import RecipeHistory from './RecipeHistory';
-import Settings from './Settings'; 
-import Profile from './Profile'; 
+import Settings from './Settings';
 
 import React, { useState, useEffect } from "react";
 import styles from './account.module.css';
@@ -68,7 +67,7 @@ const Pantry = () => {
   }
 
   return (
-    <div>
+    <div className={styles.account}>
       <Navbar />
       <div className={styles.pantryContent}>
         <div className={styles.sidebar}>
@@ -97,17 +96,11 @@ const Pantry = () => {
             Recipe History
           </div>
           <div
-              onClick={() => handleSectionClick('Settings')}
-              className={activeSection === 'Settings' ? styles.active : styles.notActive}
-            >
-              Settings
-            </div>
-            <div
-              onClick={() => handleSectionClick('Profile')}
-              className={activeSection === 'Profile' ? styles.active : styles.notActive}
-            >
-              Profile
-            </div>
+            onClick={() => handleSectionClick('Settings')}
+            className={activeSection === 'Settings' ? styles.active : styles.notActive}
+          >
+            Settings
+          </div>
         </div>
         <div className={styles.pantrySection}>
           {activeSection === 'Pantry' && (
@@ -118,8 +111,7 @@ const Pantry = () => {
           {activeSection === 'Allergens' && <AllergenInput />}
           {activeSection === 'Nutrition' && <NutritionInput />}
           {activeSection === 'History' && <RecipeHistory />}
-          {activeSection === 'Settings' && <Settings />} 
-          {activeSection === 'Profile' && <Profile />} 
+          {activeSection === 'Settings' && <Settings />}
         </div>
       </div>
     </div>

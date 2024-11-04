@@ -110,7 +110,7 @@ const AllergenInput = () => {
                 <div className={styles.header}>Your Food Allergies</div>
                 {error && <div className={styles.error}>{error}</div>}
                 {allergies && allergies.length > 0 && (
-                    <div className={styles.scrollableContainer}>
+                    <div className={styles.allergyScrollableContainer}>
                         {allergies.map((item, index) => (
                             <div key={index} className={styles.allergy}>
                                 {item}

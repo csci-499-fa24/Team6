@@ -1,5 +1,6 @@
 import { styled, TextField, Select, LinearProgress, linearProgressClasses, CircularProgress } from '@mui/material';
 import { Box } from '@mui/material';
+import { useState, useEffect } from 'react';
 
 export const CustomTextField = styled(TextField)(({ }) => ({
   '& label': {
@@ -115,7 +116,38 @@ export const CustomLinearProgress = styled(LinearProgress)(({ theme }) => ({
   },
 }));
 
-export const CustomCircularProgress = ({ value, progressColor, backgroundColor, thickness = 8, size = 60 }) => {
+export const CustomCircularProgress = ({ value, progressColor, backgroundColor }) => {
+  const [size, setSize] = useState(60);
+  const [thickness, setThickness] = useState(8);
+
+  useEffect(() => {
+    const updateSizeAndThickness = () => {
+      const width = window.innerWidth;
+
+      if (width >= 2000 && width <= 2560) {
+        setSize(80);
+        setThickness(8);
+      }
+      else if (width >= 950 && width <= 1300) {
+        setSize(60);
+        setThickness(8);
+      }
+      else if (width >= 430 && width <= 700) {
+        setSize(50);
+        setThickness(7);
+      }
+      else if (width <= 430) {
+        setSize(40);
+        setThickness(7);
+      }
+    };
+
+    updateSizeAndThickness(); // Initial call
+    window.addEventListener('resize', updateSizeAndThickness);
+
+    return () => window.removeEventListener('resize', updateSizeAndThickness);
+  }, []);
+
   return (
     <Box position="relative" display="inline-flex">
       <CircularProgress

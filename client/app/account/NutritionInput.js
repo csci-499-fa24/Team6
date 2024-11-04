@@ -151,7 +151,7 @@ const NutritionInput = () => {
                                 size="small"
                                 className={styles.nutritionInput}
                             />
-                            <div style={{ marginLeft: '1.5em' }}>grams</div>
+                            <div className={styles.nutritionGram} style={{ marginLeft: '1.5em' }}>grams</div>
                         </div>
                     ))}
                 </div>
