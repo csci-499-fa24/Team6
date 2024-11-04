@@ -37,8 +37,10 @@ const RecipeDetails = () => {
 
     const renderIngredients = (ingredients, color = "#506264") => (
         <div>
-            {ingredients.map((ingredient, i) => (
-                <div style={{ color: color }} className={styles.ingredient}>{ingredient.name}</div>
+            {ingredients?.map((ingredient, i) => (
+                <div key={i} style={{ color: color }} className={styles.ingredient}>
+                    {ingredient.original}
+                </div>
             ))}
         </div>
     );
