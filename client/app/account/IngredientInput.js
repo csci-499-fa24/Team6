@@ -285,9 +285,7 @@ const IngredientInput = () => {
                                     ))}
                                 </CustomDropdown>
                                 <div className={styles.ingredientName}>{capitalizeFirstLetter(ingredient.name)}</div>
-                                <IconButton onClick={() => handleRemove(ingredient.ingredient_id)}>
-                                    <RemoveCircleOutlineRounded />
-                                </IconButton>
+                                <RemoveCircleOutlineRounded onClick={() => handleRemove(ingredient.ingredient_id)} className={styles.removeButton} />
                             </li>
                         ))}
                     </ul>

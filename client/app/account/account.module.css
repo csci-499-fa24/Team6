@@ -1,3 +1,9 @@
+.account {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
 .allergiesWrapper {
     height: 80%;
     width: 100%;
@@ -6,48 +12,43 @@
     align-items: center;
 }
 
-.pageWrapper {
-    margin: 7vh 10vw;
-}
-
 .pantryContent {
+    flex: 1;
     display: flex;
-    width: 100%;
+    justify-content: space-between;
 }
 
 .sidebar {
     display: flex;
     flex-direction: column;
     color: #506264;
-    width: 20%;
+    padding-right: 60px;
+    margin-top: 90px;
+    border-right: 1px solid #a2a6a7;
+    height: 80%;
+    margin-left: 160px;
 }
 
 .notActive {
-    font-size: 1em;
+    font-size: 18px;
     margin-bottom: 1.5em;
     padding: .6em 0 .6em 1.5em;
     cursor: pointer;
+    width: 160px;
 }
 
 .active {
-    font-size: 1em;
+    font-size: 18px;
     margin-bottom: 1.5em;
     padding: .6em 0 .6em 1.5em;
     color: #EC4A27;
     cursor: pointer;
-}
-
-.seperator {
-    height: 750px;
-    width: 1px;
-    background-color: #506264;
-    border-radius: 5px;
-    margin-left: 30px;
+    width: 160px;
 }
 
 .pantrySection {
-    margin-left: 5em;
     width: 100%;
+    margin-top: 90px;
 }
 
 .header {
@@ -55,6 +56,7 @@
     font-weight: 500;
     width: 100%;
     text-align: center;
+    margin-bottom: 20px
 }
 
 .addAllergy {
@@ -97,7 +99,7 @@
 .allergy {
     display: flex;
     justify-content: space-between;
-    width: 100%;
+    width: 180px;
     padding: 10px;
     align-items: center;
     margin-right: 50px;
@@ -106,25 +108,34 @@
 .removeButton {
     color: #506264;
     margin-left: 7px;
+    font-size: 20px !important;
 
     &:hover {
         color: #EC4A27;
         cursor: pointer;
-
-        .allergy {
-            color: #EC4A27;
-        }
     }
 }
 
 .scrollableContainer {
     color: #506264;
     display: grid;
-    grid-template-columns: repeat(2, 1fr); 
+    grid-template-columns: repeat(2, 1fr);
     column-gap: 70px;
     max-height: 450px;
     overflow-y: auto;
-    padding: 20px;
+    padding: 20px 50px;
+    margin-top: 16px;
+}
+
+.allergyScrollableContainer {
+    color: #506264;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: 70px;
+    max-height: 500px;
+    overflow-y: auto;
+    padding: 0 50px;
+    margin: 20px 0;
     margin-top: 16px;
 }
 
@@ -154,26 +165,27 @@
     display: flex;
     flex-direction: column;
     width: 170px;
-    margin-right:15px;
+    margin-right: 15px;
 }
 
 .nutritionalGoals {
     display: flex;
     margin-top: 20px;
+    justify-content: space-around;
+    padding: 0px 70px;
 }
 
 .nutritionInputs {
     margin-top: 50px;
     display: flex;
     flex-direction: column;
-    width: 80%;
+    width: 475px;
     margin-bottom: 30px;
 }
 
 .nutritionSection {
-    width: 40%;
-    margin-right: 200px;
-    display:flex;
+    width: 35%;
+    display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -220,6 +232,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    height: 500px;
 }
 
 .ingredientList {
@@ -239,7 +252,7 @@
     display: flex;
     align-items: center;
     height: 100%;
-    margin-bottom: 1em;
+    margin-bottom: 18px;
 }
 
 .ingredientItemUnit {
@@ -286,10 +299,6 @@
     width: 250px;
 }
 
-.trackerSection {
-    width: 40%;
-}
-
 .trackerWrapper {
     margin-top: 50px;
     display: grid;
@@ -297,6 +306,7 @@
     grid-template-rows: repeat(4, 1fr);
     gap: 2em;
     margin-left: 10px;
+    column-gap: 6em;
 }
 
 .trackerItemTitle {
@@ -348,30 +358,39 @@
 .planPageWrapper {
     width: 100%;
     height: 100%;
-    padding: 2em 8em; /* Add some padding for better layout */
+    padding: 2em 8em;
+    /* Add some padding for better layout */
 }
 
 .title {
     margin-top: 2.5em;
 }
 
+.recipeHistoryWrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .recipesContainer {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    grid-column-gap: 5em;
+    grid-template-columns: repeat(3, 1fr);
+    grid-column-gap: 2em;
     grid-row-gap: 3em;
     margin-top: 2em;
+    width: 85%;
 }
 
 .recipeCard {
     background-color: rgba(171, 169, 231, 0.2);
     border-radius: 10px;
     padding: .8em 1em;
-    height: 24vh;
-    width: 16.4vw;
+    height: 235px;
+    width: 325px;
     cursor: pointer;
     text-decoration: none;
-    transition: background-color 0.3s, box-shadow 0.3s; /* Smooth transition */
+    transition: background-color 0.3s, box-shadow 0.3s;
+    /* Smooth transition */
 }
 
 .recipeCard:hover {
@@ -410,7 +429,8 @@
 
 .amountTextField {
     width: 110px;
-    margin-right: 20px !important;    color: #506264;
+    margin-right: 20px !important;
+    color: #506264;
 }
 
 .unitSelect {
@@ -419,27 +439,27 @@
 }
 
 .ingredientName {
-    width: 120px;
+    width: 180px;
     margin-right: 15px;
     font-weight: 500;
     font-size: 14px;
 }
 
-.scrollableContainer::-webkit-scrollbar {
+.scrollableContainer::-webkit-scrollbar, .allergyScrollableContainer::-webkit-scrollbar {
     width: 12px;
 }
 
-.scrollableContainer::-webkit-scrollbar-thumb {
+.scrollableContainer::-webkit-scrollbar-thumb, .allergyScrollableContainer::-webkit-scrollbar-thumb {
     background-color: rgba(156, 183, 210, .6);
     border-radius: 10px;
     border: 3px solid transparent;
 }
 
-.scrollableContainer::-webkit-scrollbar-thumb:hover {
+.scrollableContainer::-webkit-scrollbar-thumb:hover, .allergyScrollableContainer::-webkit-scrollbar-thumb:hover {
     background-color: rgba(156, 183, 210, 0.806);
 }
 
-.scrollableContainer::-webkit-scrollbar-track {
+.scrollableContainer::-webkit-scrollbar-track, .allergyScrollableContainer::-webkit-scrollbar-track {
     background-color: #ebeff2;
     border-radius: 10px;
 }
@@ -493,5 +513,1111 @@
 }
 
 .exceeded {
-    color:#ec4924;
+    color: #ec4924;
+}
+
+@media (min-width: 2000px) and (max-width: 2560px) {
+    .sidebar {
+        padding-right: 100px;
+        margin-top: 120px;
+    }
+
+    .pantrySection {
+        width: 100%;
+        margin-top: 120px;
+    }
+
+    .notActive,
+    .active {
+        font-size: 24px;
+        font-weight: 500;
+        width: 180px;
+    }
+
+    .scrollableContainer {
+        column-gap: 100px;
+        max-height: 700px;
+        margin-top: 22px;
+        padding: 20px 60px;
+    }
+
+    .ingredientInputContainer {
+        height: 750px;
+        margin-top: 60px;
+    }
+
+    .saveButton {
+        font-size: 20px;
+        width: 230px;
+        border-radius: 10px;
+        padding: 12px;
+    }
+
+    .amountTextField {
+        width: 150px;
+        margin-right: 20px !important;
+    }
+
+    .unitSelect {
+        width: 180px;
+        margin-right: 20px !important;
+    }
+
+    .ingredientName {
+        width: 240px;
+        font-size: 18px;
+    }
+
+    .ingredientItem {
+        margin-bottom: 24px;
+    }
+
+    .header {
+        font-size: 24px;
+        font-weight: 600;
+    }
+
+    .textfieldLabel {
+        font-size: 20px;
+        font-weight: 500;
+    }
+
+    .input {
+        width: 1000px;
+    }
+
+    .amount {
+        display: flex;
+        flex-direction: column;
+        width: 200px;
+        margin-right: 15px;
+    }
+
+    .removeButton {
+        font-size: 24px !important;
+    }
+
+    .allergyScrollableContainer {
+       font-size: 20px;
+       column-gap: 90px;
+       max-height: 600px;
+    }
+
+    .allergies {
+        margin-top: 5em;
+    }
+
+    .addAllergy {
+        width: 600px;
+    }
+
+    .nutritionSection {
+        width: 45%;
+    }
+
+    .nutritionInputs {
+        font-size: 20px;
+        font-weight: 500;
+    }
+
+    .nutritionalItem {
+        padding-bottom: 1.5rem;
+    }
+
+    .nutritionName {
+        width: 55%;
+    }
+
+    .nutritionInput {
+        width: 30%;
+    }
+
+    .nutritionGram {
+        margin-left: 3em !important;
+    }
+
+    .trackerItemTitle {
+        font-size: 1em;
+        font-weight: 500;
+    }
+
+    .data {
+        font-size: 1em;
+    }
+
+    .trackerWrapper {
+        column-gap: 10em;
+        row-gap: 4em;
+    }
+
+    .trackerVisual {
+        width: 110px;
+    }
+
+    .nutritionalGoals {
+        padding: 0px 100px;
+    }
+
+    .recipeCard {
+        width: 423px;
+        height: 306px;
+    }
+
+    .recipeTitle {
+        font-size: 1.3em;
+    }
+
+    .recipeTime, .recipeIngredients {
+        font-size: .9em;
+    }
+}
+
+@media (min-width: 1300px) and (max-width: 1650px) {
+    .sidebar {
+        margin-top: 90px;
+        margin-left: 100px;
+    }
+
+    .pantrySection {
+        width: 100%;
+        margin-top: 90px;
+    }
+
+    .scrollableContainer {
+        grid-template-columns: repeat(2, 1fr);
+        max-height: 390px;
+        overflow-y: auto;
+        padding: 20px 50px;
+        margin-top: 16px;
+        column-gap: 50px;
+    }
+
+    .active,
+    .notActive {
+        font-size: 16px;
+        width: 120px;
+    }
+
+    .ingredientInputContainer {
+        height: 490px;
+        margin-top: 60px;
+    }
+
+    .saveButton {
+        font-size: 15px;
+        width: 180px;
+        border-radius: 10px;
+        padding: 11px;
+    }
+
+    .amountTextField {
+        width: 90px;
+        margin-right: 20px !important;
+    }
+
+    .unitSelect {
+        width: 100px;
+        margin-right: 20px !important;
+    }
+
+    .ingredientName {
+        width: 160px;
+        font-size: 12px;
+        margin: 0;
+    }
+
+    .ingredientItem {
+        margin-bottom: 22px;
+    }
+
+    .header {
+        font-size: 18px;
+        font-weight: 500;
+    }
+
+    .textfieldLabel {
+        font-size: 15px;
+        font-weight: 400;
+    }
+
+    .amount {
+        display: flex;
+        flex-direction: column;
+        width: 170px;
+        margin-right: 15px;
+    }
+
+    .removeButton {
+        font-size: 20px !important;
+    }
+
+    .nutritionSection {
+        width: 45%;
+    }
+
+    .nutritionInputs {
+        font-size: 16px;
+        font-weight: 500;
+    }
+
+    .nutritionalItem {
+        padding-bottom: 1.2rem;
+    }
+
+    .nutritionName {
+        width: 40%;
+    }
+
+    .nutritionInput {
+        width: 25%;
+    }
+
+
+    .trackerItemTitle {
+        font-size: .7em;
+        font-weight: 500;
+    }
+
+    .data {
+        font-size: .7em;
+    }
+
+    .trackerWrapper {
+        column-gap: 2em;
+        row-gap: 2em;
+    }
+
+    .trackerVisual {
+        width: 80px;
+    }
+
+    .nutritionalGoals {
+        padding: 0px 50px;
+    }
+
+    .trackerItem {
+        width: 180px;
+    }
+
+    .recipeCard {
+        width: 250px;
+        height: 181px;
+    }
+
+    .recipeTitle {
+        font-size: .8em;
+        font-weight: 500;
+    }
+
+    .recipeTime, .recipeIngredients {
+        font-size: .6em;
+    }
+}
+
+@media (min-width: 950px) and (max-width: 1300px) {
+    .sidebar {
+        margin-top: 90px;
+        margin-left: 90px;
+        height: 85%;
+    }
+
+    .pantrySection {
+        width: 100%;
+        margin-top: 90px;
+    }
+
+    .scrollableContainer {
+        grid-template-columns: repeat(1, 1fr);
+        max-height: 390px;
+        overflow-y: auto;
+        padding: 20px 50px;
+        margin-top: 16px;
+    }
+
+    .active,
+    .notActive {
+        font-size: 15px;
+        width: 110px;
+    }
+
+    .ingredientInputContainer {
+        height: 490px;
+        margin-top: 60px;
+    }
+
+    .saveButton {
+        font-size: 15px;
+        width: 180px;
+        border-radius: 10px;
+        padding: 11px;
+    }
+
+    .amountTextField {
+        width: 120px;
+        margin-right: 20px !important;
+    }
+
+    .unitSelect {
+        width: 130px;
+        margin-right: 20px !important;
+    }
+
+    .ingredientName {
+        width: 210px;
+        font-size: 14px;
+        font-weight: 400;
+    }
+
+    .ingredientItem {
+        margin-bottom: 22px;
+    }
+
+    .header {
+        font-size: 18px;
+        font-weight: 500;
+    }
+
+    .textfieldLabel {
+        font-size: 14px;
+        font-weight: 400;
+    }
+
+    .input {
+        width: 530px;
+    }
+
+    .amount {
+        display: flex;
+        flex-direction: column;
+        width: 170px;
+        margin-right: 15px;
+    }
+
+    .removeButton {
+        font-size: 20px !important;
+    }
+
+    .nutritionalGoals {
+        flex-direction: column-reverse;
+        margin-bottom: 50px;
+    }
+
+    .nutritionSection {
+        width: 100%;
+    }
+
+    .nutritionInputs {
+        font-size: 16px;
+        font-weight: 500;
+        margin-top: 20px;
+        margin-bottom: 0;
+    }
+
+    .nutritionalItem {
+        padding-bottom: 1.2rem;
+    }
+
+    .nutritionName {
+        width: 40%;
+        font-size: 15px;
+    }
+
+    .nutritionGram {
+        font-size: 15px
+    }
+
+    .nutritionInput {
+        width: 25%;
+    }
+
+    .trackerSection {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 60px;
+    }
+
+    .trackerItemTitle {
+        font-size: .7em;
+        font-weight: 500;
+    }
+
+    .data {
+        font-size: .7em;
+    }
+
+    .trackerWrapper {
+        column-gap: 2em;
+        row-gap: 2em;
+        margin-left: 0;
+        margin-top: 20px;
+    }
+
+    .trackerVisual {
+        width: 80px;
+    }
+
+    .nutritionalGoals {
+        padding: 0px 50px;
+    }
+
+    .trackerItem {
+        width: 180px;
+    }
+
+    .recipeCard {
+        width: 250px;
+        height: 181px;
+    }
+
+    .recipeTitle {
+        font-size: .8em;
+        font-weight: 500;
+    }
+
+    .recipeTime, .recipeIngredients {
+        font-size: .6em;
+    }
+
+    .recipesContainer { 
+        grid-template-columns: repeat(2, 1fr);
+        grid-row-gap: 2em;
+        grid-column-gap: 6em;
+        margin-bottom: 30px;
+        width: auto;
+    }
+}
+
+@media (min-width: 700px) and (max-width: 950px) {
+    .sidebar {
+        margin-top: 70px;
+        padding-right: 0px;
+        margin-left: 70px;
+        height: 90%;
+    }
+
+    .input {
+        width: 450px;
+    }
+
+    .active,
+    .notActive {
+        font-size: 13px;
+        width: 120px;
+    }
+
+    .pantrySection {
+        margin-top: 70px;
+    }
+
+    .scrollableContainer {
+        grid-template-columns: repeat(1, 1fr);
+        max-height: 390px;
+        padding: 20px 30px;
+        margin-top: 16px;
+    }
+
+    .ingredientInputContainer {
+        height: 500px;
+        margin-top: 50px;
+    }
+
+    .saveButton {
+        font-size: 13px;
+        width: 160px;
+        border-radius: 10px;
+        padding: 10px;
+    }
+
+    .amountTextField {
+        width: 100px;
+        margin-right: 10px !important;
+    }
+
+    .unitSelect {
+        width: 100px;
+        margin-right: 10px !important;
+    }
+
+    .ingredientName {
+        width: 180px;
+        font-size: 12px;
+        font-weight: 400;
+    }
+
+    .ingredientItem {
+        margin-bottom: 20px;
+    }
+
+    .header {
+        font-size: 15px;
+        font-weight: 500;
+    }
+
+    .textfieldLabel {
+        font-size: 12px;
+        font-weight: 400;
+    }
+
+    .amount {
+        width: 150px;
+        margin-right: 10px;
+    }
+
+    .removeButton {
+        font-size: 17px !important;
+    }
+
+    .addButton {
+        font-size: 20px !important;
+        margin-top: 20px;
+    }
+
+    .ingredient {
+        margin-right: 10px;
+    }
+
+    .scrollableContainer::-webkit-scrollbar {
+        width: 10px;
+    }
+    
+    .addAllergy {
+        width: 300px;
+    }
+
+    .allergyScrollableContainer {
+        grid-template-columns: repeat(1, 1fr);
+        max-height: 500px;
+        padding: 0px 80px;
+        margin-top: 20px;
+        font-size: 16px;
+    }
+
+    .allergies {
+        height: 90%;
+    }
+
+    .allergyScrollableContainer::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    .nutritionalGoals {
+        flex-direction: column-reverse;
+        margin-bottom: 50px;
+        padding: 0px 35px;
+    }
+
+    .nutritionSection {
+        width: 90%;
+    }
+
+    .nutritionInputs {
+        font-size: 16px;
+        font-weight: 500;
+        margin-top: 20px;
+        margin-bottom: 0;
+        width: 400px;
+    }
+
+    .nutritionalItem {
+        padding-bottom: 1.2rem;
+    }
+
+    .nutritionName {
+        width: 35%;
+        font-size: 14px;
+    }
+
+    .nutritionGram {
+        font-size: 14px
+    }
+
+    .nutritionInput {
+        width: 22%;
+    }
+
+    .trackerSection {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 60px;
+    }
+
+    .trackerItemTitle {
+        font-size: .7em;
+        font-weight: 500;
+    }
+
+    .data {
+        font-size: .7em;
+    }
+
+    .trackerWrapper {
+        column-gap: 1.5em;
+        row-gap: 2em;
+        margin-left: 0;
+        margin-top: 20px;
+    }
+
+    .trackerVisual {
+        width: 80px;
+    }
+
+    .trackerItem {
+        width: 180px;
+    }
+
+    .recipeCard {
+        width: 250px;
+        height: 181px;
+    }
+
+    .recipeTitle {
+        font-size: .8em;
+        font-weight: 500;
+    }
+
+    .recipeTime, .recipeIngredients {
+        font-size: .6em;
+    }
+
+    .recipesContainer { 
+        grid-template-columns: repeat(1, 1fr);
+        grid-row-gap: 2em;
+        margin-bottom: 30px;
+        width: auto;
+    }
+}
+
+@media (min-width: 430px) and (max-width: 700px) {
+    .pantryContent {
+        width: 100%;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+    }
+
+    .sidebar {
+        margin-top: 60px;
+        margin-left: 0;
+        height: 30px;
+        padding-right: 0px;
+        flex-direction: row;
+        border-right: none;
+        border-bottom: 1px solid #a2a6a7;
+        width: 400px;
+        justify-content: space-between;
+    }
+
+    .input {
+        width: 410px;
+        margin: 0;
+    }
+
+    .active,
+    .notActive {
+        font-size: 11px;
+        padding: 0;
+        width: auto;
+    }
+
+    .pantrySection {
+        margin-top: 30px;
+    }
+
+    .scrollableContainer {
+        grid-template-columns: repeat(1, 1fr);
+        max-height: 390px;
+        padding: 20px 30px;
+        margin-top: 16px;
+    }
+
+    .ingredientInputContainer {
+        height: 500px;
+        margin-top: 50px;
+    }
+
+    .saveButton {
+        font-size: 12px;
+        width: 140px;
+        border-radius: 10px;
+        padding: 9px;
+    }
+
+    .amountTextField {
+        width: 100px;
+        margin-right: 10px !important;
+    }
+
+    .unitSelect {
+        width: 90px;
+        margin-right: 10px !important;
+    }
+
+    .ingredientName {
+        width: 140px;
+        font-size: 11px;
+        font-weight: 400;
+    }
+
+    .ingredientItem {
+        margin-bottom: 18px;
+    }
+
+    .header {
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    .textfieldLabel {
+        font-size: 11px;
+        font-weight: 400;
+    }
+
+    .amount {
+        width: 150px;
+        margin-right: 10px;
+    }
+
+    .removeButton {
+        font-size: 15px !important;
+    }
+
+    .addButton {
+        font-size: 18px !important;
+        margin-top: 20px;
+    }
+
+    .ingredient {
+        margin-right: 5px;
+    }
+
+    .scrollableContainer::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .addAllergy {
+        width: 300px;
+    }
+
+    .allergyScrollableContainer {
+        grid-template-columns: repeat(1, 1fr);
+        max-height: 500px;
+        padding: 0px 80px;
+        margin-top: 20px;
+        font-size: 15px;
+    }
+
+    .allergies {
+        height: 85%;
+    }
+
+    .allergyScrollableContainer::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    .nutritionalGoals {
+        flex-direction: column-reverse;
+        margin-bottom: 50px;
+        padding: 0px 0px;
+        align-items: center;
+    }
+
+    .nutritionSection {
+        width: 90%;
+    }
+
+    .nutritionInputs {
+        font-size: 16px;
+        font-weight: 500;
+        margin-top: 20px;
+        margin-bottom: 0;
+        width: 400px;
+    }
+
+    .nutritionalItem {
+        padding-bottom: 1.2rem;
+    }
+
+    .nutritionName {
+        width: 35%;
+        font-size: 14px;
+    }
+
+    .nutritionGram {
+        font-size: 14px
+    }
+
+    .nutritionInput {
+        width: 22%;
+    }
+
+    .trackerSection {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 60px;
+    }
+
+    .trackerItemTitle {
+        font-size: .7em;
+        font-weight: 500;
+    }
+
+    .data {
+        font-size: .7em;
+    }
+
+    .trackerWrapper {
+        column-gap: 1em;
+        row-gap: 2em;
+        margin-left: 0;
+        margin-top: 20px;
+    }
+
+    .trackerVisual {
+        width: 80px;
+    }
+
+    .trackerItem {
+        width: 180px;
+    }
+
+    .recipeCard {
+        width: 250px;
+        height: 181px;
+    }
+
+    .recipeTitle {
+        font-size: .8em;
+        font-weight: 500;
+    }
+
+    .recipeTime, .recipeIngredients {
+        font-size: .6em;
+    }
+
+    .recipesContainer { 
+        grid-template-columns: repeat(1, 1fr);
+        grid-row-gap: 2em;
+        margin-bottom: 30px;
+        width: auto;
+    }
+}
+
+@media (max-width: 430px) {
+    .pantryContent {
+        width: 100%;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+    }
+
+    .sidebar {
+        margin-top: 60px;
+        margin-left: 0;
+        padding-right: 0px;
+        flex-direction: row;
+        border-right: none;
+        border-bottom: 1px solid #a2a6a7;
+        width: 350px;
+        justify-content: space-between;
+        height: 25px;
+    }
+
+    .input {
+        width: 350px;
+        margin: 0;
+    }
+
+    .active,
+    .notActive {
+        font-size: 11px;
+        padding: 0;
+        width: auto;
+    }
+
+    .pantrySection {
+        margin-top: 30px;
+    }
+
+    .scrollableContainer {
+        grid-template-columns: repeat(1, 1fr);
+        max-height: 450px;
+        padding: 20px 20px;
+        margin-top: 16px;
+    }
+
+    .ingredientInputContainer {
+        height: 55vh;
+        margin-top: 30px;
+    }
+
+    .saveButton {
+        font-size: 12px;
+        width: 140px;
+        border-radius: 10px;
+        padding: 9px;
+    }
+
+    .amountTextField {
+        width: 80px;
+        margin-right: 10px !important;
+    }
+
+    .unitSelect {
+        width: 70px;
+        margin-right: 10px !important;
+    }
+
+    .ingredientName {
+        width: 140px;
+        font-size: 11px;
+        font-weight: 400;
+    }
+
+    .ingredientItem {
+        margin-bottom: 18px;
+    }
+
+    .header {
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    .textfieldLabel {
+        font-size: 11px;
+        font-weight: 400;
+    }
+
+    .amount {
+        width: 150px;
+        margin-right: 10px;
+    }
+
+    .removeButton {
+        font-size: 15px !important;
+    }
+
+    .addButton {
+        font-size: 18px !important;
+        margin-top: 20px;
+    }
+
+    .ingredient {
+        margin-right: 5px;
+    }
+
+    .scrollableContainer::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .addAllergy {
+        width: 300px;
+    }
+
+    .allergyScrollableContainer {
+        grid-template-columns: repeat(1, 1fr);
+        max-height: 500px;
+        padding: 0px 80px;
+        margin-top: 20px;
+        font-size: 14px;
+    }
+
+    .allergies {
+        height: 95%;
+    }
+
+    .allergyScrollableContainer::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .nutritionalGoals {
+        flex-direction: column-reverse;
+        margin-bottom: 50px;
+        padding: 0px 0px;
+        align-items: center;
+    }
+
+    .nutritionSection {
+        width: 90%;
+    }
+
+    .nutritionInputs {
+        font-size: 16px;
+        font-weight: 500;
+        margin-top: 20px;
+        margin-bottom: 0;
+        width: 400px;
+    }
+
+    .nutritionalItem {
+        padding-bottom: 1.2rem;
+    }
+
+    .nutritionName {
+        width: 30%;
+        font-size: 13px;
+    }
+
+    .nutritionGram {
+        font-size: 13px
+    }
+
+    .nutritionInput {
+        width: 20%;
+    }
+
+    .trackerSection {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 60px;
+    }
+
+    .trackerItemTitle {
+        font-size: .6em;
+        font-weight: 500;
+    }
+
+    .data {
+        font-size: .6em;
+    }
+
+    .trackerWrapper {
+        column-gap: 1em;
+        row-gap: 2em;
+        margin-left: 0;
+        margin-top: 20px;
+    }
+
+    .trackerVisual {
+        width: 70px;
+    }
+
+    .trackerItem {
+        width: 150px;
+    }
+
+    .recipeCard {
+        width: 232px;
+        height: 168px;
+    }
+
+    .recipeTitle {
+        font-size: .75em;
+        font-weight: 500;
+    }
+
+    .recipeTime, .recipeIngredients {
+        font-size: .55em;
+    }
+
+    .recipesContainer { 
+        grid-template-columns: repeat(1, 1fr);
+        grid-row-gap: 2em;
+        margin-bottom: 30px;
+        width: auto;
+        margin-top: .6em;
+    }
 }

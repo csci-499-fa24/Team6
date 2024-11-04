@@ -74,7 +74,7 @@ const RecipeHistory = () => {
     }
 
     return (
-        <div>
+        <div className={styles.recipeHistoryWrapper}>
             <div className={styles.header}>Your Recipe History</div>
             <div className={styles.recipesContainer}>
                 {recipes?.length > 0 ? (
