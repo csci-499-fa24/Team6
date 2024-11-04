@@ -19,11 +19,11 @@ const RecipePage = () => {
         type: '',
         cuisine: '',
         diet: '',
+        searchQuery: ''
     });
     const [page, setPage] = useState(1);
-    const recipesPerPage = 12; // Display 12 recipes per page
+    const recipesPerPage = 12;
 
-    // Fetch user ingredients from your API
     const fetchUserIngredients = async () => {
         try {
             const token = localStorage.getItem('token');
@@ -43,7 +43,7 @@ const RecipePage = () => {
     };
 
     const fetchRecipes = async () => {
-        if (userIngredients.length === 0) return; // Wait until ingredients are fetched
+        if (userIngredients.length === 0) return;
 
         try {
             const headers = {
@@ -62,16 +62,26 @@ const RecipePage = () => {
                     type: filters.type || '',
                     cuisine: filters.cuisine || '',
                     diet: filters.diet || '',
+                    query: filters.searchQuery || '',
                 },
                 headers
             });
 
             const basicRecipes = response.data;
-            setRecipes(basicRecipes);
-            const recipeIds = basicRecipes.map(recipe => recipe.id).join(',');
+            
+            const filteredRecipes = filters.searchQuery
+                ? basicRecipes.filter(recipe => 
+                    recipe.title.toLowerCase().includes(filters.searchQuery.toLowerCase())
+                  )
+                : basicRecipes;
+
+            setRecipes(filteredRecipes);
+
+            const recipeIds = filteredRecipes.map(recipe => recipe.id).join(',');
 
             const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
             await delay(1000);
+            
             const recipeDetails = await axios.get(`https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/informationBulk`, {
                 params: {
                     ids: recipeIds,
@@ -80,7 +90,7 @@ const RecipePage = () => {
                 headers
             });
 
-            const combinedRecipes = basicRecipes.map(basicRecipe => {
+            const combinedRecipes = filteredRecipes.map(basicRecipe => {
                 const detailedRecipe = recipeDetails.data.find(detailed => detailed.id === basicRecipe.id);
                 return {
                     ...basicRecipe,
@@ -118,6 +128,18 @@ const RecipePage = () => {
         });
     };
 
+    const handleSearchChange = (e) => {
+        setFilters({
+            ...filters,
+            searchQuery: e.target.value
+        });
+    };
+
+    const handleSearchClick = () => {
+        setPage(1);
+        fetchRecipes();
+    };
+
     const handleNextPage = () => {
         setPage(prevPage => prevPage + 1);
     };
@@ -132,7 +154,6 @@ const RecipePage = () => {
         try {
             const token = localStorage.getItem('token');
 
-            // Check if the recipe is already in favorites
             const checkResponse = await axios.get(
                 `${process.env.NEXT_PUBLIC_SERVER_URL}/api/favorites`,
                 {
@@ -146,7 +167,6 @@ const RecipePage = () => {
             const isFavorite = checkResponse.data.recipes.some(recipe => recipe.id === recipeId);
 
             if (isFavorite) {
-                // If it is already in favorites, remove it
                 const response = await axios.delete(
                     `${process.env.NEXT_PUBLIC_SERVER_URL}/api/favorites`,
                     {
@@ -162,7 +182,6 @@ const RecipePage = () => {
                     alert(`Recipe ${recipeId} removed from favorites.`);
                 }
             } else {
-                // If not in favorites, add it
                 const response = await axios.post(
                     `${process.env.NEXT_PUBLIC_SERVER_URL}/api/favorites`,
                     { recipeId },
@@ -202,7 +221,22 @@ const RecipePage = () => {
                     <div className={styles.recipePageDescription}>Based on your pantry</div>
                 </div>
 
-                {/* Filter Section */}
+                <div className={styles.searchBarContainer}>
+                    <input
+                        type="text"
+                        placeholder="Search for recipes..."
+                        value={filters.searchQuery}
+                        onChange={handleSearchChange}
+                        className={styles.searchBar}
+                    />
+                    <Button 
+                        className={styles.searchButton} 
+                        onClick={handleSearchClick}
+                    >
+                        Search
+                    </Button>
+                </div>
+
                 <div className={styles.filtersContainer}>
                     <select
                         name="type"
