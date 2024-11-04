@@ -29,7 +29,7 @@ router.get('/profile', authenticateToken, async (req, res) => {
 
     try {
         const result = await pool.query(`
-            SELECT u.email, up.first_name, up.last_name, up.phone
+            SELECT u.email, u.is_email_subscribed, u.is_sms_subscribed, up.first_name, up.last_name, up.phone
             FROM users u
             JOIN user_profiles up ON u.user_id = up.user_id
             WHERE u.user_id = $1
@@ -216,6 +216,33 @@ router.put('/update-phone', authenticateToken, async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 });
+
+// Add endpoint to update email subscription preference
+const { sendUnsubscribeConfirmationEmail } = require('../email_noti/email');
+
+router.put('/update-email-subscription', authenticateToken, async (req, res) => {
+    const { is_email_subscribed } = req.body;
+    const userId = req.user.id;
+
+    try {
+        const updateQuery = 'UPDATE users SET is_email_subscribed = $1 WHERE user_id = $2 RETURNING is_email_subscribed, email';
+        const updateResult = await pool.query(updateQuery, [is_email_subscribed, userId]);
+
+        if (updateResult.rows.length > 0) {
+            if (!is_email_subscribed) {
+                // Send unsubscription email if user unsubscribed
+                await sendUnsubscribeConfirmationEmail(updateResult.rows[0].email);
+            }
+            res.status(200).json({ message: 'Email subscription updated successfully', is_email_subscribed: updateResult.rows[0].is_email_subscribed });
+        } else {
+            res.status(404).json({ message: 'User not found' });
+        }
+    } catch (error) {
+        console.error('Error updating email subscription:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
 
 module.exports = router;
 
