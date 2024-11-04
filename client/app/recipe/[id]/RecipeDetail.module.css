@@ -3,10 +3,12 @@
     margin-left: 8em;
     display: flex;
     height: 80vh;
+    flex-wrap: wrap;
 }
 
 .recipeDetailsWrapper {
-    width: 40%;
+    width: 100%;
+    max-width: 40%;
 }
 
 .recipeTitle {
@@ -16,16 +18,19 @@
 }
 
 .recipeImage {
-    width: 60%;
-    height: 40%;
+    width: 100%;
+    max-width: 60%;
+    height: auto;
     border-radius: 10px;
-    object-fit:cover;
+    object-fit: cover;
     margin-bottom: 1em;
 }
 
 .recipeStatsWrapper {
     display: flex;
+    flex-wrap: wrap;
 }
+
 
 .recipeTime {
     display: flex;
@@ -85,22 +90,24 @@
 }
 
 .recipeInstructionWrapper {
-    width: 55%;
+    width: 100%;
+    max-width: 55%;
 }
 
 .ingredientWrapper {
-    height: 25%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1em;
+    height: auto;
     width: 100%;
-    column-count: 2;
-    column-gap: 40px;
-    column-fill: auto;
 }
 
 .ingredient {
-    color:#506264;
+    color: #506264;
     font-size: .9em;
     font-weight: 500;
     margin-bottom: .4em;
+    width: calc(50% - 1em); /* Each ingredient takes half the width minus the gap */
 }
 
 .instructionWrapper {
@@ -129,7 +136,7 @@
 }
 
 .instructionList {
-    color:#506264;
+    color: #506264;
     font-size: 1em;
     font-weight: 500;
     margin-bottom: .2em;
@@ -173,23 +180,24 @@
     height: 7%;
     border-radius: 10px;
     margin: 5% auto;
-    &:hover {
-        background-color: rgb(233, 69, 15);
-        cursor: pointer;
-    }
+}
+
+.madeButton:hover {
+    background-color: rgb(233, 69, 15);
+    cursor: pointer;
 }
 
 .trackerWrapper {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     grid-template-rows: repeat(2, auto);
-    grid-row-gap: 2em;
-    grid-column-gap: .5em;
+    gap: 1em;
     justify-items: center;
     font-size: .8em;
     font-weight: 600;
-    color:#506264;
-    width: 65%;
+    color: #506264;
+    width: 100%;
+    max-width: 65%;
     margin-top: 3em;
     margin-left: -1.5em;
 }
@@ -216,11 +224,12 @@
 }
 
 .titleButtons {
-    color:#EC4A27;
-    &:hover {
-        color: rgb(233, 69, 15);
-        cursor: pointer;
-    }
+    color: #EC4A27;
+}
+
+.titleButtons:hover {
+    color: rgb(233, 69, 15);
+    cursor: pointer;
 }
 
 .button {
