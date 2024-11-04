@@ -77,6 +77,38 @@ const Settings = () => {
         }
     };
 
+    // Add SMS Subscription Handling in UI
+    const handleSmsSubscriptionChange = async () => {
+        const newSmsSubscriptionStatus = !isSmsSubscribed;
+        setIsSmsSubscribed(newSmsSubscriptionStatus);
+
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/user/update-sms-subscription`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ is_sms_subscribed: newSmsSubscriptionStatus })
+            });
+
+            if (response.ok) {
+                if (!newSmsSubscriptionStatus) {
+                    setNotificationMessage('You have unsubscribed from SMS notifications.');
+                    setShowNotification(true);
+                    setTimeout(() => setShowNotification(false), 4500);
+                }
+            } else {
+                console.error('Failed to update SMS subscription');
+                setIsSmsSubscribed(!newSmsSubscriptionStatus);
+            }
+        } catch (error) {
+            console.error('Error updating SMS subscription:', error);
+            setIsSmsSubscribed(!newSmsSubscriptionStatus);
+        }
+    };
+
     const renderTabContent = () => {
         switch (activeTab) {
             case 'Account Info':
@@ -120,7 +152,7 @@ const Settings = () => {
                                 type="checkbox"
                                 className={styles.checkbox}
                                 checked={isEmailSubscribed}
-                                onChange={handleEmailSubscriptionChange} // Updated to use new function
+                                onChange={handleEmailSubscriptionChange} 
                             />
                         </div>
                         <div className={styles.notificationRow}>
@@ -129,7 +161,7 @@ const Settings = () => {
                                 type="checkbox"
                                 className={styles.checkbox}
                                 checked={isSmsSubscribed}
-                                onChange={() => setIsSmsSubscribed(!isSmsSubscribed)}
+                                onChange={handleSmsSubscriptionChange}
                             />
                         </div>
                     </div>

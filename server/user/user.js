@@ -243,6 +243,30 @@ router.put('/update-email-subscription', authenticateToken, async (req, res) => 
     }
 });
 
+//Update SMS Subscription Endpoint
+const { sendUnsubscribeConfirmationSMS } = require('../notifications/sms');
+
+router.put('/update-sms-subscription', authenticateToken, async (req, res) => {
+    const { is_sms_subscribed } = req.body;
+    const userId = req.user.id;
+
+    try {
+        const updateQuery = 'UPDATE users SET is_sms_subscribed = $1 WHERE user_id = $2 RETURNING is_sms_subscribed, phone';
+        const updateResult = await pool.query(updateQuery, [is_sms_subscribed, userId]);
+
+        if (updateResult.rows.length > 0) {
+            if (!is_sms_subscribed) {
+                await sendUnsubscribeConfirmationSMS(updateResult.rows[0].phone);
+            }
+            res.status(200).json({ message: 'SMS subscription updated successfully', is_sms_subscribed: updateResult.rows[0].is_sms_subscribed });
+        } else {
+            res.status(404).json({ message: 'User not found' });
+        }
+    } catch (error) {
+        console.error('Error updating SMS subscription:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
 
 module.exports = router;
 

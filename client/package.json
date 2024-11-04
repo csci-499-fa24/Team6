@@ -15,12 +15,14 @@
     "@mui/material": "^6.1.6",
     "axios": "^1.7.7",
     "bcrypt": "^5.1.1",
+    "dotenv": "^16.4.5",
     "jspdf": "^2.5.2",
     "next": "^14.2.14",
     "react": "^18.3.1",
     "react-circular-progressbar": "^2.1.0",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^6.26.2"
+    "react-router-dom": "^6.26.2",
+    "twilio": "^5.3.5"
   },
   "devDependencies": {
     "@babel/core": "^7.25.8",

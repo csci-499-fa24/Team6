@@ -20,7 +20,8 @@
     "jsonwebtoken": "^9.0.2",
     "node-cron": "^3.0.3",
     "nodemailer": "^6.9.15",
-    "pg": "^8.13.0"
+    "pg": "^8.13.0",
+    "twilio": "^5.3.5"
   },
   "devDependencies": {
     "jest": "^29.7.0",
