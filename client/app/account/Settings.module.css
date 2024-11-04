@@ -197,3 +197,51 @@
     margin-top: 0.5rem;
 }
 
+.notificationPopup {
+    position: absolute;
+    top: 120%; /* Position it a bit above the bottom of the settings card */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(255, 107, 107, 0.9); /* Soft red with transparency */
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    opacity: 0;
+    animation: slideUpFade 0.5s forwards;
+    z-index: 1; /* Ensure it stays above other content in the settings card */
+}
+
+/* Slide-up and fade-in animation */
+@keyframes slideUpFade {
+    0% {
+        transform: translateX(-50%) translateY(20px); /* Slightly below */
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(-50%) translateY(0); /* In position */
+        opacity: 1;
+    }
+}
+
+/* Notification icon style */
+.notificationIcon {
+    font-size: 1.2rem;
+    margin-right: 0.5rem;
+}
+
+/* Fade-out transition */
+.notificationPopup.fadeOut {
+    animation: fadeOut 0.5s forwards;
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
