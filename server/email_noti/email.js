@@ -24,7 +24,7 @@ async function getLowIngredients() {
             JOIN user_profiles up ON u.user_id = up.user_id
             JOIN user_ingredient ui ON up.user_id = ui.user_id
             JOIN ingredients i ON ui.ingredient_id = i.ingredient_id
-            WHERE ui.amount < 5 AND up.email IS NOT NULL;
+            WHERE ui.amount < 5 AND up.email IS NOT NULL AND u.is_email_subscribed = true;
         `);
 
         const users = result.rows;
@@ -104,4 +104,45 @@ async function checkAndSendEmail() {
     }
 }
 
-module.exports = { checkAndSendEmail, createTransporter, getLowIngredients };
+// Function to send unsubscription confirmation email
+async function sendUnsubscribeConfirmationEmail(userEmail) {
+    try {
+        if (!transporter) {
+            await createTransporter();
+        }
+
+        const logoUrl = "https://raw.githubusercontent.com/csci-499-fa24/Team6/main/client/public/assets/logo.png";
+        const mailOptions = {
+            from: `"PANTRY PAL" <${process.env.EMAIL_USER}>`, // Adjust sender name
+            to: userEmail,
+            subject: 'You’ve Successfully Unsubscribed from Our Notifications',
+            html: `
+                <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+                    <div style="background-color: #f0f0f0; padding: 20px; text-align: center;">
+                        <img src="${logoUrl}" alt="PantryPal Logo" style="height: 70px; margin-bottom: 10px;">
+                    </div>
+                    <div style="padding: 20px; background-color: white; border-radius: 8px;">
+                        <h2 style="color: #ff6b6b;">You’ve Unsubscribed from Email Notifications</h2>
+                        <p style="color: #555;">Hey Pal,</p>
+                        <p>We wanted to let you know that you have successfully unsubscribed from our email notifications. We respect your choice, and you won’t receive any more email notifications from us.</p>
+                        <p>If you change your mind, you can always <a href="YOUR_REACTIVATION_URL" style="color: #ff6b6b; text-decoration: none;">re-subscribe here</a> through your account settings.</p>
+                        <p style="margin-top: 20px;">Thank you for being part of our community!</p>
+                        <p style="margin-top: 10px;">Warm regards,</p>
+                        <p><strong>Your PantryPal :)</strong></p>
+                    </div>
+                    <div style="background-color: #f8f8f8; padding: 10px; text-align: center; color: #999; font-size: 0.85rem;">
+                        <p>© ${new Date().getFullYear()} PantryPal. All rights reserved.</p>
+                        <p><a href="YOUR_PRIVACY_POLICY_URL" style="color: #999; text-decoration: none;">Privacy Policy</a> | <a href="YOUR_TERMS_URL" style="color: #999; text-decoration: none;">Terms of Service</a></p>
+                    </div>
+                </div>
+            `
+        };
+
+        await transporter.sendMail(mailOptions);
+        console.log('Unsubscription confirmation email sent to:', userEmail);
+    } catch (error) {
+        console.error('Error sending unsubscription confirmation email:', error);
+    }
+}
+
+module.exports = { checkAndSendEmail, sendUnsubscribeConfirmationEmail, createTransporter, getLowIngredients };

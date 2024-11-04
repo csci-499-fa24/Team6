@@ -8,6 +8,11 @@ const Settings = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('********'); // This can remain a placeholder
     const [phoneNumber, setPhoneNumber] = useState('');
+    const [isEmailSubscribed, setIsEmailSubscribed] = useState(false); 
+    const [isSmsSubscribed, setIsSmsSubscribed] = useState(false);
+    const [notificationMessage, setNotificationMessage] = useState('');
+    const [showNotification, setShowNotification] = useState(false);
+
 
     useEffect(() => {
         // Fetch user profile information on component load
@@ -25,6 +30,8 @@ const Settings = () => {
                     const data = await response.json();
                     setEmail(data.email); // Set the actual email from the backend
                     setPhoneNumber(data.phone); // Set the actual phone number from the backend
+                    setIsEmailSubscribed(data.is_email_subscribed);
+                    setIsSmsSubscribed(data.is_sms_subscribed);
                 } else {
                     console.error('Failed to fetch user data');
                 }
@@ -35,6 +42,40 @@ const Settings = () => {
 
         fetchUserData();
     }, []);
+
+    //Function to handle updating email subscription
+    const handleEmailSubscriptionChange = async () => {
+        const newSubscriptionStatus = !isEmailSubscribed;
+        setIsEmailSubscribed(newSubscriptionStatus);
+
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/user/update-email-subscription`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ is_email_subscribed: newSubscriptionStatus })
+            });
+
+            if (response.ok) {
+                // Show confirmation message if unsubscribed
+                if (!newSubscriptionStatus) {
+                setNotificationMessage('You have unsubscribed from email notifications.');
+                setShowNotification(true);
+                setTimeout(() => setShowNotification(false), 4500); // Hide after 5 seconds
+                }
+            } else {
+                console.error('Failed to update email subscription');
+                setIsEmailSubscribed(!newSubscriptionStatus);
+            }
+        } catch (error) {
+            console.error('Error updating email subscription:', error);
+            // Revert the checkbox state if there is an error
+            setIsEmailSubscribed(!newSubscriptionStatus);
+        }
+    };
 
     const renderTabContent = () => {
         switch (activeTab) {
@@ -75,11 +116,21 @@ const Settings = () => {
                     <div className={styles.tabContent}>
                         <div className={styles.notificationRow}>
                             <label className={styles.label}>Email Notifications</label>
-                            <input type="checkbox" className={styles.checkbox} />
+                            <input
+                                type="checkbox"
+                                className={styles.checkbox}
+                                checked={isEmailSubscribed}
+                                onChange={handleEmailSubscriptionChange} // Updated to use new function
+                            />
                         </div>
                         <div className={styles.notificationRow}>
                             <label className={styles.label}>SMS Notifications</label>
-                            <input type="checkbox" className={styles.checkbox} />
+                            <input
+                                type="checkbox"
+                                className={styles.checkbox}
+                                checked={isSmsSubscribed}
+                                onChange={() => setIsSmsSubscribed(!isSmsSubscribed)}
+                            />
                         </div>
                     </div>
                 );
@@ -90,13 +141,13 @@ const Settings = () => {
 
     return (
         <div className={styles.settingsWrapper}>
-            <div className={styles.settingsCard}>
+            <div className={styles.settingsCard} style={{ position: 'relative' }}> {/* Make settingsCard relative to position the notification */}
                 <div className={styles.profilePicture}>
                     <img src="/assets/profile-image.png" alt="Profile" />
                 </div>
                 
                 <h2 className={styles.heading}>Account Settings</h2>
-
+    
                 {/* Tabs for Different Sections */}
                 <div className={styles.tabs}>
                     {['Account Info', 'Privacy & Security', 'Notifications'].map(tab => (
@@ -109,17 +160,25 @@ const Settings = () => {
                         </button>
                     ))}
                 </div>
-
+    
                 {/* Tab Content */}
                 {renderTabContent()}
-
+    
                 {/* Save All Changes Button */}
                 {activeTab === 'Account Info' && (
                     <button className={styles.saveButton}>Save All Changes</button>
                 )}
+    
+                {/* Notification Message */}
+                {showNotification && (
+                    <div className={`${styles.notificationPopup} ${!showNotification ? styles.fadeOut : ''}`}>
+                        <span className={styles.notificationIcon}>ⓘ</span> {/* Updated icon to "info" style */}
+                        <span>{notificationMessage}</span>
+                    </div>
+                )}
             </div>
         </div>
-    );
+    );        
 };
 
 export default Settings;
