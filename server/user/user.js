@@ -54,22 +54,20 @@ router.get('/profile', authenticateToken, async (req, res) => {
 // Endpoint to update user email
 router.put('/update-email', authenticateToken, async (req, res) => {
     const { email } = req.body;
-    const userId = req.user.id; // Extract user ID from authenticated token
+    const userId = req.user.id;
 
     if (!email) {
         return res.status(400).json({ message: 'Email is required' });
     }
 
-    //Must follow email format
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailPattern.test(email)) {
         return res.status(400).json({ message: 'Invalid email format' });
     }
 
-    //Adding check for existing account with email
     try {
         const emailExists = await pool.query('SELECT user_id FROM users WHERE email = $1', [email]);
-        if (emailExists.rows.length > 0 && emailExists.rows[0].user_id !== userId) {
+        if (emailExists.rows && emailExists.rows.length > 0 && emailExists.rows[0].user_id !== userId) {
             return res.status(409).json({ message: 'Email is already associated with another account' });
         }
     } catch (error) {
@@ -86,7 +84,7 @@ router.put('/update-email', authenticateToken, async (req, res) => {
         `;
         const userDetailsResult = await pool.query(userDetailsQuery, [userId]);
 
-        if (userDetailsResult.rows.length === 0) {
+        if (!userDetailsResult.rows || userDetailsResult.rows.length === 0) {
             return res.status(404).json({ message: 'User not found' });
         }
 
@@ -94,15 +92,18 @@ router.put('/update-email', authenticateToken, async (req, res) => {
         const updateEmailQuery = 'UPDATE users SET email = $1 WHERE user_id = $2 RETURNING email';
         const updateResult = await pool.query(updateEmailQuery, [email, userId]);
 
-        console.log('Updated email information:', JSON.stringify({
-            user_id: userId,
-            name: `${userDetails.first_name} ${userDetails.last_name}`,
-            previous_email: userDetails.previous_email,
-            new_email: updateResult.rows[0].email,
-            phone: userDetails.phone
-        }, null, 2));
-
-        res.status(200).json({ message: 'Email updated successfully', email: updateResult.rows[0].email });
+        if (updateResult.rows && updateResult.rows.length > 0) {
+            console.log('Updated email information:', JSON.stringify({
+                user_id: userId,
+                name: `${userDetails.first_name} ${userDetails.last_name}`,
+                previous_email: userDetails.previous_email,
+                new_email: updateResult.rows[0].email,
+                phone: userDetails.phone
+            }, null, 2));
+            res.status(200).json({ message: 'Email updated successfully', email: updateResult.rows[0].email });
+        } else {
+            res.status(500).json({ message: 'Failed to update email' });
+        }
     } catch (error) {
         console.error('Error updating email:', error);
         res.status(500).json({ message: 'Internal server error' });
@@ -166,12 +167,11 @@ router.put('/update-phone', authenticateToken, async (req, res) => {
     const { phone } = req.body;
     const userId = req.user.id;
 
-    const phonePattern = /^\d{3}-\d{3}-\d{4}$/; // Expected format: 123-456-7890
+    const phonePattern = /^\d{3}-\d{3}-\d{4}$/;
     if (!phonePattern.test(phone) && !/^\d{10}$/.test(phone)) {
         return res.status(400).json({ message: 'Invalid phone number format. Use XXX-XXX-XXXX or XXXXXXXXXX' });
     }
 
-    // Normalize the phone number to digits only for consistent checking
     const normalizedPhone = phone.replace(/\D/g, '');
 
     try {
@@ -180,15 +180,13 @@ router.put('/update-phone', authenticateToken, async (req, res) => {
             WHERE REPLACE(phone, '-', '') = $1 OR phone = $1
         `, [normalizedPhone]);
 
-        if (phoneExists.rows.length > 0 && phoneExists.rows[0].user_id !== userId) {
+        if (phoneExists.rows && phoneExists.rows.length > 0 && phoneExists.rows[0].user_id !== userId) {
             return res.status(409).json({ message: 'Phone number is already associated with another account' });
         }
     } catch (error) {
         console.error('Error checking phone number:', error);
         return res.status(500).json({ message: 'Internal server error' });
     }
-
-    // Continue with the existing phone update logic
 
     try {
         const userDetailsQuery = `
@@ -199,7 +197,7 @@ router.put('/update-phone', authenticateToken, async (req, res) => {
         `;
         const userDetailsResult = await pool.query(userDetailsQuery, [userId]);
 
-        if (userDetailsResult.rows.length === 0) {
+        if (!userDetailsResult.rows || userDetailsResult.rows.length === 0) {
             return res.status(404).json({ message: 'User not found' });
         }
 
@@ -207,15 +205,18 @@ router.put('/update-phone', authenticateToken, async (req, res) => {
         const updatePhoneQuery = 'UPDATE user_profiles SET phone = $1 WHERE user_id = $2 RETURNING phone';
         const updateResult = await pool.query(updatePhoneQuery, [phone, userId]);
 
-        console.log('Updated phone information:', JSON.stringify({
-            user_id: userId,
-            name: `${userDetails.first_name} ${userDetails.last_name}`,
-            previous_phone: userDetails.previous_phone,
-            new_phone: updateResult.rows[0].phone,
-            email: userDetails.email
-        }, null, 2));
-
-        res.status(200).json({ message: 'Phone number updated successfully', phone: updateResult.rows[0].phone });
+        if (updateResult.rows && updateResult.rows.length > 0) {
+            console.log('Updated phone information:', JSON.stringify({
+                user_id: userId,
+                name: `${userDetails.first_name} ${userDetails.last_name}`,
+                previous_phone: userDetails.previous_phone,
+                new_phone: updateResult.rows[0].phone,
+                email: userDetails.email
+            }, null, 2));
+            res.status(200).json({ message: 'Phone number updated successfully', phone: updateResult.rows[0].phone });
+        } else {
+            res.status(500).json({ message: 'Failed to update phone number' });
+        }
     } catch (error) {
         console.error('Error updating phone number:', error);
         res.status(500).json({ message: 'Internal server error' });
