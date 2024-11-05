@@ -1,7 +1,6 @@
 .recipePageWrapper {
     width: 100%;
     min-height: 100vh;
-    background: linear-gradient(135deg, rgba(255,240,220,0.8) 0%, rgba(255,220,255,0.8) 100%);
 }
 
 .title {
@@ -33,10 +32,14 @@
     border-radius: 7px;
     border: 1px solid rgba(171, 169, 231, 0.3);
     background-color: white;
-    color: #506264;
-    font-size: 0.9em;
-    width: 20vw;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    color: #000000;
+    font-size: 14px;
+    width: 300px;
+}
+
+.searchBar::placeholder {
+    color: #506264 !important;
+    opacity: 1; 
 }
 
 .searchBar::placeholder {
@@ -45,19 +48,23 @@
 
 .searchBar:focus {
     outline: none;
-    border-color: rgba(171, 169, 231, 0.5);
+    border-color: #EC4A27;
 }
 
 .searchButton {
-    background-color: #EC4A27 !important;
-    border-radius: 25px !important;
-    height: 3rem !important;
-    padding: 0 1em !important;
+    background-color: #EC4A27;
+    border-radius: 5px;
+    height: 33px;
+    padding: 0 40px;
     color: white !important;
-    border: none !important;
     font-weight: 600 !important;
     cursor: pointer;
+    font-size: 15px !important;
     transition: background-color 0.3s ease !important;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .searchButton:hover {
@@ -66,8 +73,9 @@
 
 .filtersContainer {
     display: flex;
-    gap: 1em;
-    margin: 2em 8em;
+    gap: 25px;
+    margin: 35px 130px;
+    align-items: center;
 }
 
 .filterSelect {
@@ -77,11 +85,11 @@
     background-color: white;
     color: #506264;
     cursor: pointer;
-    font-size: 0.9em;
+    font-size: 14px;
 }
 
 .filterSelect:hover {
-    border-color: rgba(171, 169, 231, 0.5);
+    border: 1px solid #EC4A27;
 }
 
 .recipesContainer {
@@ -89,15 +97,16 @@
     grid-template-columns: repeat(4, 1fr);
     grid-column-gap: 5em;
     grid-row-gap: 3em;
-    margin: 2em 8em;
+    margin: 0 107px;
+    justify-items:center;
 }
 
 .recipeCard {
     background-color: rgba(171, 169, 231, 0.2);
     border-radius: 10px;
     padding: .8em 1em;
-    height: 24vh;
-    width: 16.4vw;
+    height: 340px;
+    width: 450px;
     cursor: pointer;
     text-decoration: none;
     transition: all 0.3s ease;
@@ -118,7 +127,7 @@
 .recipeTitle {
     font-weight: 600;
     margin-top: .3em;
-    font-size: 1em;
+    font-size: 1.2em;
     max-width: 80%;
     white-space: nowrap;
     overflow: hidden;
@@ -126,7 +135,7 @@
 }
 
 .recipeImage {
-    height: 75%;
+    height: 79%;
     width: 100%;
     border-radius: 10px;
     object-fit: cover;
@@ -144,7 +153,8 @@
     background-color: rgba(143, 195, 255, .73);
     border-radius: 7px;
     color: #506264;
-    font-size: .7em;
+    font-size: .8em;
+    font-weight: 500;
     padding: .4em .8em;
     margin-top: .5em;
     margin-right: 1em;
@@ -157,7 +167,8 @@
     background-color: rgba(227, 167, 255, .6);
     border-radius: 7px;
     color: #506264;
-    font-size: .7em;
+    font-size: .8em;
+    font-weight: 500;
     padding: .4em .8em;
     margin-top: .5em;
     margin-right: 1em;
@@ -186,9 +197,9 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 1em;
-    margin: 2em 0;
-    padding-bottom: 2em;
+    gap: 70px;
+    margin: 50px 0;
+    padding-bottom: 50px;
 }
 
 .paginationButton {
@@ -220,4 +231,268 @@
     text-align: center;
     color: #506264;
     font-size: 1.2em;
+}
+
+.pageButton {
+    background-color: #EC4A27;
+    width: 150px;
+    padding: 10px 0px;
+    text-align: center;
+    border-radius: 5px;
+    color: white;
+
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+.disabled {
+    background-color: #a8a5a2;
+    width: 150px;
+    padding: 10px 0px;
+    text-align: center;
+    border-radius: 5px;
+    color: white;
+
+    &:hover {
+        cursor:default;
+    }
+}
+
+@media (min-width: 1600px) and (max-width: 2000px) {
+    .recipeCard {
+        width: 320px;
+        height: 241px;
+    }
+
+    .recipesContainer {
+        grid-column-gap: 0;
+        margin: 0 90px;
+    }
+
+    .recipeTitle {
+        font-size: .9em;
+        font-weight: 450;
+    }
+
+    .recipeTime {
+        font-size: .6em;
+    }
+
+    .recipeIngredients {
+        font-size: .6em;
+    }
+
+    .recipeHeart {
+        font-size: 1em !important;
+    }
+
+    .searchButton {
+        height: 32px;
+    }
+
+    .recipePageTitle {
+        font-size: 1.8rem;
+    }
+    
+    .recipePageDescription {
+        font-size: 1.1em;
+    }
+}
+
+@media (min-width: 1200px) and (max-width: 1600px) {
+    .recipeCard {
+        width: 320px;
+        height: 241px;
+    }
+
+    .recipesContainer {
+        grid-column-gap: 0;
+        grid-template-columns: repeat(3, 1fr);
+        margin: 0 75px;
+    }
+
+    .recipeTitle {
+        font-size: .9em;
+        font-weight: 450;
+    }
+
+    .recipeTime {
+        font-size: .6em;
+    }
+
+    .recipeIngredients {
+        font-size: .6em;
+    }
+
+    .recipeHeart {
+        font-size: 1em !important;
+    }
+    
+    .searchBar {
+        width: 275px;
+        min-width: 275px;
+        font-size: 13px;
+    }
+
+    .filtersContainer {
+        gap: 25px;
+    }
+
+    .searchButton {
+        height: 30px;
+        font-size: 14px !important;
+    }
+
+    .filterSelect {
+        font-size: 13px;
+    }
+
+    .recipePageTitle {
+        font-size: 1.7rem;
+    }
+    
+    .recipePageDescription {
+        font-size: 1em;
+    }
+}
+
+@media (min-width: 750px) and (max-width: 1200px) {
+    .recipeCard {
+        width: 320px;
+        height: 241px;
+    }
+
+    .recipesContainer {
+        grid-column-gap: 0;
+        grid-template-columns: repeat(2, 1fr);
+        margin: 0 20px;
+    }
+
+    .recipeTitle {
+        font-size: .9em;
+        font-weight: 450;
+    }
+
+    .recipeTime {
+        font-size: .6em;
+    }
+
+    .recipeIngredients {
+        font-size: .6em;
+    }
+
+    .recipeHeart {
+        font-size: 1em !important;
+    }
+
+    .searchBar {
+        width: 220px;
+        min-width: 220px;
+        font-size: 12px;
+    }
+
+    .filtersContainer {
+        gap: 10px;
+    }
+
+    .filterSelect {
+        font-size: 12px;
+        width: 248px;
+    }
+
+    .searchButton {
+        height: 27px;
+        font-size: 13px !important;
+    }
+
+    .recipePageTitle {
+        font-size: 1.7rem;
+    }
+    
+    .recipePageDescription {
+        font-size: 1em;
+    }
+
+    .filtersContainer {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .title {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-left: 0;
+    }
+}
+
+@media (min-width: 0px) and (max-width: 750px) {
+    .recipeCard {
+        width: 320px;
+        height: 241px;
+    }
+
+    .recipesContainer {
+        grid-column-gap: 0;
+        grid-template-columns: repeat(1, 1fr);
+        margin: 0 0px;
+    }
+
+    .recipeTitle {
+        font-size: .9em;
+        font-weight: 450;
+    }
+
+    .recipeTime {
+        font-size: .6em;
+    }
+
+    .recipeIngredients {
+        font-size: .6em;
+    }
+
+    .recipeHeart {
+        font-size: 1em !important;
+    }
+
+    .searchBar {
+        width: 220px;
+        min-width: 220px;
+        font-size: 12px;
+    }
+
+    .filtersContainer {
+        gap: 10px;
+    }
+
+    .filterSelect {
+        font-size: 12px;
+        width: 248px;
+    }
+
+    .searchButton {
+        height: 27px;
+        font-size: 13px !important;
+    }
+
+    .recipePageTitle {
+        font-size: 1.7rem;
+    }
+    
+    .recipePageDescription {
+        font-size: 1em;
+    }
+
+    .filtersContainer {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .title {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-left: 0;
+    }
 }
