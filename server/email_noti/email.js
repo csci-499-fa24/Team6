@@ -66,7 +66,6 @@ async function checkAndSendEmail() {
         }
 
         await transporter.verify();
-        console.log('Sign-in successful, ready to send emails');
 
         const users = await getLowIngredients();
 
