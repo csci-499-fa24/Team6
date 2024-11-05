@@ -42,10 +42,6 @@
     opacity: 1; 
 }
 
-.searchBar::placeholder {
-    color: #a0a0a0;
-}
-
 .searchBar:focus {
     outline: none;
     border-color: #EC4A27;

@@ -23,7 +23,7 @@ const Discover = () => {
         cuisine: '',
         diet: '',
         allergens: [],
-        searchQuery: '' 
+        searchQuery: ''
     });
     const recipesPerPage = 12;
     const router = useRouter();
@@ -227,8 +227,8 @@ const Discover = () => {
                 <div className={styles.pageDescription}>Explore new dishes</div>
             </div>
 
-            {/* Search Bar */}
-            <div className={styles.searchBarContainer}>
+            {/* Filter Section */}
+            <div className={styles.filtersContainer}>
                 <input
                     type="text"
                     placeholder="Search for recipes..."
@@ -236,13 +236,6 @@ const Discover = () => {
                     onChange={handleSearchChange}
                     className={styles.searchBar}
                 />
-                <Button className={styles.searchButton} onClick={handleSearchClick}>
-                    Search
-                </Button>
-            </div>
-
-            {/* Filter Section */}
-            <div className={styles.filtersContainer}>
                 <select
                     name="type"
                     value={filters.type}
@@ -316,6 +309,9 @@ const Discover = () => {
                         </option>
                     ))}
                 </select>
+                <div className={styles.searchButton} onClick={handleSearchClick}>
+                    Search
+                </div>
             </div>
 
             {/* Recipe Grid */}
@@ -323,12 +319,19 @@ const Discover = () => {
                 {recipes.length > 0 ? (
                     recipes.map((recipe) => (
                         <Link href={`/discover/${recipe.id}`} key={recipe.id} className={styles.recipeCard}>
-                            <img src={recipe.image} alt={recipe.title} className={styles.recipeImage} />
+                            <img
+                                src={recipe.image}
+                                alt={recipe.title}
+                                className={styles.recipeImage}
+                                onError={(e) => {
+                                    e.target.onerror = null;
+                                    e.target.src = '/assets/noImage.png';
+                                }} />
                             <div className={styles.recipeTitleWrapper}>
                                 <div className={styles.recipeTitle}>{recipe.title}</div>
                                 <FavoriteBorderIcon
-                                        className={styles.favoriteIcon}
-                                        onClick={(e) => addAndRemoveFavorites(recipe.id, e)}
+                                    className={styles.favoriteIcon}
+                                    onClick={(e) => addAndRemoveFavorites(recipe.id, e)}
                                 />
                             </div>
                             <div className={styles.recipeInfoWrapper}>
@@ -350,20 +353,13 @@ const Discover = () => {
 
             {/* Pagination */}
             <div className={styles.pagination}>
-                <button
-                    onClick={handlePreviousPage}
-                    disabled={page === 1}
-                    className={styles.paginationButton}
-                >
+                <div onClick={handlePreviousPage} disabled={page === 1} className={`${styles.pageButton} ${page === 1 ? styles.disabled : ''}`}>
                     Previous
-                </button>
+                </div>
                 <span className={styles.pageNumber}>Page {page}</span>
-                <button
-                    onClick={handleNextPage}
-                    className={styles.paginationButton}
-                >
+                <div onClick={handleNextPage} className={styles.pageButton}>
                     Next
-                </button>
+                </div>
             </div>
         </div>
     );
