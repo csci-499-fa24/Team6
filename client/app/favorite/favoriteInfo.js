@@ -10,46 +10,70 @@ const FavoriteInfo = ({ recipe, userId, onClose }) => {
 
     useEffect(() => {
         // Check each ingredient's status for the current user
-        const checkIngredients = async () => {
-            try {
-                const ingredientIds = recipe.extendedIngredients.map((ing) => ing.id);
-                const response = await fetch('/api/check-ingredients', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ userId, ingredientIds }),
-                });
-                const data = await response.json();
-                setIngredientStatus(data); // { [ingredientId]: true/false }
-            } catch (error) {
-                console.error('Error checking ingredients', error);
-            }
-        };
+        // const checkIngredients = async () => {
+        //     try {
+        //         const ingredientIds = recipe.extendedIngredients.map((ing) => ing.id);
+        //         const response = await fetch('/api/check-ingredients', {
+        //             method: 'POST',
+        //             headers: { 'Content-Type': 'application/json' },
+        //             body: JSON.stringify({ userId, ingredientIds }),
+        //         });
+        //         const data = await response.json();
+        //         setIngredientStatus(data); // { [ingredientId]: true/false }
+        //     } catch (error) {
+        //         console.error('Error checking ingredients', error);
+        //     }
+        // };
 
-        checkIngredients();
+        // checkIngredients();
     }, [recipe, userId]);
 
     const handleUseRecipe = async () => {
         console.log("Using recipe...");
+        // try {
+        //     const response = await fetch('/api/use-recipe', {
+        //         method: 'POST',
+        //         headers: { 'Content-Type': 'application/json' },
+        //         body: JSON.stringify({ userId, ingredients: recipe.extendedIngredients }),
+        //     });
+
+        //     const result = await response.json();
+        //     console.log('Response:', result);
+
+        //     if (result.missingIngredients && result.missingIngredients.length > 0) {
+        //         console.log('Missing ingredients:', result.missingIngredients);
+        //         setMissingIngredients(result.missingIngredients);
+        //         setHasMissingIngredients(true);
+        //     } else {
+        //         console.log('Recipe used successfully');
+        //         onClose();
+        //     }
+        // } catch (error) {
+        //     console.error('Error using recipe:', error);
+        // }
         try {
-            const response = await fetch('/api/use-recipe', {
+            const token = localStorage.getItem('token');
+            console.log(recipe);
+            await fetch(process.env.NEXT_PUBLIC_SERVER_URL + '/api/plan/add-recipe', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId, ingredients: recipe.extendedIngredients }),
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({ recipeId: recipe.id })
             });
 
-            const result = await response.json();
-            console.log('Response:', result);
+            await fetch(process.env.NEXT_PUBLIC_SERVER_URL + '/api/discover/auto-remove', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({ ingredients: recipe.extendedIngredients })
+            });
 
-            if (result.missingIngredients && result.missingIngredients.length > 0) {
-                console.log('Missing ingredients:', result.missingIngredients);
-                setMissingIngredients(result.missingIngredients);
-                setHasMissingIngredients(true);
-            } else {
-                console.log('Recipe used successfully');
-                onClose();
-            }
         } catch (error) {
-            console.error('Error using recipe:', error);
+            console.error('Error adding recipe:', error);
         }
     };
 

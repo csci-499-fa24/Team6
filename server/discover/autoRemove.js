@@ -46,15 +46,42 @@ router.post('/', authenticateToken, async (req, res) => {
 
             const ingredient_id = ingredientResult.rows[0].ingredient_id;
 
-            const userIngredientResult = await pool.query(
-                `SELECT amount FROM user_ingredient 
-                 WHERE user_id = $1 AND ingredient_id = $2`,
-                [user_id, ingredient_id]
-            );
+        // Check if the user has this ingredient with the matching unit
+        // const userIngredientResult = await pool.query(
+        //     `SELECT amount FROM user_ingredient 
+        //      WHERE user_id = $1 AND ingredient_id = $2 AND unit = $3`,
+        //     [user_id, ingredient_id, ingredient.unit]
+        // );
+        const userIngredientResult = await pool.query(
+            `SELECT amount, unit FROM user_ingredient 
+             WHERE user_id = $1 AND ingredient_id = $2`,
+            [user_id, ingredient_id]
+        );
 
-            if (userIngredientResult.rows.length > 0) {
-                const currentAmount = userIngredientResult.rows[0].amount;
-                const newAmount = currentAmount - ingredient.amount;
+        if (userIngredientResult.rows.length > 0) {
+            const currentAmount = userIngredientResult.rows[0].amount;
+            let newAmount = currentAmount - ingredient.amount;
+            if (userIngredientResult.rows[0].unit != ingredient.unit) {
+                const url = `https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/convert?ingredientName=${ingredient.name}&sourceUnit=${ingredient.unit}&targetUnit=${userIngredientResult.rows[0].unit}&sourceAmount=${ingredient.amount}`;
+
+                try {
+                    const response = await fetch(url, {
+                        method: 'GET',
+                        headers: {
+                            'X-RapidAPI-Host': 'spoonacular-recipe-food-nutrition-v1.p.rapidapi.com',
+                            'X-RapidAPI-Key': process.env.NEXT_PUBLIC_SPOONACULAR_API_KEY
+                        }
+                    });
+                    const result = await response.json();
+                    const match = result.answer.match(/(\d+(\.\d+)?)/g);
+                    newAmount = currentAmount - match[1];
+                } catch (error) {
+                    console.error(error);
+                }
+            }
+
+          
+          
 
                 if (newAmount > 0) {
                     // Update the row with the new amount
