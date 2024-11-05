@@ -10,22 +10,22 @@ const FavoriteInfo = ({ recipe, userId, onClose }) => {
 
     useEffect(() => {
         // Check each ingredient's status for the current user
-        const checkIngredients = async () => {
-            try {
-                const ingredientIds = recipe.extendedIngredients.map((ing) => ing.id);
-                const response = await fetch('/api/check-ingredients', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ userId, ingredientIds }),
-                });
-                const data = await response.json();
-                setIngredientStatus(data); // { [ingredientId]: true/false }
-            } catch (error) {
-                console.error('Error checking ingredients', error);
-            }
-        };
+        // const checkIngredients = async () => {
+        //     try {
+        //         const ingredientIds = recipe.extendedIngredients.map((ing) => ing.id);
+        //         const response = await fetch('/api/check-ingredients', {
+        //             method: 'POST',
+        //             headers: { 'Content-Type': 'application/json' },
+        //             body: JSON.stringify({ userId, ingredientIds }),
+        //         });
+        //         const data = await response.json();
+        //         setIngredientStatus(data); // { [ingredientId]: true/false }
+        //     } catch (error) {
+        //         console.error('Error checking ingredients', error);
+        //     }
+        // };
 
-        checkIngredients();
+        // checkIngredients();
     }, [recipe, userId]);
 
     const handleUseRecipe = async () => {
