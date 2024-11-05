@@ -35,15 +35,30 @@ const RecipeDetails = () => {
         }
     }, []);
 
-    const renderIngredients = (ingredients, color = "#506264") => (
-        <div>
-            {ingredients?.map((ingredient, i) => (
-                <div key={i} style={{ color: color }} className={styles.ingredient}>
-                    {ingredient.original}
-                </div>
-            ))}
-        </div>
-    );
+    const renderIngredients = (usedIngredients, missedIngredients) => {
+        const mergedIngredients = [
+            ...usedIngredients.map(ingredient => ({ ...ingredient, status: 'used' })),
+            ...missedIngredients.map(ingredient => ({ ...ingredient, status: 'missed' }))
+        ];
+
+        return (
+            <div className={styles.ingredientWrapper}>
+                {mergedIngredients.length > 0 ? (
+                    mergedIngredients.map((ingredient, i) => (
+                        <div
+                            key={i}
+                            style={{ color: ingredient.status === 'missed' ? "red" : "#506264" }}
+                            className={styles.ingredient}
+                        >
+                            {ingredient.original}
+                        </div>
+                    ))
+                ) : (
+                    <div className={styles.noIngredientsMessage}>No ingredients available.</div>
+                )}
+            </div>
+        );
+    };
 
     const renderInstructions = (instructions) => {
         if (!instructions || instructions.length === 0 || !instructions[0].steps) {
@@ -58,7 +73,7 @@ const RecipeDetails = () => {
         );
     };
 
-    const handleAdd = async() => {
+    const handleAdd = async () => {
         const token = localStorage.getItem('token');
         if (!token) {
             router.push('/login');
@@ -74,7 +89,7 @@ const RecipeDetails = () => {
                 },
                 body: JSON.stringify({ recipeId: recipe.id })
             });
-            
+
             await fetch(process.env.NEXT_PUBLIC_SERVER_URL + '/api/discover/auto-remove', {
                 method: 'POST',
                 headers: {
@@ -195,7 +210,7 @@ const RecipeDetails = () => {
     };
 
     return (
-        <div>
+        <div className={styles.recipeDetailsWrapper}>
             <Navbar />
             {loading ? (
                 <p>Loading recipe details...</p>
@@ -203,131 +218,133 @@ const RecipeDetails = () => {
                 <p>Error: {error}</p>
             ) : recipe ? (
                 <div className={styles.recipeWrapper}>
-                    <div className={styles.recipeDetailsWrapper}>
-                        <div className={styles.recipeTitle}>{recipe.title}</div>
-                        <img className={styles.recipeImage} src={recipe.image} alt={recipe.title} />
-                        <div className={styles.recipeStatsWrapper} >
-                            <div className={styles.recipeTime}><AccessTimeIcon className={styles.recipeClock} />{recipe.readyInMinutes} min</div>
-                            <div className={styles.recipeIngredients}><LocalDiningIcon className={styles.recipeClock} />{recipe.usedIngredientCount}/{recipe.usedIngredientCount + recipe.missedIngredientCount} Ingredients</div>
-                            <div className={styles.servingSize}><PersonOutlineOutlinedIcon className={styles.recipeClock} />Serves {recipe.servings}</div>
-                        </div>
-                        <div className={styles.trackerWrapper}>
-                            <div className={styles.trackerItem}>
-                                <div className={styles.trackerVisual}>
-                                    <div className={styles.trackerItemTitle}>Calories</div>
-                                    <CustomCircularProgress
-                                        value={75}
-                                        progressColor="#74DE72"
-                                        backgroundColor="#C3F5C2"
-                                        size={50}
-                                    />
+                    <div className={styles.recipeTitle}>{recipe.title}</div>
+                    <div className={styles.recipeContent}>
+                        <div className={styles.recipeLeft}>
+                            <div className={styles.recipeImageWrapper}>
+                                <img className={styles.recipeImage} src={recipe.image} alt={recipe.title} />
+                                <div className={styles.recipeStatsWrapper} >
+                                    <div className={styles.recipeDetailTime}><AccessTimeIcon className={styles.recipeClock} />{recipe.readyInMinutes} min</div>
+                                    <div className={styles.recipeDetailIngredients}><LocalDiningIcon className={styles.recipeClock} />{recipe.usedIngredientCount}/{recipe.usedIngredientCount + recipe.missedIngredientCount} Ingredients</div>
+                                    <div className={styles.servingDetailSize}><PersonOutlineOutlinedIcon className={styles.recipeClock} />Serves {recipe.servings}</div>
                                 </div>
-                                <div className={styles.data}> {getRoundedNutrientAmount("Calories")} <span style={{ color: '#74DE72' }}>(30%)</span></div>
                             </div>
-                            <div className={styles.trackerItem}>
-                                <div className={styles.trackerVisual}>
-                                    <div className={styles.trackerItemTitle}>Total Fat</div>
-                                    <CustomCircularProgress
-                                        value={75}
-                                        progressColor="#EC4A27"
-                                        backgroundColor="#F5AD9D"
-                                        size={50}
-                                    />
+                            <div className={styles.trackerWrapper}>
+                                <div className={styles.trackerItem}>
+                                    <div className={styles.trackerVisual}>
+                                        <div className={styles.trackerItemTitle}>Calories</div>
+                                        <CustomCircularProgress
+                                            value={75}
+                                            progressColor="#74DE72"
+                                            backgroundColor="#C3F5C2"
+                                            size={50}
+                                        />
+                                    </div>
+                                    <div className={styles.data}> {getRoundedNutrientAmount("Calories")} <span style={{ color: '#74DE72' }}>(30%)</span></div>
                                 </div>
-                                <div className={styles.data}> {getRoundedNutrientAmount("Fat")}  <span style={{ color: '#EC4A27' }}>(30%)</span></div>
-                            </div>
-                            <div className={styles.trackerItem}>
-                                <div className={styles.trackerVisual}>
-                                    <div className={styles.trackerItemTitle}>Protein</div>
-                                    <CustomCircularProgress
-                                        value={75}
-                                        progressColor="#72B1F1"
-                                        backgroundColor="#B6D9FC"
-                                        size={50}
-                                    />
+                                <div className={styles.trackerItem}>
+                                    <div className={styles.trackerVisual}>
+                                        <div className={styles.trackerItemTitle}>Total Fat</div>
+                                        <CustomCircularProgress
+                                            value={75}
+                                            progressColor="#EC4A27"
+                                            backgroundColor="#F5AD9D"
+                                            size={50}
+                                        />
+                                    </div>
+                                    <div className={styles.data}> {getRoundedNutrientAmount("Fat")}  <span style={{ color: '#EC4A27' }}>(30%)</span></div>
                                 </div>
-                                <div className={styles.data}> {getRoundedNutrientAmount("Protein")}  <span style={{ color: '#72B1F1' }}>(30%)</span></div>
-                            </div>
-                            <div className={styles.trackerItem}>
-                                <div className={styles.trackerVisual}>
-                                    <div className={styles.trackerItemTitle}>Saturated Fat</div>
-                                    <CustomCircularProgress
-                                        value={75}
-                                        progressColor="#FF6D99"
-                                        backgroundColor="#F5C5CE"
-                                        size={50}
-                                    />
+                                <div className={styles.trackerItem}>
+                                    <div className={styles.trackerVisual}>
+                                        <div className={styles.trackerItemTitle}>Protein</div>
+                                        <CustomCircularProgress
+                                            value={75}
+                                            progressColor="#72B1F1"
+                                            backgroundColor="#B6D9FC"
+                                            size={50}
+                                        />
+                                    </div>
+                                    <div className={styles.data}> {getRoundedNutrientAmount("Protein")}  <span style={{ color: '#72B1F1' }}>(30%)</span></div>
                                 </div>
-                                <div className={styles.data}> {getRoundedNutrientAmount("Saturated Fat")}  <span style={{ color: '#FF6D99' }}>(30%)</span></div>
-                            </div>
-                            <div className={styles.trackerItem}>
-                                <div className={styles.trackerVisual}>
-                                    <div className={styles.trackerItemTitle}>Carbs</div>
-                                    <CustomCircularProgress
-                                        value={75}
-                                        progressColor="#EBB06C"
-                                        backgroundColor="#FFCF96"
-                                        size={50}
-                                    />
+                                <div className={styles.trackerItem}>
+                                    <div className={styles.trackerVisual}>
+                                        <div className={styles.trackerItemTitle}>Saturated Fat</div>
+                                        <CustomCircularProgress
+                                            value={75}
+                                            progressColor="#FF6D99"
+                                            backgroundColor="#F5C5CE"
+                                            size={50}
+                                        />
+                                    </div>
+                                    <div className={styles.data}> {getRoundedNutrientAmount("Saturated Fat")}  <span style={{ color: '#FF6D99' }}>(30%)</span></div>
                                 </div>
-                                <div className={styles.data}> {getRoundedNutrientAmount("Carbohydrates")}  <span style={{ color: '#EBB06C' }}>(30%)</span></div>
-                            </div>
-                            <div className={styles.trackerItem}>
-                                <div className={styles.trackerVisual}>
-                                    <div className={styles.trackerItemTitle}>Fiber</div>
-                                    <CustomCircularProgress
-                                        value={75}
-                                        progressColor="#7D975C"
-                                        backgroundColor="#C1CBB9"
-                                        size={50}
-                                    />
+                                <div className={styles.trackerItem}>
+                                    <div className={styles.trackerVisual}>
+                                        <div className={styles.trackerItemTitle}>Carbs</div>
+                                        <CustomCircularProgress
+                                            value={75}
+                                            progressColor="#EBB06C"
+                                            backgroundColor="#FFCF96"
+                                            size={50}
+                                        />
+                                    </div>
+                                    <div className={styles.data}> {getRoundedNutrientAmount("Carbohydrates")}  <span style={{ color: '#EBB06C' }}>(30%)</span></div>
                                 </div>
-                                <div className={styles.data}> {getRoundedNutrientAmount("Fiber")}  <span style={{ color: '#7D975C' }}>(30%)</span></div>
-                            </div>
-                            <div className={styles.trackerItem}>
-                                <div className={styles.trackerVisual}>
-                                    <div className={styles.trackerItemTitle}>Sugar</div>
-                                    <CustomCircularProgress
-                                        value={75}
-                                        progressColor="#8893F2"
-                                        backgroundColor="#C9C8FF"
-                                        size={50}
-                                    />
+                                <div className={styles.trackerItem}>
+                                    <div className={styles.trackerVisual}>
+                                        <div className={styles.trackerItemTitle}>Fiber</div>
+                                        <CustomCircularProgress
+                                            value={75}
+                                            progressColor="#7D975C"
+                                            backgroundColor="#C1CBB9"
+                                            size={50}
+                                        />
+                                    </div>
+                                    <div className={styles.data}> {getRoundedNutrientAmount("Fiber")}  <span style={{ color: '#7D975C' }}>(30%)</span></div>
                                 </div>
-                                <div className={styles.data}> {getRoundedNutrientAmount("Sugar")}  <span style={{ color: '#8893F2' }}>(30%)</span></div>
-                            </div>
-                            <div className={styles.trackerItem}>
-                                <div className={styles.trackerVisual}>
-                                    <div className={styles.trackerItemTitle}>Sodium</div>
-                                    <CustomCircularProgress
-                                        value={75}
-                                        progressColor="#9474A3"
-                                        backgroundColor="#CBA6DD"
-                                        size={50}
-                                    />
+                                <div className={styles.trackerItem}>
+                                    <div className={styles.trackerVisual}>
+                                        <div className={styles.trackerItemTitle}>Sugar</div>
+                                        <CustomCircularProgress
+                                            value={75}
+                                            progressColor="#8893F2"
+                                            backgroundColor="#C9C8FF"
+                                            size={50}
+                                        />
+                                    </div>
+                                    <div className={styles.data}> {getRoundedNutrientAmount("Sugar")}  <span style={{ color: '#8893F2' }}>(30%)</span></div>
                                 </div>
-                                <div className={styles.data}> {getRoundedNutrientAmount("Sodium")}  <span style={{ color: '#9474A3' }}>(30%)</span></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className={styles.recipeInstructionWrapper}>
-                        <div className={styles.titleWrapper}>
-                            <div className={styles.title}>Ingredients</div>
-                            <div className={styles.titleButtons}>
-                                <FileDownloadOutlinedIcon className={styles.button} onClick={generatePDF} />
-                                <LocalPrintshopOutlinedIcon className={styles.button} />
+                                <div className={styles.trackerItem}>
+                                    <div className={styles.trackerVisual}>
+                                        <div className={styles.trackerItemTitle}>Sodium</div>
+                                        <CustomCircularProgress
+                                            value={75}
+                                            progressColor="#9474A3"
+                                            backgroundColor="#CBA6DD"
+                                            size={50}
+                                        />
+                                    </div>
+                                    <div className={styles.data}> {getRoundedNutrientAmount("Sodium")}  <span style={{ color: '#9474A3' }}>(30%)</span></div>
+                                </div>
                             </div>
                         </div>
-                        <div className={styles.ingredientWrapper}>
-                            {renderIngredients(recipe.usedIngredients)}
-                            {renderIngredients(recipe.missedIngredients, "red")}
-                        </div>
-                        <div className={styles.title}>Instructions</div>
-                        <div className={styles.instructionWrapper}>
-                            {renderInstructions(recipe.instructions)}
-                        </div>
-                        <div className={styles.madeButton} onClick={handleAdd}>
-                            <div className={styles.madeButtonText}>Cooked</div>
+
+                        <div className={styles.recipeInstructionWrapper}>
+                            <div className={styles.titleWrapper}>
+                                <div className={styles.title}>Ingredients</div>
+                                <div className={styles.titleButtons}>
+                                    <FileDownloadOutlinedIcon className={styles.button} onClick={generatePDF} />
+                                    <LocalPrintshopOutlinedIcon className={styles.button} />
+                                </div>
+                            </div>
+                            {renderIngredients(recipe.usedIngredients, recipe.missedIngredients)}
+                            <div className={styles.title}>Instructions</div>
+                            <div className={styles.instructionWrapper}>
+                                {renderInstructions(recipe.instructions)}
+                            </div>
+                            <div className={styles.madeButton} onClick={handleAdd}>
+                                <div className={styles.madeButtonText}>Cooked</div>
+                            </div>
                         </div>
                     </div>
                 </div>
