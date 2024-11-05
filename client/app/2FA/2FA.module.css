@@ -1,0 +1,99 @@
+/* Adjust the container if needed */
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    min-height: 100vh;
+    background-color: #f0f8ff;
+}
+
+/* Title and instructions styling */
+.title {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.instructions {
+    font-size: 1.1rem;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+/* Input box container */
+.codeContainer {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+/* Input styling for each code box */
+.codeInput {
+    width: 60px; /* Adjust width as desired */
+    height: 60px; /* Adjust height as desired */
+    font-size: 1.5rem;
+    text-align: center;
+    border-radius: 8px;
+    border: 2px solid #ddd;
+    transition: all 0.2s ease;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+}
+
+/* Hover and focus effects for better UX */
+.codeInput:focus,
+.codeInput:hover {
+    outline: none;
+    border-color: #ff6b6b;
+    box-shadow: 0px 4px 10px rgba(255, 107, 107, 0.2);
+}
+
+/* Submit button styling */
+.submitButton {
+    background-color: #ff6b6b;
+    color: #fff;
+    font-size: 1.2rem;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.submitButton:hover {
+    background-color: #e65a5a;
+}
+
+.submitButton:focus {
+    outline: none;
+}
+
+/* Resend button styling */
+.resendButton {
+    background: none;
+    border: none;
+    color: #666;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    margin-top: 10px;
+}
+
+.resendButton:disabled {
+    color: #bbb;
+}
+
+.resendButton:hover:enabled {
+    color: #ff6b6b;
+}
+
+/* Error message styling */
+.error {
+    color: #ff6b6b;
+    font-size: 0.95rem;
+    margin-top: -10px;
+    margin-bottom: 10px;
+}

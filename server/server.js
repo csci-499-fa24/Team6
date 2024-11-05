@@ -100,7 +100,11 @@ app.post("/api/login", async (req, res) => {
             expiresIn: "1h"
         });
 
-        res.json({ token });
+        // Add requires2FA flag if 2FA is enabled
+        res.json({
+            token,
+            requires2FA: user.is_2fa_enabled // Flag indicating if 2FA is needed
+        });
     } catch (err) {
         console.error("Login error:", err);
         res.status(500).json({ error: "Login failed" });

@@ -43,21 +43,21 @@ const Login = () => {
       if (response.ok) {
         localStorage.setItem('token', data.token);
 
-        const token = localStorage.getItem('token');
-        const protectedResponse = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/protected`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
-        });
+        if (data.requires2FA) {
+          // Send 2FA code to the user's email
+          await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/user/send-2fa-code`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${data.token}`,
+              'Content-Type': 'application/json',
+            },
+          });
 
-        if (protectedResponse.ok) {
-          const protectedData = await protectedResponse.json();
-          console.log('Protected data:', protectedData);
-          window.location.href = "/account";
+          // Redirect to the 2FA page
+          window.location.href = "/2FA";
         } else {
-          console.error('Failed to fetch protected data');
+          // If 2FA is not required, proceed to the account page
+          window.location.href = "/discover";
         }
       } else {
         setError(data.message || 'Login failed');
@@ -66,7 +66,6 @@ const Login = () => {
       setError('An error occurred. Please try again.');
     }
   };
-
 
   return (
     <div className={styles.login}>

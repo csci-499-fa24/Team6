@@ -10,6 +10,7 @@ const Settings = () => {
     const [phoneNumber, setPhoneNumber] = useState('');
     const [isEmailSubscribed, setIsEmailSubscribed] = useState(false); 
     const [isSmsSubscribed, setIsSmsSubscribed] = useState(false);
+    const [is2FAEnabled, setIs2FAEnabled] = useState(false);
     const [notificationMessage, setNotificationMessage] = useState('');
     const [showNotification, setShowNotification] = useState(false);
 
@@ -32,6 +33,7 @@ const Settings = () => {
                     setPhoneNumber(data.phone); // Set the actual phone number from the backend
                     setIsEmailSubscribed(data.is_email_subscribed);
                     setIsSmsSubscribed(data.is_sms_subscribed);
+                    setIs2FAEnabled(data.is_2fa_enabled);
                 } else {
                     console.error('Failed to fetch user data');
                 }
@@ -61,11 +63,13 @@ const Settings = () => {
 
             if (response.ok) {
                 // Show confirmation message if unsubscribed
-                if (!newSubscriptionStatus) {
-                setNotificationMessage('You have unsubscribed from email notifications.');
+                setNotificationMessage(
+                    newSubscriptionStatus
+                        ? 'You have subscribed to email notifications.'
+                        : 'You have unsubscribed from email notifications.'
+                );
                 setShowNotification(true);
-                setTimeout(() => setShowNotification(false), 4500); // Hide after 5 seconds
-                }
+                setTimeout(() => setShowNotification(false), 4500); // Hide after 4.5 seconds
             } else {
                 console.error('Failed to update email subscription');
                 setIsEmailSubscribed(!newSubscriptionStatus);
@@ -74,6 +78,35 @@ const Settings = () => {
             console.error('Error updating email subscription:', error);
             // Revert the checkbox state if there is an error
             setIsEmailSubscribed(!newSubscriptionStatus);
+        }
+    };
+
+    const handle2FAChange = async () => {
+        const new2FAStatus = !is2FAEnabled;
+        setIs2FAEnabled(new2FAStatus);
+
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/user/update-2fa`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ is_2fa_enabled: new2FAStatus })
+            });
+
+            if (response.ok) {
+                setNotificationMessage(new2FAStatus ? 'Two-Factor Authentication enabled.' : 'Two-Factor Authentication disabled.');
+                setShowNotification(true);
+                setTimeout(() => setShowNotification(false), 4500); // Hide after 4.5 seconds
+            } else {
+                console.error('Failed to update 2FA status');
+                setIs2FAEnabled(!new2FAStatus); // Revert state on failure
+            }
+        } catch (error) {
+            console.error('Error updating 2FA status:', error);
+            setIs2FAEnabled(!new2FAStatus);
         }
     };
 
@@ -107,7 +140,12 @@ const Settings = () => {
                     <div className={styles.tabContent}>
                         <div className={styles.privacyRow}>
                             <label className={styles.label}>Two-Factor Authentication</label>
-                            <input type="checkbox" className={styles.checkbox} />
+                            <input
+                                type="checkbox"
+                                className={styles.checkbox}
+                                checked={is2FAEnabled}
+                                onChange={handle2FAChange}
+                            />
                         </div>
                     </div>
                 );

@@ -1,8 +1,13 @@
 const express = require('express');
 const pool = require('../db'); // Database connection
 const bcrypt = require('bcrypt');
+const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const router = express.Router();
+
+
+const { send2FACodeEmail } = require('../email_noti/2fa');
+const twoFACodes = new Map(); // Structure: { userId: { code, expiresAt } }
 
 // Middleware to authenticate token
 const authenticateToken = (req, res, next) => {
@@ -29,7 +34,7 @@ router.get('/profile', authenticateToken, async (req, res) => {
 
     try {
         const result = await pool.query(`
-            SELECT u.email, u.is_email_subscribed, u.is_sms_subscribed, up.first_name, up.last_name, up.phone
+            SELECT u.email, u.is_email_subscribed, u.is_sms_subscribed, u.is_2fa_enabled, up.first_name, up.last_name, up.phone
             FROM users u
             JOIN user_profiles up ON u.user_id = up.user_id
             WHERE u.user_id = $1
@@ -243,6 +248,73 @@ router.put('/update-email-subscription', authenticateToken, async (req, res) => 
     }
 });
 
+// Add endpoint for 2fa
+router.put('/update-2fa', authenticateToken, async (req, res) => {
+    const { is_2fa_enabled } = req.body;
+    const userId = req.user.id;
+
+    try {
+        const updateQuery = 'UPDATE users SET is_2fa_enabled = $1 WHERE user_id = $2 RETURNING is_2fa_enabled';
+        const updateResult = await pool.query(updateQuery, [is_2fa_enabled, userId]);
+
+        if (updateResult.rows.length > 0) {
+            res.status(200).json({ message: 'Two-Factor Authentication status updated successfully', is_2fa_enabled: updateResult.rows[0].is_2fa_enabled });
+        } else {
+            res.status(404).json({ message: 'User not found' });
+        }
+    } catch (error) {
+        console.error('Error updating 2FA status:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+// Send 2FA code
+router.post('/send-2fa-code', authenticateToken, async (req, res) => {
+    const userId = req.user.id;
+
+    // Generate a random 6-character alphanumeric code
+    const code = crypto.randomBytes(3).toString('hex').toUpperCase();
+
+    // Set expiration for the code (5 minutes from now)
+    const expiresAt = Date.now() + 5 * 60 * 1000;
+    twoFACodes.set(userId, { code, expiresAt });
+
+    try {
+        // Send code via email
+        const user = await pool.query('SELECT email FROM users WHERE user_id = $1', [userId]);
+        if (user.rows.length > 0) {
+            await send2FACodeEmail(user.rows[0].email, code);
+            res.status(200).json({ message: '2FA code sent' });
+        } else {
+            res.status(404).json({ message: 'User not found' });
+        }
+    } catch (error) {
+        console.error('Error sending 2FA code:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+// Verify 2FA code
+router.post('/verify-2fa-code', authenticateToken, (req, res) => {
+    const userId = req.user.id;
+    const { code } = req.body;
+
+    const storedCodeData = twoFACodes.get(userId);
+
+     // Check if there's a stored code and if it hasn't expired
+     if (!storedCodeData || Date.now() > storedCodeData.expiresAt) {
+        return res.status(400).json({ message: 'Code expired or invalid' });
+    }
+
+    if (storedCodeData.code === code) {
+        // Remove the code once used
+        twoFACodes.delete(userId);
+        res.status(200).json({ message: '2FA verified successfully' });
+    } else {
+        console.log('Incorrect code entered.');
+        res.status(401).json({ message: 'Incorrect code' });
+    }
+});
 
 module.exports = router;
 
