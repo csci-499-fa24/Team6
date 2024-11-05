@@ -1,7 +1,5 @@
-"use client";
-
+'use client';
 import { useRouter } from 'next/navigation';
-import { Suspense, useEffect, useState } from 'react';
 
 import Navbar from "../components/navbar";
 import IngredientInput from './IngredientInput';
@@ -10,6 +8,7 @@ import AllergenInput from "./AllergenInput";
 import RecipeHistory from './RecipeHistory';
 import Settings from './Settings';
 
+import React, { useState, useEffect } from "react";
 import styles from './account.module.css';
 
 const Pantry = () => {
@@ -24,15 +23,6 @@ const Pantry = () => {
   };
 
   useEffect(() => {
-    // Access `window` only when the component mounts on the client side
-    if (typeof window !== "undefined") {
-      const searchParams = new URLSearchParams(window.location.search);
-      const section = searchParams.get('section');
-      if (section) {
-        setActiveSection(section.charAt(0).toUpperCase() + section.slice(1));
-      }
-    }
-
     const token = localStorage.getItem('token');
 
     const verifyToken = async () => {
@@ -77,52 +67,54 @@ const Pantry = () => {
   }
 
   return (
-    <Suspense fallback={<div>Loading section...</div>}>
-      <div className={styles.account}>
-        <Navbar />
-        <div className={styles.pantryContent}>
-          <div className={styles.sidebar}>
-            <div
-              onClick={() => handleSectionClick('Pantry')}
-              className={activeSection === 'Pantry' ? styles.active : styles.notActive}
-            >
-              Pantry
-            </div>
-            <div
-              onClick={() => handleSectionClick('Allergens')}
-              className={activeSection === 'Allergens' ? styles.active : styles.notActive}
-            >
-              Allergens
-            </div>
-            <div
-              onClick={() => handleSectionClick('Nutrition')}
-              className={activeSection === 'Nutrition' ? styles.active : styles.notActive}
-            >
-              Nutrition
-            </div>
-            <div
-              onClick={() => handleSectionClick('History')}
-              className={activeSection === 'History' ? styles.active : styles.notActive}
-            >
-              Recipe History
-            </div>
-            <div
-              onClick={() => handleSectionClick('Settings')}
-              className={activeSection === 'Settings' ? styles.active : styles.notActive}
-            >
-              Settings
-            </div>
+    <div className={styles.account}>
+      <Navbar />
+      <div className={styles.pantryContent}>
+        <div className={styles.sidebar}>
+          <div
+            onClick={() => handleSectionClick('Pantry')}
+            className={activeSection === 'Pantry' ? styles.active : styles.notActive}
+          >
+            Pantry
           </div>
-          <div className={styles.pantrySection}>
-            {activeSection === 'Pantry' && <IngredientInput />}
-            {activeSection === 'Allergens' && <AllergenInput />}
-            {activeSection === 'Nutrition' && <NutritionInput />}
-            {activeSection === 'History' && <RecipeHistory />}
-            {activeSection === 'Settings' && <Settings />}
+          <div
+            onClick={() => handleSectionClick('Allergens')}
+            className={activeSection === 'Allergens' ? styles.active : styles.notActive}
+          >
+            Allergens
+          </div>
+          <div
+            onClick={() => handleSectionClick('Nutrition')}
+            className={activeSection === 'Nutrition' ? styles.active : styles.notActive}
+          >
+            Nutrition
+          </div>
+          <div
+            onClick={() => handleSectionClick('History')}
+            className={activeSection === 'History' ? styles.active : styles.notActive}
+          >
+            Recipe History
+          </div>
+          <div
+            onClick={() => handleSectionClick('Settings')}
+            className={activeSection === 'Settings' ? styles.active : styles.notActive}
+          >
+            Settings
           </div>
         </div>
+        <div className={styles.pantrySection}>
+          {activeSection === 'Pantry' && (
+            <>
+              <IngredientInput />
+            </>
+          )}
+          {activeSection === 'Allergens' && <AllergenInput />}
+          {activeSection === 'Nutrition' && <NutritionInput />}
+          {activeSection === 'History' && <RecipeHistory />}
+          {activeSection === 'Settings' && <Settings />}
+        </div>
       </div>
-    </Suspense>
+    </div>
   );
 };
 
