@@ -68,11 +68,11 @@ const RecipePage = () => {
             });
 
             const basicRecipes = response.data;
-            
+
             const filteredRecipes = filters.searchQuery
-                ? basicRecipes.filter(recipe => 
+                ? basicRecipes.filter(recipe =>
                     recipe.title.toLowerCase().includes(filters.searchQuery.toLowerCase())
-                  )
+                )
                 : basicRecipes;
 
             setRecipes(filteredRecipes);
@@ -81,7 +81,7 @@ const RecipePage = () => {
 
             const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
             await delay(1000);
-            
+
             const recipeDetails = await axios.get(`https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/informationBulk`, {
                 params: {
                     ids: recipeIds,
@@ -211,7 +211,7 @@ const RecipePage = () => {
             }
         }
     };
-
+    console.log(recipes)
     return (
         <div>
             <Navbar />
@@ -220,8 +220,7 @@ const RecipePage = () => {
                     <div className={styles.recipePageTitle}>Recommended Recipes</div>
                     <div className={styles.recipePageDescription}>Based on your pantry</div>
                 </div>
-
-                <div className={styles.searchBarContainer}>
+                <div className={styles.filtersContainer}>
                     <input
                         type="text"
                         placeholder="Search for recipes..."
@@ -229,15 +228,6 @@ const RecipePage = () => {
                         onChange={handleSearchChange}
                         className={styles.searchBar}
                     />
-                    <Button 
-                        className={styles.searchButton} 
-                        onClick={handleSearchClick}
-                    >
-                        Search
-                    </Button>
-                </div>
-
-                <div className={styles.filtersContainer}>
                     <select
                         name="type"
                         value={filters.type}
@@ -291,6 +281,12 @@ const RecipePage = () => {
                         <option value="primal">Primal</option>
                         <option value="whole30">Whole30</option>
                     </select>
+                    <div
+                        className={styles.searchButton}
+                        onClick={handleSearchClick}
+                    >
+                        <div>Search</div>
+                    </div>
                 </div>
 
                 {loading ? (
@@ -309,7 +305,15 @@ const RecipePage = () => {
                                         localStorage.setItem('selectedRecipe', JSON.stringify(recipe));
                                     }}
                                 >
-                                    <img src={recipe.image} alt={recipe.title} className={styles.recipeImage} />
+                                    <img
+                                        src={recipe.image}
+                                        alt={recipe.title}
+                                        className={styles.recipeImage}
+                                        onError={(e) => {
+                                            e.target.onerror = null;
+                                            e.target.src = '/assets/noImage.png';
+                                        }}
+                                    />
                                     <div className={styles.recipeTitleWrapper}>
                                         <div className={styles.recipeTitle}>{recipe.title}</div>
                                         <FavoriteBorderIcon
@@ -330,12 +334,12 @@ const RecipePage = () => {
                 )}
 
                 <div className={styles.pagination}>
-                    <Button onClick={handlePreviousPage} disabled={page === 1}>
+                    <div onClick={handlePreviousPage} disabled={page === 1} className={`${styles.pageButton} ${page === 1 ? styles.disabled : ''}`}>
                         Previous
-                    </Button>
-                    <Button onClick={handleNextPage}>
+                    </div>
+                    <div onClick={handleNextPage} className={styles.pageButton}>
                         Next
-                    </Button>
+                    </div>
                 </div>
             </div>
         </div>
