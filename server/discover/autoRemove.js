@@ -17,7 +17,6 @@ const authenticateToken = (req, res, next) => {
             return res.status(403).json({ message: 'Invalid token' });
         }
 
-
         // Ensure the user_id is available in the decoded token
         if (!decoded || !decoded.id) {
             return res.status(403).json({ message: 'Invalid token payload' });
@@ -29,23 +28,23 @@ const authenticateToken = (req, res, next) => {
 }
 
 router.post('/', authenticateToken, async (req, res) => {
-    const { ingredients } = req.body;
-    const user_id = req.user.id;
+    try {
+        const { ingredients } = req.body;
+        const user_id = req.user.id;
 
+        for (const ingredient of ingredients) {
+            // Retrieve the ingredient_id for the current ingredient name
+            const ingredientResult = await pool.query(
+                `SELECT ingredient_id FROM ingredients WHERE name = $1`,
+                [ingredient.name]
+            );
 
-    for (const ingredient of ingredients) {
-        // Retrieve the ingredient_id for the current ingredient name
-        const ingredientResult = await pool.query(
-            `SELECT ingredient_id FROM ingredients WHERE name = $1`,
-            [ingredient.name]
-        );
+            if (ingredientResult.rows.length === 0) {
+                // Ingredient not found, skip to the next one
+                continue;
+            }
 
-        if (ingredientResult.rows.length === 0) {
-            // Ingredient not found, skip to the next one
-            continue;
-        }
-
-        const ingredient_id = ingredientResult.rows[0].ingredient_id;
+            const ingredient_id = ingredientResult.rows[0].ingredient_id;
 
         // Check if the user has this ingredient with the matching unit
         // const userIngredientResult = await pool.query(
@@ -81,33 +80,32 @@ router.post('/', authenticateToken, async (req, res) => {
                 }
             }
 
-            if (newAmount > 0) {
-                // Update the row with the new amount
-                // await pool.query(
-                //     `UPDATE user_ingredient SET amount = $1 
-                //      WHERE user_id = $2 AND ingredient_id = $3 AND unit = $4`,
-                //     [newAmount, user_id, ingredient_id, ingredient.unit]
-                // );
-                await pool.query(
-                    `UPDATE user_ingredient SET amount = $1 
-                     WHERE user_id = $2 AND ingredient_id = $3`,
-                    [newAmount, user_id, ingredient_id]
-                );
-            } else {
-                // Delete the row if the new amount is zero or less
-                // await pool.query(
-                //     `DELETE FROM user_ingredient 
-                //      WHERE user_id = $1 AND ingredient_id = $2 AND unit = $3`,
-                //     [user_id, ingredient_id, ingredient.unit]
-                // );
-                await pool.query(
-                    `DELETE FROM user_ingredient 
-                     WHERE user_id = $1 AND ingredient_id = $2`,
-                    [user_id, ingredient_id]
-                );
+          
+          
+
+                if (newAmount > 0) {
+                    // Update the row with the new amount
+                    await pool.query(
+                        `UPDATE user_ingredient SET amount = $1 
+                         WHERE user_id = $2 AND ingredient_id = $3`,
+                        [newAmount, user_id, ingredient_id]
+                    );
+                } else {
+                    // Delete the row if the new amount is zero or less
+                    await pool.query(
+                        `DELETE FROM user_ingredient 
+                         WHERE user_id = $1 AND ingredient_id = $2`,
+                        [user_id, ingredient_id]
+                    );
+                }
             }
         }
-    }
 
+        return res.status(200).json({ message: 'Ingredients updated successfully' });
+    } catch (error) {
+        console.error('Error in autoRemove:', error);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
 });
+
 module.exports = router;
