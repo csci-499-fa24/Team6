@@ -104,7 +104,7 @@ async function checkAndSendEmail() {
 }
 
 // Function to send unsubscription confirmation email
-async function sendUnsubscribeConfirmationEmail(userEmail) {
+const sendUnsubscribeConfirmationEmail = async (userEmail) => {
     try {
         if (!transporter) {
             await createTransporter();
@@ -124,7 +124,7 @@ async function sendUnsubscribeConfirmationEmail(userEmail) {
                         <h2 style="color: #ff6b6b;">You’ve Unsubscribed from Email Notifications</h2>
                         <p style="color: #555;">Hey Pal,</p>
                         <p>We wanted to let you know that you have successfully unsubscribed from our email notifications. We respect your choice, and you won’t receive any more email notifications from us.</p>
-                        <p>If you change your mind, you can always <a href="YOUR_REACTIVATION_URL" style="color: #ff6b6b; text-decoration: none;">re-subscribe here</a> through your account settings.</p>
+                        <p>If you change your mind, you can always <a href="https://team6-client.onrender.com/account?section=settings" style="color: #ff6b6b; text-decoration: none;">re-subscribe here</a> through your account settings.</p>
                         <p style="margin-top: 20px;">Thank you for being part of our community!</p>
                         <p style="margin-top: 10px;">Warm regards,</p>
                         <p><strong>Your PantryPal :)</strong></p>
@@ -142,6 +142,6 @@ async function sendUnsubscribeConfirmationEmail(userEmail) {
     } catch (error) {
         console.error('Error sending unsubscription confirmation email:', error);
     }
-}
+};
 
 module.exports = { checkAndSendEmail, sendUnsubscribeConfirmationEmail, createTransporter, getLowIngredients };

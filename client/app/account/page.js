@@ -1,5 +1,5 @@
 'use client';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 import Navbar from "../components/navbar";
 import IngredientInput from './IngredientInput';
@@ -13,6 +13,7 @@ import styles from './account.module.css';
 
 const Pantry = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [loading, setLoading] = useState(true);
   const [authenticated, setAuthenticated] = useState(false);
   const [activeSection, setActiveSection] = useState('Pantry');
@@ -23,6 +24,11 @@ const Pantry = () => {
   };
 
   useEffect(() => {
+    const section = searchParams.get('section');
+    if (section) {
+      setActiveSection(section.charAt(0).toUpperCase() + section.slice(1));
+    }
+
     const token = localStorage.getItem('token');
 
     const verifyToken = async () => {
@@ -56,7 +62,7 @@ const Pantry = () => {
     };
 
     verifyToken();
-  }, [router]);
+  }, [router, searchParams]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -103,11 +109,7 @@ const Pantry = () => {
           </div>
         </div>
         <div className={styles.pantrySection}>
-          {activeSection === 'Pantry' && (
-            <>
-              <IngredientInput />
-            </>
-          )}
+          {activeSection === 'Pantry' && <IngredientInput />}
           {activeSection === 'Allergens' && <AllergenInput />}
           {activeSection === 'Nutrition' && <NutritionInput />}
           {activeSection === 'History' && <RecipeHistory />}
