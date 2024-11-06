@@ -67,7 +67,7 @@ router.post('/', async (req, res) => {
             const upsertNutritionQuery = `
                 INSERT INTO user_nutritional_goals 
                 (user_id, protein, carbohydrates, total_fat, saturated_fat, fiber, sodium, sugar, calories)
-                VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
                 ON CONFLICT (user_id) 
                 DO UPDATE SET 
                     protein = EXCLUDED.protein,
