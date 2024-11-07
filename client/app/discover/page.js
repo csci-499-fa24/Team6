@@ -323,6 +323,9 @@ const Discover = () => {
                                 src={recipe.image}
                                 alt={recipe.title}
                                 className={styles.recipeImage}
+                                onClick={() => {
+                                    localStorage.setItem('selectedRecipe', JSON.stringify(recipe));
+                                }}
                                 onError={(e) => {
                                     e.target.onerror = null;
                                     e.target.src = '/assets/noImage.png';
