@@ -26,10 +26,20 @@ const RegistrationStep1 = ({ currentStep, handleNextStep, formData, setFormData 
         }
     }, [formData.password, confirmPassword]);
 
-    // Validate fields and passwords before moving to the next step
+    // Email validation function
+    const isValidEmail = (email) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    };
+
+    // Validate fields, email, and passwords before moving to the next step
     const validateForm = () => {
         if (!formData.firstName || !formData.lastName || !formData.email || !formData.phoneNumber || !formData.password || !confirmPassword) {
             setErrorMessage("All fields are required.");
+            return false;
+        }
+        if (!isValidEmail(formData.email)) {
+            setErrorMessage("Please enter a valid email address.");
             return false;
         }
         if (formData.password !== confirmPassword) {
