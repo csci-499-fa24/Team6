@@ -12,142 +12,129 @@ import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 import jsPDF from 'jspdf';
 import axios from 'axios';
 
-const RecipeDetails = ({ params }) => {
-    const [recipe, setRecipe] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setEarror] = useState(null);
+// Recipe Image component
+const RecipeImage = ({ recipe }) => (
+    <div className={styles.recipeImageWrapper}>
+        <img className={styles.recipeImage} src={recipe.image} alt={recipe.title} />
+        <div className={styles.recipeStatsWrapper}>
+            <div className={styles.recipeDetailTime}>{recipe.readyInMinutes} min</div>
+            <div className={styles.recipeDetailIngredients}>{recipe.usedIngredientCount}/{recipe.usedIngredientCount + recipe.missedIngredientCount} Ingredients</div>
+            <div className={styles.servingDetailSize}>Serves {recipe.servings}</div>
+        </div>
+    </div>
+);
 
-    const fetchRecipeDetails = async (recipeIds) => {
-        const storedRecipe = JSON.parse(localStorage.getItem('selectedRecipe'));
+// IngredientsList Component
+const IngredientsList = ({ usedIngredients = [], missedIngredients = [], onIngredientAdded }) => {
+    const storedRecipe = JSON.parse(localStorage.getItem('selectedRecipe'));
+    const [mergedIngredients, setMergedIngredients] = useState([
+        ...usedIngredients.map(ingredient => ({ ...ingredient, status: 'used' })),
+        ...missedIngredients.map(ingredient => ({ ...ingredient, status: 'missed' }))
+    ]);
 
-        console.log("call api")
+    const handleAddIngredient = async (ingredient) => {
+        if (!ingredient) return;
+
+        const payload = {
+            ingredient_name: ingredient.name,
+            amount: parseInt(ingredient.amount),
+            unit: ingredient.unit,
+            possibleUnits: ingredient.possibleUnits || []
+        };
+
+        const token = localStorage.getItem("token");
+
         try {
-            setLoading(true);  // Set loading to true when fetching data
-            // Make a request to fetch the recipe details in bulk (using the recipeIds)
-            const recipeDetails = await axios.get(`https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/informationBulk`, {
-                params: {
-                    ids: recipeIds,  // Assuming recipeIds is an array of IDs
-                    includeNutrition: true,
-                },
+            const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/ingredient`, {
+                method: 'POST',
                 headers: {
-                    'X-RapidAPI-Key': process.env.NEXT_PUBLIC_SPOONACULAR_API_KEY,
-                    'X-RapidAPI-Host': 'spoonacular-recipe-food-nutrition-v1.p.rapidapi.com'
-                }
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(payload),
             });
 
-            // Merge storedRecipe and detailedRecipe based on `id` (or `title` if you prefer)
-            const combinedRecipe = {
-                ...storedRecipe, // Spread basic recipe data
-                id: recipeDetails.data[0].id,
-                image: recipeDetails.data[0].image,
-                title: recipeDetails.data[0].title,
-                readyInMinutes: recipeDetails.data[0].readyInMinutes,
-                instructions: recipeDetails.data[0].analyzedInstructions, // Add detailed instructions
-                nutrition: recipeDetails.data[0].nutrition, // Add nutrition info
-                servings: recipeDetails.data[0].servings, // Add nutrition info
-                usedIngredients: recipeDetails.data[0].extendedIngredients
+            if (!response.ok) throw new Error('Failed to add ingredient');
 
+            // Update the mergedIngredients state to move this item to "used"
+            setMergedIngredients(prevIngredients =>
+                prevIngredients.map(ing =>
+                    ing.name === ingredient.name ? { ...ing, status: 'used' } : ing
+                )
+            );
 
+            // Update localStorage
+            const storedRecipe = JSON.parse(localStorage.getItem('selectedRecipe'));
+            const updatedRecipe = {
+                ...storedRecipe,
+                usedIngredients: [...storedRecipe.usedIngredients, ingredient],
+                missedIngredients: storedRecipe.missedIngredients.filter(ing => ing.name !== ingredient.name)
             };
-            // Save combinedRecipes to state or localStorage
-            setRecipe(combinedRecipe);
+            localStorage.setItem('selectedRecipe', JSON.stringify(updatedRecipe));
 
-            // Save combinedRecipes to localStorage if needed
-            localStorage.setItem('selectedRecipe', JSON.stringify(combinedRecipe));
-
+            // Optionally notify parent component of the update
+            if (onIngredientAdded) onIngredientAdded(updatedRecipe);
         } catch (error) {
-            console.error('Error fetching recipe details:', error);
-        } finally {
-            setLoading(false);  // Set loading to false after the fetch is complete
+            console.error('Error adding ingredient:', error);
         }
     };
 
-    useEffect(() => {
-        const storedRecipe = JSON.parse(localStorage.getItem('selectedRecipe'));
-
-        if (storedRecipe) {
-            setRecipe(storedRecipe);
-            // Check if instructions or nutrients are missing
-            if (!storedRecipe.instructions || !storedRecipe.nutrition?.nutrients) {
-                console.log("no instruction or nutrients")
-                fetchRecipeDetails(storedRecipe.id);
-            } else {
-                setLoading(false);
-            }
-        } else {
-            fetchRecipeDetails(params);
-            setLoading(false);
-        }
-    }, []);
-
-    const renderIngredients = (usedIngredients = [], missedIngredients = []) => {
-        const mergedIngredients = [
-            ...usedIngredients.map(ingredient => ({ ...ingredient, status: 'used' })),
-            ...missedIngredients.map(ingredient => ({ ...ingredient, status: 'missed' }))
-        ];
-
     return (
-            <div className={styles.ingredientWrapper}>
-                {mergedIngredients.length > 0 ? (
-                    mergedIngredients.map((ingredient, i) => (
+        <div className={styles.ingredientWrapper}>
+            {mergedIngredients.length > 0 ? (
+                mergedIngredients.map((ingredient, i) => (
+                    <div key={i} className={styles.ingredientContainer}>
                         <div
-                            key={i}
                             style={{ color: ingredient.status === 'missed' ? "red" : "#506264" }}
                             className={styles.ingredient}
                         >
                             {ingredient.original}
                         </div>
-                    ))
-                ) : (
-                    <div className={styles.noIngredientsMessage}>No ingredients available.</div>
-                )}
-            </div>
-        );
-    };
+                        {ingredient.status === 'missed' && (
+                            <button onClick={() => handleAddIngredient(ingredient)} className={styles.addButton}>
+                                Add
+                            </button>
+                        )}
+                    </div>
+                ))
+            ) : (
+                <div className={styles.noIngredientsMessage}>No ingredients available.</div>
+            )}
+        </div>
+    );
+};
 
-    const renderInstructions = (instructions) => {
-        if (!instructions || instructions.length === 0 || !instructions[0].steps) {
-            return <p>No instructions available.</p>;
-        }
-        return (
+// InstructionsList Component
+const InstructionsList = ({ instructions }) => {
+    if (!instructions || instructions.length === 0 || !instructions[0].steps) {
+        return <p>No instructions available.</p>;
+    }
+    return (
+        <div>
+            <div className={styles.title}>Instructions</div>
             <ol className={styles.instructionList}>
                 {instructions[0].steps.map((stepObj, index) => (
                     <li key={index}>{stepObj.step}</li>
                 ))}
             </ol>
-        );
-    };
+        </div>
+)
+    ;
+};
 
-    const handleAdd = async () => {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            router.push('/login');
-            return;
-        }
+// Nutrient Tracker component
+const NutrientTracker = ({recipe}) => {
 
-        try {
-            await fetch(process.env.NEXT_PUBLIC_SERVER_URL + '/api/plan/add-recipe', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`
-                },
-                body: JSON.stringify({ recipeId: recipe.id })
-            });
-
-            await fetch(process.env.NEXT_PUBLIC_SERVER_URL + '/api/discover/auto-remove', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`
-                },
-                body: JSON.stringify({ ingredients: recipe.usedIngredients })
-            });
-
-        } catch (error) {
-            console.error('Error adding recipe:', error);
-        }
-    };
+    const nutrients = [
+        { name: "Calories", color: "#74DE72", backgroundColor: "#C3F5C2" },
+        { name: "Total Fat", color: "#EC4A27", backgroundColor: "#F5AD9D" },
+        { name: "Protein", color: "#72B1F1", backgroundColor: "#B6D9FC" },
+        { name: "Saturated Fat", color: "#FF6D99", backgroundColor: "#F5C5CE" },
+        { name: "Carbs", color: "#EBB06C", backgroundColor: "#FFCF96" },
+        { name: "Fiber", color: "#7D975C", backgroundColor: "#C1CBB9" },
+        { name: "Sugar", color: "#8893F2", backgroundColor: "#C9C8FF" },
+        { name: "Sodium", color: "#9474A3", backgroundColor: "#CBA6DD" }
+    ];
 
     const getRoundedNutrientAmount = (nutrientName) => {
         if (!recipe || !recipe.nutrition || !recipe.nutrition.nutrients) {
@@ -157,6 +144,31 @@ const RecipeDetails = ({ params }) => {
         return nutrient ? `${Math.round(nutrient.amount)} ${nutrient.unit}` : 0;
     };
 
+    return (
+        <div className={styles.trackerWrapper}>
+            {nutrients.map((nutrient, index) => (
+                <div key={index} className={styles.trackerItem}>
+                    <div className={styles.trackerVisual}>
+                        <div className={styles.trackerItemTitle}>{nutrient.name}</div>
+                        <CustomCircularProgress
+                            value={75} // Assuming a static value for progress, you can adjust this as needed
+                            progressColor={nutrient.color}
+                            backgroundColor={nutrient.backgroundColor}
+                            size={50}
+                        />
+                    </div>
+                    <div className={styles.data}>
+                        {getRoundedNutrientAmount(nutrient.name)}{" "}
+                        <span style={{ color: nutrient.color }}>(30%)</span>
+                    </div>
+                </div>
+            ))}
+        </div>
+    );
+};
+
+// Left Side heading component
+const LeftSideHeading = ({recipe}) =>{
     const generatePDF = () => {
         const doc = new jsPDF();
         const margin = 10; // Define side margin
@@ -253,6 +265,121 @@ const RecipeDetails = ({ params }) => {
         // Save PDF
         doc.save(`${recipe.title}.pdf`);
     };
+    return (
+        <div className={styles.titleWrapper}>
+            <div className={styles.title}>Ingredients</div>
+            <div className={styles.titleButtons}>
+                <FileDownloadOutlinedIcon className={styles.button} onClick={generatePDF}/>
+                <LocalPrintshopOutlinedIcon className={styles.button}/>
+            </div>
+        </div>
+    )
+}
+
+// Cooked Button component
+const CookedButton = ({onClick}) => (
+    <div className={styles.madeButton} onClick={onClick}>
+        <div className={styles.madeButtonText}>Cooked</div>
+    </div>
+);
+
+//Main
+const RecipeDetails = ({params}) => {
+    const [recipe, setRecipe] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setEarror] = useState(null);
+
+    const fetchRecipeDetails = async (recipeIds) => {
+        const storedRecipe = JSON.parse(localStorage.getItem('selectedRecipe'));
+
+        console.log("call api")
+        try {
+            setLoading(true);  // Set loading to true when fetching data
+            // Make a request to fetch the recipe details in bulk (using the recipeIds)
+            const recipeDetails = await axios.get(`https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/informationBulk`, {
+                params: {
+                    ids: recipeIds,  // Assuming recipeIds is an array of IDs
+                    includeNutrition: true,
+                },
+                headers: {
+                    'X-RapidAPI-Key': process.env.NEXT_PUBLIC_SPOONACULAR_API_KEY,
+                    'X-RapidAPI-Host': 'spoonacular-recipe-food-nutrition-v1.p.rapidapi.com'
+                }
+            });
+
+            // Merge storedRecipe and detailedRecipe based on `id` (or `title` if you prefer)
+            const combinedRecipe = {
+                ...storedRecipe, // Spread basic recipe data
+                id: recipeDetails.data[0].id,
+                image: recipeDetails.data[0].image,
+                title: recipeDetails.data[0].title,
+                readyInMinutes: recipeDetails.data[0].readyInMinutes,
+                instructions: recipeDetails.data[0].analyzedInstructions, // Add detailed instructions
+                nutrition: recipeDetails.data[0].nutrition, // Add nutrition info
+                servings: recipeDetails.data[0].servings, // Add nutrition info
+                usedIngredients: recipeDetails.data[0].extendedIngredients
+            };
+            // Save combinedRecipes to state or localStorage
+            setRecipe(combinedRecipe);
+
+            // Save combinedRecipes to localStorage if needed
+            localStorage.setItem('selectedRecipe', JSON.stringify(combinedRecipe));
+
+        } catch (error) {
+            console.error('Error fetching recipe details:', error);
+        } finally {
+            setLoading(false);  // Set loading to false after the fetch is complete
+        }
+    };
+
+    useEffect(() => {
+        const storedRecipe = JSON.parse(localStorage.getItem('selectedRecipe'));
+
+        if (storedRecipe) {
+            setRecipe(storedRecipe);
+            // Check if instructions or nutrients are missing
+            if (!storedRecipe.instructions || !storedRecipe.nutrition?.nutrients) {
+                console.log("no instruction or nutrients")
+                fetchRecipeDetails(storedRecipe.id);
+            } else {
+                setLoading(false);
+            }
+        } else {
+            fetchRecipeDetails(params);
+            setLoading(false);
+        }
+    }, []);
+
+    const handleAdd = async () => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            router.push('/login');
+            return;
+        }
+
+        try {
+            await fetch(process.env.NEXT_PUBLIC_SERVER_URL + '/api/plan/add-recipe', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({ recipeId: recipe.id })
+            });
+
+            await fetch(process.env.NEXT_PUBLIC_SERVER_URL + '/api/discover/auto-remove', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({ ingredients: recipe.usedIngredients })
+            });
+
+        } catch (error) {
+            console.error('Error adding recipe:', error);
+        }
+    };
 
     return (
         <div className={styles.recipeDetailsWrapper}>
@@ -266,130 +393,15 @@ const RecipeDetails = ({ params }) => {
                     <div className={styles.recipeTitle}>{recipe.title}</div>
                     <div className={styles.recipeContent}>
                         <div className={styles.recipeLeft}>
-                            <div className={styles.recipeImageWrapper}>
-                                <img className={styles.recipeImage} src={recipe.image} alt={recipe.title} />
-                                <div className={styles.recipeStatsWrapper} >
-                                    <div className={styles.recipeDetailTime}><AccessTimeIcon className={styles.recipeClock} />{recipe.readyInMinutes} min</div>
-                                    <div className={styles.recipeDetailIngredients}><LocalDiningIcon className={styles.recipeClock} />{recipe.usedIngredientCount}/{recipe.usedIngredientCount + recipe.missedIngredientCount} Ingredients</div>
-                                    <div className={styles.servingDetailSize}><PersonOutlineOutlinedIcon className={styles.recipeClock} />Serves {recipe.servings}</div>
-                                </div>
-                            </div>
-                            <div className={styles.trackerWrapper}>
-                                <div className={styles.trackerItem}>
-                                    <div className={styles.trackerVisual}>
-                                        <div className={styles.trackerItemTitle}>Calories</div>
-                                        <CustomCircularProgress
-                                            value={75}
-                                            progressColor="#74DE72"
-                                            backgroundColor="#C3F5C2"
-                                            size={50}
-                                        />
-                                    </div>
-                                    <div className={styles.data}> {getRoundedNutrientAmount("Calories")} <span style={{ color: '#74DE72' }}>(30%)</span></div>
-                                </div>
-                                <div className={styles.trackerItem}>
-                                    <div className={styles.trackerVisual}>
-                                        <div className={styles.trackerItemTitle}>Total Fat</div>
-                                        <CustomCircularProgress
-                                            value={75}
-                                            progressColor="#EC4A27"
-                                            backgroundColor="#F5AD9D"
-                                            size={50}
-                                        />
-                                    </div>
-                                    <div className={styles.data}> {getRoundedNutrientAmount("Fat")}  <span style={{ color: '#EC4A27' }}>(30%)</span></div>
-                                </div>
-                                <div className={styles.trackerItem}>
-                                    <div className={styles.trackerVisual}>
-                                        <div className={styles.trackerItemTitle}>Protein</div>
-                                        <CustomCircularProgress
-                                            value={75}
-                                            progressColor="#72B1F1"
-                                            backgroundColor="#B6D9FC"
-                                            size={50}
-                                        />
-                                    </div>
-                                    <div className={styles.data}> {getRoundedNutrientAmount("Protein")}  <span style={{ color: '#72B1F1' }}>(30%)</span></div>
-                                </div>
-                                <div className={styles.trackerItem}>
-                                    <div className={styles.trackerVisual}>
-                                        <div className={styles.trackerItemTitle}>Saturated Fat</div>
-                                        <CustomCircularProgress
-                                            value={75}
-                                            progressColor="#FF6D99"
-                                            backgroundColor="#F5C5CE"
-                                            size={50}
-                                        />
-                                    </div>
-                                    <div className={styles.data}> {getRoundedNutrientAmount("Saturated Fat")}  <span style={{ color: '#FF6D99' }}>(30%)</span></div>
-                                </div>
-                                <div className={styles.trackerItem}>
-                                    <div className={styles.trackerVisual}>
-                                        <div className={styles.trackerItemTitle}>Carbs</div>
-                                        <CustomCircularProgress
-                                            value={75}
-                                            progressColor="#EBB06C"
-                                            backgroundColor="#FFCF96"
-                                            size={50}
-                                        />
-                                    </div>
-                                    <div className={styles.data}> {getRoundedNutrientAmount("Carbohydrates")}  <span style={{ color: '#EBB06C' }}>(30%)</span></div>
-                                </div>
-                                <div className={styles.trackerItem}>
-                                    <div className={styles.trackerVisual}>
-                                        <div className={styles.trackerItemTitle}>Fiber</div>
-                                        <CustomCircularProgress
-                                            value={75}
-                                            progressColor="#7D975C"
-                                            backgroundColor="#C1CBB9"
-                                            size={50}
-                                        />
-                                    </div>
-                                    <div className={styles.data}> {getRoundedNutrientAmount("Fiber")}  <span style={{ color: '#7D975C' }}>(30%)</span></div>
-                                </div>
-                                <div className={styles.trackerItem}>
-                                    <div className={styles.trackerVisual}>
-                                        <div className={styles.trackerItemTitle}>Sugar</div>
-                                        <CustomCircularProgress
-                                            value={75}
-                                            progressColor="#8893F2"
-                                            backgroundColor="#C9C8FF"
-                                            size={50}
-                                        />
-                                    </div>
-                                    <div className={styles.data}> {getRoundedNutrientAmount("Sugar")}  <span style={{ color: '#8893F2' }}>(30%)</span></div>
-                                </div>
-                                <div className={styles.trackerItem}>
-                                    <div className={styles.trackerVisual}>
-                                        <div className={styles.trackerItemTitle}>Sodium</div>
-                                        <CustomCircularProgress
-                                            value={75}
-                                            progressColor="#9474A3"
-                                            backgroundColor="#CBA6DD"
-                                            size={50}
-                                        />
-                                    </div>
-                                    <div className={styles.data}> {getRoundedNutrientAmount("Sodium")}  <span style={{ color: '#9474A3' }}>(30%)</span></div>
-                                </div>
-                            </div>
+                            <RecipeImage recipe={recipe} />
+                            <NutrientTracker recipe={recipe}/>
                         </div>
 
                         <div className={styles.recipeInstructionWrapper}>
-                            <div className={styles.titleWrapper}>
-                                <div className={styles.title}>Ingredients</div>
-                                <div className={styles.titleButtons}>
-                                    <FileDownloadOutlinedIcon className={styles.button} onClick={generatePDF} />
-                                    <LocalPrintshopOutlinedIcon className={styles.button} />
-                                </div>
-                            </div>
-                            {renderIngredients(recipe.usedIngredients, recipe.missedIngredients)}
-                            <div className={styles.title}>Instructions</div>
-                            <div className={styles.instructionWrapper}>
-                                {renderInstructions(recipe.instructions)}
-                            </div>
-                            <div className={styles.madeButton} onClick={handleAdd}>
-                                <div className={styles.madeButtonText}>Cooked</div>
-                            </div>
+                            <LeftSideHeading recipe={recipe}/>
+                            <IngredientsList usedIngredients={recipe.usedIngredients} missedIngredients={recipe.missedIngredients} />
+                            <InstructionsList instructions={recipe.instructions} />
+                            <CookedButton onClick={handleAdd} />
                         </div>
                     </div>
                 </div>
