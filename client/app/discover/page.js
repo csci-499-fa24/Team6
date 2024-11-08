@@ -27,6 +27,7 @@ const Discover = () => {
     });
     const recipesPerPage = 12;
     const router = useRouter();
+    const [favorites, setFavorites] = useState([]);
 
     // Authentication logic
     useEffect(() => {
@@ -45,6 +46,7 @@ const Discover = () => {
                     if (response.status === 200) {
                         setAuthenticated(true);
                         fetchUserAllergens();
+                        fetchFavorites();
                     } else {
                         router.push('/login');
                     }
@@ -112,6 +114,20 @@ const Discover = () => {
         }
     };
 
+    const fetchFavorites = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/favorites`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                }
+            });
+            setFavorites(response.data.recipes);
+        } catch (error) {
+            console.error('Error fetching favorites:', error);
+        }
+    };
+
     const handleFilterChange = (e) => {
         setFilters({
             ...filters,
@@ -145,7 +161,6 @@ const Discover = () => {
         try {
             const token = localStorage.getItem('token');
 
-            // Check if the recipe is already in favorites
             const checkResponse = await axios.get(
                 `${process.env.NEXT_PUBLIC_SERVER_URL}/api/favorites`,
                 {
@@ -159,7 +174,6 @@ const Discover = () => {
             const isFavorite = checkResponse.data.recipes.some(recipe => recipe.id === recipeId);
 
             if (isFavorite) {
-                // If it is already in favorites, remove it
                 const response = await axios.delete(
                     `${process.env.NEXT_PUBLIC_SERVER_URL}/api/favorites`,
                     {
@@ -173,9 +187,9 @@ const Discover = () => {
 
                 if (response.status === 200) {
                     alert(`Recipe ${recipeId} removed from favorites.`);
+                    fetchFavorites();
                 }
             } else {
-                // If not in favorites, add it
                 const response = await axios.post(
                     `${process.env.NEXT_PUBLIC_SERVER_URL}/api/favorites`,
                     { recipeId },
@@ -189,20 +203,12 @@ const Discover = () => {
 
                 if (response.status === 201) {
                     alert(`Recipe ${recipeId} added to favorites!`);
+                    fetchFavorites();
                 }
             }
         } catch (error) {
-            if (error.response && error.response.data) {
-                const message = error.response.data.message;
-                if (message === 'Recipe already in favorites.') {
-                    alert(`Recipe ${recipeId} is already in favorites.`);
-                } else {
-                    alert('An error occurred while adding/removing from favorites: ' + message);
-                }
-            } else {
-                console.error('Error adding/removing recipe to favorites:', error);
-                alert('An unexpected error occurred. Please try again later.');
-            }
+            console.error('Error adding/removing recipe to favorites:', error);
+            alert('An unexpected error occurred. Please try again later.');
         }
     };
 
@@ -333,7 +339,7 @@ const Discover = () => {
                             <div className={styles.recipeTitleWrapper}>
                                 <div className={styles.recipeTitle}>{recipe.title}</div>
                                 <FavoriteBorderIcon
-                                    className={styles.favoriteIcon}
+                                    className={`${styles.favoriteIcon} ${favorites.some(fav => fav.id === recipe.id) ? styles.favoriteIconRed : ''}`}
                                     onClick={(e) => addAndRemoveFavorites(recipe.id, e)}
                                 />
                             </div>
