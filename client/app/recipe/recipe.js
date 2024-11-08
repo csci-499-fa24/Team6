@@ -23,6 +23,7 @@ const RecipePage = () => {
     });
     const [page, setPage] = useState(1);
     const recipesPerPage = 12;
+    const [favoriteRecipes, setFavoriteRecipes] = useState([]);
 
     const fetchUserIngredients = async () => {
         try {
@@ -39,6 +40,25 @@ const RecipePage = () => {
         } catch (error) {
             console.error('Error fetching user ingredients:', error);
             setError('Failed to fetch user ingredients.');
+        }
+    };
+
+    const fetchFavoriteRecipes = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get(
+                `${process.env.NEXT_PUBLIC_SERVER_URL}/api/favorites`,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
+            setFavoriteRecipes(response.data.recipes.map(recipe => recipe.id));
+        } catch (error) {
+            console.error('Error fetching favorites:', error);
+            setError('Failed to fetch favorite recipes.');
         }
     };
 
@@ -112,7 +132,12 @@ const RecipePage = () => {
     };
 
     useEffect(() => {
-        fetchUserIngredients();
+        const fetchData = async () => {
+            await fetchUserIngredients();
+            await fetchFavoriteRecipes();
+        };
+
+        fetchData();
     }, []);
 
     useEffect(() => {
@@ -153,21 +178,10 @@ const RecipePage = () => {
         e.preventDefault();
         try {
             const token = localStorage.getItem('token');
-
-            const checkResponse = await axios.get(
-                `${process.env.NEXT_PUBLIC_SERVER_URL}/api/favorites`,
-                {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
-                }
-            );
-
-            const isFavorite = checkResponse.data.recipes.some(recipe => recipe.id === recipeId);
+            const isFavorite = favoriteRecipes.includes(recipeId);
 
             if (isFavorite) {
-                const response = await axios.delete(
+                await axios.delete(
                     `${process.env.NEXT_PUBLIC_SERVER_URL}/api/favorites`,
                     {
                         data: { recipeId },
@@ -177,12 +191,9 @@ const RecipePage = () => {
                         }
                     }
                 );
-
-                if (response.status === 200) {
-                    alert(`Recipe ${recipeId} removed from favorites.`);
-                }
+                setFavoriteRecipes(favoriteRecipes.filter(id => id !== recipeId));
             } else {
-                const response = await axios.post(
+                await axios.post(
                     `${process.env.NEXT_PUBLIC_SERVER_URL}/api/favorites`,
                     { recipeId },
                     {
@@ -192,23 +203,11 @@ const RecipePage = () => {
                         }
                     }
                 );
-
-                if (response.status === 201) {
-                    alert(`Recipe ${recipeId} added to favorites!`);
-                }
+                setFavoriteRecipes([...favoriteRecipes, recipeId]);
             }
         } catch (error) {
-            if (error.response && error.response.data) {
-                const message = error.response.data.message;
-                if (message === 'Recipe already in favorites.') {
-                    alert(`Recipe ${recipeId} is already in favorites.`);
-                } else {
-                    alert('An error occurred while adding/removing from favorites: ' + message);
-                }
-            } else {
-                console.error('Error adding/removing recipe to favorites:', error);
-                alert('An unexpected error occurred. Please try again later.');
-            }
+            console.error('Error adding/removing recipe to favorites:', error);
+            alert('An unexpected error occurred. Please try again later.');
         }
     };
     console.log(recipes)
@@ -319,6 +318,9 @@ const RecipePage = () => {
                                         <FavoriteBorderIcon
                                             className={styles.favoriteIcon}
                                             onClick={(e) => addAndRemoveFavorites(recipe.id, e)}
+                                            sx={{
+                                                color: favoriteRecipes.includes(recipe.id) ? 'red' : 'gray',
+                                            }}
                                         />
                                     </div>
                                     <div className={styles.recipeInfoWrapper}>
