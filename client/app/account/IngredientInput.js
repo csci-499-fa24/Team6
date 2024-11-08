@@ -22,6 +22,7 @@ const IngredientInput = () => {
     const [suggestions, setSuggestions] = useState([]);
     const [selectedIngredient, setSelectedIngredient] = useState(null);
     const [possibleUnits, setPossibleUnits] = useState([]);
+    const [debounceTimer, setDebounceTimer] = useState(null);
 
     const capitalizeFirstLetter = (string) => {
         return string
@@ -50,12 +51,21 @@ const IngredientInput = () => {
         const value = e.target.value;
         setIngredient(value);
 
-        if (value.length > 0) {
-            fetchIngredients(value);
-        } else {
-            setSuggestions([]);
+        // Clear previous debounce timer
+        if (debounceTimer) {
+            clearTimeout(debounceTimer);
         }
 
+        // Set new debounce timer
+        const newTimer = setTimeout(() => {
+            if (value.length > 0) {
+                fetchIngredients(value);
+            } else {
+                setSuggestions([]);
+            }
+        }, 1000); // 1 second debounce
+
+        setDebounceTimer(newTimer);
         setSelectedIngredient(null);
     };
 
