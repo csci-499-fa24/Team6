@@ -121,6 +121,78 @@ describe('Favorites Router', () => {
         });
     });
 
+    // describe('GET /favorites', () => {
+    //     const mockRecipeDetails = {
+    //         id: recipeId,
+    //         title: 'Test Recipe',
+    //         instructions: 'Test Instructions'
+    //     };
+
+    //     test('should get all favorite recipes', async () => {
+    //         // Mock database response for favorites
+    //         pool.query.mockResolvedValueOnce({
+    //             rows: [{ recipe_id: recipeId }]
+    //         });
+
+    //         // Mock API response
+    //         axios.get.mockResolvedValueOnce({ data: mockRecipeDetails });
+
+    //         const response = await request(app)
+    //             .get('/favorites')
+    //             .set('Authorization', `Bearer ${validToken}`);
+
+    //         expect(response.status).toBe(200);
+    //         expect(response.body.recipes).toHaveLength(1);
+    //         expect(response.body.recipes[0]).toEqual(mockRecipeDetails);
+    //     });
+
+    //     test('should handle empty favorites list', async () => {
+    //         // Mock empty favorites list
+    //         pool.query.mockResolvedValueOnce({ rows: [] });
+
+    //         const response = await request(app)
+    //             .get('/favorites')
+    //             .set('Authorization', `Bearer ${validToken}`);
+
+    //         expect(response.status).toBe(200);
+    //         expect(response.body.recipes).toHaveLength(0);
+    //         expect(response.body.message).toBe('No favorite recipes found for this user.');
+    //     });
+
+    //     test('should handle API errors', async () => {
+    //         pool.query.mockResolvedValueOnce({
+    //             rows: [{ recipe_id: recipeId }]
+    //         });
+
+    //         axios.get.mockRejectedValueOnce(new Error('API error'));
+
+    //         const response = await request(app)
+    //             .get('/favorites')
+    //             .set('Authorization', `Bearer ${validToken}`);
+
+    //         expect(response.status).toBe(500);
+    //         expect(response.body.message).toBe('Failed to retrieve favorite recipes.');
+    //     });
+    // });
+
+    // describe('Authentication', () => {
+    //     test('should require authentication token', async () => {
+    //         const response = await request(app)
+    //             .get('/favorites');
+
+    //         expect(response.status).toBe(401);
+    //         expect(response.body.message).toBe('Token not found');
+    //     });
+
+    //     test('should reject invalid token', async () => {
+    //         const response = await request(app)
+    //             .get('/favorites')
+    //             .set('Authorization', 'Bearer invalidToken');
+
+    //         expect(response.status).toBe(403);
+    //         expect(response.body.message).toBe('Invalid token');
+    //     });
+    // });
     describe('GET /favorites', () => {
         const mockRecipeDetails = {
             id: recipeId,
@@ -134,8 +206,8 @@ describe('Favorites Router', () => {
                 rows: [{ recipe_id: recipeId }]
             });
 
-            // Mock API response
-            axios.get.mockResolvedValueOnce({ data: mockRecipeDetails });
+            // Mock API response to return an array of recipes
+            axios.get.mockResolvedValueOnce({ data: [mockRecipeDetails] });
 
             const response = await request(app)
                 .get('/favorites')
@@ -160,10 +232,12 @@ describe('Favorites Router', () => {
         });
 
         test('should handle API errors', async () => {
+            // Mock database response for favorites
             pool.query.mockResolvedValueOnce({
                 rows: [{ recipe_id: recipeId }]
             });
 
+            // Mock API error response
             axios.get.mockRejectedValueOnce(new Error('API error'));
 
             const response = await request(app)
