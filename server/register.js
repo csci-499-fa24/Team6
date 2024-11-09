@@ -57,7 +57,8 @@ router.post('/', async (req, res) => {
                     }
                 } catch (err) {
                     console.error('Error adding or updating ingredient:', err);
-                    return res.status(500).json({ message: 'Internal server error' });
+                   // return res.status(500).json({ message: 'Internal server error' });
+                   continue;
                 } 
 
                 // Insert ingredients to user_ingredient
