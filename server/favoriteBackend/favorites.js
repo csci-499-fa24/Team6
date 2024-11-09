@@ -116,4 +116,26 @@ router.get('/', authenticateToken, async (req, res) => {
     }
  });
 
+router.get('/favorite-id', authenticateToken, async (req, res) => {
+    const user_id = req.user.id;
+
+    try {
+        const favoriteQuery = await pool.query(
+            'SELECT recipe_id FROM user_favorites WHERE user_id = $1',
+            [user_id]
+        );
+
+        const recipeIds = favoriteQuery.rows.map(row => row.recipe_id);
+
+        if (recipeIds.length === 0) {
+            return res.status(200).json({ recipeIds: [], message: 'No favorite recipes found for this user.' });
+        }
+
+        res.status(200).json({ recipeIds });
+    } catch (error) {
+        console.error('Error retrieving favorite recipe IDs:', error);
+        res.status(500).json({ message: 'Failed to retrieve favorite recipe IDs.' });
+    }
+})
+
 module.exports = router;
