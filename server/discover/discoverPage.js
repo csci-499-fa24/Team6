@@ -16,10 +16,10 @@ router.get('/random-recipes', async (req, res) => {
             const searchParams = {
                 number,
                 offset,
-                query: search || '', 
-                type: type || '', 
-                cuisine: cuisine || '', 
-                diet: diet || '', 
+                query: search || '',
+                type: type || '',
+                cuisine: cuisine || '',
+                diet: diet || '',
                 intolerances: intolerances || '', // Add intolerances parameter
                 addRecipeInformation: true,
                 sort: 'popularity',
@@ -52,7 +52,7 @@ router.get('/random-recipes', async (req, res) => {
                 offset,
                 addRecipeInformation: true,
                 fillIngredients: true,
-                intolerances: intolerances || '', 
+                intolerances: intolerances || '',
             };
 
             const response = await axios.get('https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/random', { params, headers });

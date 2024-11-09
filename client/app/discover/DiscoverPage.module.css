@@ -204,7 +204,7 @@
 
 .searchBar::placeholder {
     color: #506264 !important;
-    opacity: 1; 
+    opacity: 1;
 }
 
 .searchBar:focus {
@@ -272,7 +272,7 @@
     .pageTitle {
         font-size: 1.8rem;
     }
-    
+
     .pageDescription {
         font-size: 1.1em;
     }
@@ -306,7 +306,7 @@
     .recipeHeart {
         font-size: 1em !important;
     }
-    
+
     .searchBar {
         width: 275px;
         min-width: 275px;
@@ -329,7 +329,7 @@
     .pageTitle {
         font-size: 1.7rem;
     }
-    
+
     .pageDescription {
         font-size: 1em;
     }
@@ -387,7 +387,7 @@
     .pageTitle {
         font-size: 1.7rem;
     }
-    
+
     .pageDescription {
         font-size: 1em;
     }
@@ -457,7 +457,7 @@
     .pageTitle {
         font-size: 1.7rem;
     }
-    
+
     .pageDescription {
         font-size: 1em;
     }
