@@ -186,7 +186,6 @@ const Discover = () => {
                 );
 
                 if (response.status === 200) {
-                    alert(`Recipe ${recipeId} removed from favorites.`);
                     fetchFavorites();
                 }
             } else {
@@ -202,13 +201,11 @@ const Discover = () => {
                 );
 
                 if (response.status === 201) {
-                    alert(`Recipe ${recipeId} added to favorites!`);
                     fetchFavorites();
                 }
             }
         } catch (error) {
             console.error('Error adding/removing recipe to favorites:', error);
-            alert('An unexpected error occurred. Please try again later.');
         }
     };
 

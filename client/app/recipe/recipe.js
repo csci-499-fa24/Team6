@@ -132,12 +132,7 @@ const RecipePage = () => {
     };
 
     useEffect(() => {
-        const fetchData = async () => {
-            await fetchUserIngredients();
-            await fetchFavoriteRecipes();
-        };
-
-        fetchData();
+        fetchUserIngredients();
     }, []);
 
     useEffect(() => {
@@ -145,6 +140,10 @@ const RecipePage = () => {
             fetchRecipes();
         }
     }, [userIngredients, filters, page]);
+
+    useEffect(() => {
+        fetchFavoriteRecipes();
+    }, []);
 
     const handleFilterChange = (e) => {
         setFilters({
