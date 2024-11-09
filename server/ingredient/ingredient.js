@@ -81,7 +81,7 @@ router.post('/', authenticateToken, async (req, res) => {
         if (userIngredientQuery.rows.length > 0) {
             if (amount > 0) {
                 await pool.query(
-                    'UPDATE user_ingredient SET amount = $1, unit = $2, WHERE user_id = $3 AND ingredient_id = $4',
+                    'UPDATE user_ingredient SET amount = $1, unit = $2 WHERE user_id = $3 AND ingredient_id = $4',
                     [amount, unit, user_id, ingredient_id]
                 );
                 return res.status(200).json({ message: 'Ingredient updated successfully!' });

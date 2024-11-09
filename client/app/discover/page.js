@@ -2,14 +2,13 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Button } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import Navbar from "../components/navbar";
 import axios from 'axios';
 import styles from './DiscoverPage.module.css';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import LocalDiningIcon from '@mui/icons-material/LocalDining';
+import FavoriteButton from "@/app/components/addAndRemoveFavorites";
 
 const Discover = () => {
     const [loading, setLoading] = useState(true);
