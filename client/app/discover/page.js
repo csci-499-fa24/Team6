@@ -26,6 +26,7 @@ const Discover = () => {
     });
     const recipesPerPage = 12;
     const router = useRouter();
+    const [favorites, setFavorites] = useState([]);
 
     // Authentication logic
     useEffect(() => {
@@ -44,6 +45,7 @@ const Discover = () => {
                     if (response.status === 200) {
                         setAuthenticated(true);
                         fetchUserAllergens();
+                        fetchFavorites();
                     } else {
                         router.push('/login');
                     }
@@ -71,6 +73,20 @@ const Discover = () => {
             }
         } catch (error) {
             console.error('Error fetching allergens:', error);
+        }
+    };
+
+    const fetchFavorites = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/favorites`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            if (response.status === 200) {
+                setFavorites(response.data.recipes);
+            }
+        } catch (error) {
+            console.error('Error fetching favorites:', error);
         }
     };
 
@@ -136,6 +152,10 @@ const Discover = () => {
 
     const handlePreviousPage = () => {
         setPage(prevPage => (prevPage > 1 ? prevPage - 1 : prevPage));
+    };
+
+    const isFavorite = (recipeId) => {
+        return favorites.some(recipe => recipe.id === recipeId);
     };
 
     // Fetch random recipes on initial load
@@ -264,7 +284,11 @@ const Discover = () => {
                                 }} />
                             <div className={styles.recipeTitleWrapper}>
                                 <div className={styles.recipeTitle}>{recipe.title}</div>
-                                <FavoriteButton recipeId={recipe.id} />
+                                <FavoriteButton
+                                    recipeId={recipe.id}
+                                    isFavorite={isFavorite(recipe.id)}
+                                    onToggleFavorite={fetchFavorites}
+                                />
                             </div>
                             <div className={styles.recipeInfoWrapper}>
                                 <div className={styles.recipeTime}>

@@ -134,8 +134,8 @@ describe('Favorites Router', () => {
                 rows: [{ recipe_id: recipeId }]
             });
 
-            // Mock API response
-            axios.get.mockResolvedValueOnce({ data: mockRecipeDetails });
+            // Mock API response to return an array of recipes
+            axios.get.mockResolvedValueOnce({ data: [mockRecipeDetails] });
 
             const response = await request(app)
                 .get('/favorites')
@@ -160,10 +160,12 @@ describe('Favorites Router', () => {
         });
 
         test('should handle API errors', async () => {
+            // Mock database response for favorites
             pool.query.mockResolvedValueOnce({
                 rows: [{ recipe_id: recipeId }]
             });
 
+            // Mock API error response
             axios.get.mockRejectedValueOnce(new Error('API error'));
 
             const response = await request(app)

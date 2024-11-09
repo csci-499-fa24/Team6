@@ -98,29 +98,22 @@ router.get('/', authenticateToken, async (req, res) => {
             return res.status(200).json({ recipes: [], message: 'No favorite recipes found for this user.' });
         }
 
-        const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+        const url = `https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/informationBulk?ids=${recipeIds.join('%2C')}`;
 
-        const recipeDetailsPromises = recipeIds.map(async (recipeId, index) => {
-            await delay(index * 1000);
-            const url = `https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/${recipeId}/information`;
-            return axios.get(url, {
-                headers: {
-                    'x-rapidapi-host': 'spoonacular-recipe-food-nutrition-v1.p.rapidapi.com',
-                    'x-rapidapi-key': apiKey
-                }
-            });
+        const response = await axios.get(url, {
+            headers: {
+                'x-rapidapi-host': 'spoonacular-recipe-food-nutrition-v1.p.rapidapi.com',
+                'x-rapidapi-key': apiKey
+            }
         });
 
-
-        const recipeDetailsResponses = await Promise.all(recipeDetailsPromises);
-        const recipes = recipeDetailsResponses.map(response => response.data);
+        const recipes = response.data;
 
         res.status(200).json({ recipes });
     } catch (error) {
         console.error('Error retrieving favorite recipes:', error);
         res.status(500).json({ message: 'Failed to retrieve favorite recipes.' });
     }
-});
-
+ });
 
 module.exports = router;
