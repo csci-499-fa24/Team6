@@ -28,8 +28,7 @@ describe('Email service', () => {
     nodemailer.createTransport.mockReturnValue(mockTransporter);
   });
 
-  it('should verify the email transporter and send an email if low ingredients are found', async () => {
-    // Mock database query to return ingredients with amounts less than 5
+  it('should verify the email transporter and send an email with correct ingredients', async () => {
     db.query.mockResolvedValue({
         rows: [
             {
@@ -52,24 +51,15 @@ describe('Email service', () => {
     await createTransporter();
     await checkAndSendEmail();
 
-    await new Promise(resolve => setTimeout(resolve, 100));
-
     expect(mockVerify).toHaveBeenCalled();
-    expect(mockSendMail).toHaveBeenCalledTimes(1); // Expecting one call for the single user
+    expect(mockSendMail).toHaveBeenCalledTimes(1);
 
-    // Check the first call's parameters
-    expect(mockSendMail).toHaveBeenCalledWith(expect.objectContaining({
-        from: process.env.EMAIL_USER,
-        to: 'john.doe@example.com',
-        subject: 'Low Ingredient Alert',
-        text: expect.stringContaining('Hi John Doe'),
-        text: expect.stringContaining('You are low on:'),
-        text: expect.stringContaining('Tomatoes'),
-        text: expect.stringContaining('Onions'),
-    }));
-});
+    const emailHtml = mockSendMail.mock.calls[0][0].html;
 
-  // New dummy test case
+    expect(emailHtml).toContain('<li>"Tomatoes", you currently have 3 units remaining</li>');
+    expect(emailHtml).toContain('<li>"Onions", you currently have 2 units remaining</li>');
+  });
+
   it('should pass a dummy test', () => {
     expect(true).toBe(true);
   });

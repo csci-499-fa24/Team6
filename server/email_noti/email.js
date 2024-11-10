@@ -72,12 +72,11 @@ async function checkAndSendEmail() {
         if (users.length > 0) {
             for (let user of users) {
                 if (user.lowIngredients.length > 0) {
-                    // Create a consolidated list of low ingredients for the email
-                    let lowIngredients = user.lowIngredients.map(ingredient =>
-                        `"${ingredient.name}", you currently have ${ingredient.amount} units remaining`
-                    );
+                    const lowIngredientsList = user.lowIngredients
+                        .map(ingredient => `<li>"${ingredient.name}", you currently have ${ingredient.amount} units remaining</li>`)
+                        .join('\n');
 
-                    const message = `
+                        const message = `
                         <p>Hi ${user.name},</p>
                         <p>You are low on:</p>
                         <ul>
@@ -85,12 +84,11 @@ async function checkAndSendEmail() {
                         </ul>
                     `;
 
-
                     const mailOptions = {
                         from: process.env.EMAIL_USER,
                         to: user.email,
                         subject: 'Low Ingredient Alert',
-                        text: message
+                        html: message
                     };
 
                     // Use await to handle the promise
