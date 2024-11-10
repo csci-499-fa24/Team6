@@ -57,7 +57,7 @@ const Login = () => {
           window.location.href = "/2FA";
         } else {
           // If 2FA is not required, proceed to the account page
-          window.location.href = "/discover";
+          window.location.href = "/account";
         }
       } else {
         setError(data.message || 'Login failed');
