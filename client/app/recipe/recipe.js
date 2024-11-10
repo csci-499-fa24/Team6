@@ -211,7 +211,7 @@ const RecipePage = () => {
             }
         }
     };
-    console.log(recipes)
+
     return (
         <div>
             <Navbar />

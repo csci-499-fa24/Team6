@@ -15,7 +15,14 @@ import axios from 'axios';
 // Recipe Image component
 const RecipeImage = ({ recipe }) => (
     <div className={styles.recipeImageWrapper}>
-        <img className={styles.recipeImage} src={recipe.image} alt={recipe.title} />
+        <img
+            className={styles.recipeImage}
+            src={recipe.image || '/assets/noImage.png'} 
+            alt={recipe.title}
+            onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = '/assets/noImage.png';
+            }} />
         <div className={styles.recipeStatsWrapper}>
             <div className={styles.recipeDetailTime}>{recipe.readyInMinutes} min</div>
             <div className={styles.recipeDetailIngredients}>{recipe.usedIngredientCount}/{recipe.usedIngredientCount + recipe.missedIngredientCount} Ingredients</div>
@@ -118,12 +125,12 @@ const InstructionsList = ({ instructions }) => {
                 ))}
             </ol>
         </div>
-)
-    ;
+    )
+        ;
 };
 
 // Nutrient Tracker component
-const NutrientTracker = ({recipe}) => {
+const NutrientTracker = ({ recipe }) => {
 
     const nutrients = [
         { name: "Calories", color: "#74DE72", backgroundColor: "#C3F5C2" },
@@ -168,7 +175,7 @@ const NutrientTracker = ({recipe}) => {
 };
 
 // Left Side heading component
-const LeftSideHeading = ({recipe}) =>{
+const LeftSideHeading = ({ recipe }) => {
     const generatePDF = () => {
         const doc = new jsPDF();
         const margin = 10; // Define side margin
@@ -269,22 +276,22 @@ const LeftSideHeading = ({recipe}) =>{
         <div className={styles.titleWrapper}>
             <div className={styles.title}>Ingredients</div>
             <div className={styles.titleButtons}>
-                <FileDownloadOutlinedIcon className={styles.button} onClick={generatePDF}/>
-                <LocalPrintshopOutlinedIcon className={styles.button}/>
+                <FileDownloadOutlinedIcon className={styles.button} onClick={generatePDF} />
+                <LocalPrintshopOutlinedIcon className={styles.button} />
             </div>
         </div>
     )
 }
 
 // Cooked Button component
-const CookedButton = ({onClick}) => (
+const CookedButton = ({ onClick }) => (
     <div className={styles.madeButton} onClick={onClick}>
         <div className={styles.madeButtonText}>Cooked</div>
     </div>
 );
 
 //Main
-const RecipeDetails = ({params}) => {
+const RecipeDetails = ({ params }) => {
     const [recipe, setRecipe] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setEarror] = useState(null);
@@ -394,11 +401,11 @@ const RecipeDetails = ({params}) => {
                     <div className={styles.recipeContent}>
                         <div className={styles.recipeLeft}>
                             <RecipeImage recipe={recipe} />
-                            <NutrientTracker recipe={recipe}/>
+                            <NutrientTracker recipe={recipe} />
                         </div>
 
                         <div className={styles.recipeInstructionWrapper}>
-                            <LeftSideHeading recipe={recipe}/>
+                            <LeftSideHeading recipe={recipe} />
                             <IngredientsList usedIngredients={recipe.usedIngredients} missedIngredients={recipe.missedIngredients} />
                             <InstructionsList instructions={recipe.instructions} />
                             <CookedButton onClick={handleAdd} />

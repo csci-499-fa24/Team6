@@ -218,7 +218,7 @@ const Discover = () => {
     if (!authenticated) {
         return null;
     }
-
+console.log(recipes)
     return (
         <div className={styles.pageWrapper}>
             <Navbar />
@@ -320,7 +320,7 @@ const Discover = () => {
                     recipes.map((recipe) => (
                         <Link href={`/discover/${recipe.id}`} key={recipe.id} className={styles.recipeCard}>
                             <img
-                                src={recipe.image}
+                                src={recipe.image || '/assets/noImage.png'}
                                 alt={recipe.title}
                                 className={styles.recipeImage}
                                 onClick={() => {
@@ -329,7 +329,8 @@ const Discover = () => {
                                 onError={(e) => {
                                     e.target.onerror = null;
                                     e.target.src = '/assets/noImage.png';
-                                }} />
+                                }}
+                            />
                             <div className={styles.recipeTitleWrapper}>
                                 <div className={styles.recipeTitle}>{recipe.title}</div>
                                 <FavoriteBorderIcon
