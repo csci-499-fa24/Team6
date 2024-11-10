@@ -78,10 +78,13 @@ async function checkAndSendEmail() {
                     );
 
                     const message = `
-                        Hi ${user.name},
-                        You are low on:
-                        ${lowIngredients.join('\n')}
+                        <p>Hi ${user.name},</p>
+                        <p>You are low on:</p>
+                        <ul>
+                            ${lowIngredientsList}
+                        </ul>
                     `;
+
 
                     const mailOptions = {
                         from: process.env.EMAIL_USER,
