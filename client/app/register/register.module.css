@@ -125,6 +125,7 @@
 
 .ingredient {
     width: 45%;
+    position: relative;
 }
 
 .ingredientList {
@@ -138,6 +139,33 @@
     overflow-y: auto;  
     position: relative; 
 }
+
+.suggestions {
+    position: absolute;
+    width: fit-content;
+    top: 100%;
+    /* Position below the input field */
+    left: 0;
+    right: 0;
+    border: 1px solid #ccc;
+    background: #fff;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    z-index: 1000;
+    /*  Ensure dropdown is above other content  */
+}
+.suggestionItem {
+    padding: 8px; 
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+}
+
+.suggestionItem:hover {
+    background-color: #f0f0f0;
+     /* Add a hover effect */
+}
+
 
 .scrollableContainer {
     display: flex;          
@@ -213,6 +241,7 @@
     flex-direction: column;
     width: 80%;
     color: #506264;
+    position: relative;
 }
 
 .nutritionalGoals {

@@ -1,7 +1,10 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 const db = require('./db'); 
+const pool = require('./db');
 const router = express.Router();
+
+
 
 router.post('/', async (req, res) => {
     console.log('Received registration request:', JSON.stringify(req.body, null, 2));
@@ -24,21 +27,45 @@ router.post('/', async (req, res) => {
         // Insert user profile
         const insertProfileQuery = 'INSERT INTO user_profiles (user_id, first_name, last_name, phone, email) VALUES ($1, $2, $3, $4, $5)';
         await db.query(insertProfileQuery, [userId, firstName, lastName, phoneNumber, email]);
+        
 
         // Insert ingredients
         if (ingredients && ingredients.length > 0) {
-            for (let ingredient of ingredients) {
+            for (let ingredient of ingredients) {             
+                const { ingredient: ingredientName, quantity, unit, possibleUnits } = ingredient;
+                let ingredient_id;
+
+                // Insert the ingredient into ingredient's table if it doesn't exist
                 try {
-                    const { ingredient: ingredientName, quantity, units } = ingredient;
-                    const findIngredientQuery = 'SELECT ingredient_id FROM ingredients WHERE name = $1';
-                    const ingredientResult = await db.query(findIngredientQuery, [ingredientName]);
-                    if (ingredientResult.rows.length > 0) {
-                        const ingredientId = ingredientResult.rows[0].ingredient_id;
-                        const insertUserIngredientQuery = 'INSERT INTO user_ingredient (user_id, ingredient_id, amount, unit) VALUES ($1, $2, $3, $4) ON CONFLICT (user_id, ingredient_id) DO UPDATE SET amount = EXCLUDED.amount, unit = EXCLUDED.unit';
-                        await db.query(insertUserIngredientQuery, [userId, ingredientId, quantity, units]);
+                    const lowerCaseIngredientName = ingredientName.toLowerCase();
+                    
+                    // Check if the ingredient exists in the ingredients table (case-insensitive)
+                    const ingredientQuery = await pool.query(
+                        'SELECT ingredient_id FROM ingredients WHERE LOWER(name) = $1',
+                        [lowerCaseIngredientName]
+                    );
+                     
+                    if (ingredientQuery.rows.length > 0) {
+                        ingredient_id = ingredientQuery.rows[0].ingredient_id;
                     } else {
-                        console.log(`Ingredient not found: ${ingredientName}`);
+                        // Insert the ingredient if it doesn't exist
+                        const insertQuery = await pool.query(
+                            'INSERT INTO ingredients (name) VALUES ($1) RETURNING ingredient_id',
+                            [lowerCaseIngredientName]
+                        );           
+                        ingredient_id = insertQuery.rows[0].ingredient_id;
                     }
+                } catch (err) {
+                    console.error('Error adding or updating ingredient:', err);
+                   // return res.status(500).json({ message: 'Internal server error' });
+                   continue;
+                } 
+
+                // Insert ingredients to user_ingredient
+                try {       
+                    const insertUserIngredientQuery = 'INSERT INTO user_ingredient (user_id, ingredient_id, amount, unit, possible_units) VALUES ($1, $2, $3, $4, $5) ON CONFLICT (user_id, ingredient_id) DO UPDATE SET amount = EXCLUDED.amount, unit = EXCLUDED.unit';
+                    await db.query(insertUserIngredientQuery, [userId, ingredient_id, quantity, unit, possibleUnits]);
+                   
                 } catch (ingredientError) {
                     console.error('Error inserting ingredient:', ingredientError);
                 }
