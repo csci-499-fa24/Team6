@@ -99,7 +99,8 @@ const Filters = ({ filters, setFilters, setPage }) => {
     );
 };
 
-const RecipeCard = ({ recipe }) => {
+const RecipeCard = ({ recipe, favoriteRecipes, onToggleFavorite }) => {
+    const isFavorite = favoriteRecipes.includes(recipe.id);
     return (
         <Link
             href={{ pathname: `/recipe/${recipe.id}` }}
@@ -120,7 +121,11 @@ const RecipeCard = ({ recipe }) => {
             />
             <div className={styles.recipeTitleWrapper}>
                 <div className={styles.recipeTitle}>{recipe.title}</div>
-                <FavoriteButton recipeId={recipe.id} />
+                <FavoriteButton
+                    recipeId={recipe.id}
+                    isFavorite={isFavorite}
+                    onToggleFavorite={onToggleFavorite}
+                />
             </div>
             <div className={styles.recipeInfoWrapper}>
                 <div className={styles.recipeTime}>
@@ -175,6 +180,7 @@ const RecipePage = () => {
     });
     const [page, setPage] = useState(1);
     const recipesPerPage = 12;
+    const [favoriteRecipes, setFavoriteRecipes] = useState([]);
 
     const fetchUserIngredients = async () => {
         try {
@@ -263,6 +269,18 @@ const RecipePage = () => {
         }
     };
 
+    const fetchFavoriteRecipes = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/favorites/favorite-id`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            setFavoriteRecipes(response.data.recipeIds);
+        } catch (error) {
+            console.error('Error fetching favorite recipes:', error);
+        }
+    };
+
     useEffect(() => {
         fetchUserIngredients();
     }, []);
@@ -272,6 +290,10 @@ const RecipePage = () => {
             fetchRecipes();
         }
     }, [userIngredients, filters, page]);
+
+    useEffect(() => {
+        fetchFavoriteRecipes();
+    }, []);
 
     return (
         <div>
@@ -289,7 +311,7 @@ const RecipePage = () => {
                     <div className={styles.recipesContainer}>
                         {recipes.length > 0 ? (
                             recipes.map((recipe) => (
-                                <RecipeCard key={recipe.id} recipe={recipe} />
+                                <RecipeCard key={recipe.id} recipe={recipe} favoriteRecipes={favoriteRecipes} onToggleFavorite={fetchFavoriteRecipes} />
                             ))
                         ) : (
                             <p>No recipes found for your ingredients.</p>
