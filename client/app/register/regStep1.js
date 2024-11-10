@@ -2,27 +2,34 @@
 import * as React from 'react';
 import { CustomTextField, CustomLinearProgress } from "../components/customComponents.js";
 import styles from './register.module.css';
-import { InputAdornment, IconButton } from '@mui/material';
+import { InputAdornment, IconButton, FormHelperText } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import Link from "next/link";
 
+
 const RegistrationStep1 = ({ currentStep, handleNextStep, formData, setFormData }) => {
     const [showPassword, setShowPassword] = React.useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
     const [confirmPassword, setConfirmPassword] = React.useState('');
     const [errorMessage, setErrorMessage] = React.useState('');
+    const [emailError, setEmailError] = React.useState('');
+    const [phoneError, setPhoneError] = React.useState('');
+    const [passwordError, setPasswordError] = React.useState('');
+    const [confirmPasswordError, setConfirmPasswordError] = React.useState('');
 
     const handleClickShowPassword = () => setShowPassword((show) => !show);
+    const handleClickShowConfirmPassword = () => setShowConfirmPassword((show) => !show);
 
     const handleMouseDownPassword = (event) => {
         event.preventDefault();
     };
 
-    // Real-time password validation
+    // Real-time password match validation for confirm password
     React.useEffect(() => {
         if (formData.password !== confirmPassword) {
-            setErrorMessage("Passwords do not match.");
+            setConfirmPasswordError("Passwords do not match.");
         } else {
-            setErrorMessage("");  // Clear error when passwords match
+            setConfirmPasswordError("");  // Clear error when passwords match
         }
     }, [formData.password, confirmPassword]);
 
@@ -32,7 +39,67 @@ const RegistrationStep1 = ({ currentStep, handleNextStep, formData, setFormData 
         return emailRegex.test(email);
     };
 
-    // Validate fields, email, and passwords before moving to the next step
+    // Phone number formatting function
+    const formatPhoneNumber = (value) => {
+        if (!value) return value;
+
+        const phoneNumber = value.replace(/[^\d]/g, "");
+        const phoneNumberLength = phoneNumber.length;
+        if (phoneNumberLength < 4) return phoneNumber;
+        if (phoneNumberLength < 7) {
+            return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3)}`;
+        }
+        return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3, 6)}-${phoneNumber.slice(6, 10)}`;
+    };
+
+    // Password validation function
+    const isValidPassword = (password) => {
+        const hasUpperCase = /[A-Z]/.test(password);
+        const hasNumber = /[0-9]/.test(password);
+        const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+        const isValidLength = password.length >= 10;
+
+        if (!isValidLength) return "Password must be at least 10 characters.";
+        if (!hasUpperCase) return "Password must contain at least one uppercase letter.";
+        if (!hasNumber) return "Password must contain at least one number.";
+        if (!hasSpecialChar) return "Password must contain at least one special character.";
+
+        return "";
+    };
+
+    const handleEmailChange = (e) => {
+        const email = e.target.value;
+        setFormData({ ...formData, email });
+        if (!isValidEmail(email)) {
+            setEmailError("Invalid email format.");
+        } else {
+            setEmailError("");
+        }
+    };
+
+    const handlePhoneChange = (e) => {
+        const formattedPhoneNumber = formatPhoneNumber(e.target.value);
+        setFormData({ ...formData, phoneNumber: formattedPhoneNumber });
+        if (formattedPhoneNumber.length < 14) {
+            setPhoneError("Invalid phone number format.");
+        } else {
+            setPhoneError("");
+        }
+    };
+
+    const handlePasswordChange = (e) => {
+        const password = e.target.value;
+        setFormData({ ...formData, password });
+        const validationMessage = isValidPassword(password);
+        setPasswordError(validationMessage);
+    };
+
+    const handleConfirmPasswordChange = (e) => {
+        const confirmPasswordValue = e.target.value;
+        setConfirmPassword(confirmPasswordValue);
+        setConfirmPasswordError(formData.password !== confirmPasswordValue ? "Passwords do not match." : "");
+    };
+
     const validateForm = () => {
         if (!formData.firstName || !formData.lastName || !formData.email || !formData.phoneNumber || !formData.password || !confirmPassword) {
             setErrorMessage("All fields are required.");
@@ -40,6 +107,14 @@ const RegistrationStep1 = ({ currentStep, handleNextStep, formData, setFormData 
         }
         if (!isValidEmail(formData.email)) {
             setErrorMessage("Please enter a valid email address.");
+            return false;
+        }
+        if (formData.phoneNumber.length < 14) {
+            setErrorMessage("Please enter a valid phone number.");
+            return false;
+        }
+        if (isValidPassword(formData.password)) {
+            setErrorMessage(isValidPassword(formData.password));
             return false;
         }
         if (formData.password !== confirmPassword) {
@@ -54,12 +129,10 @@ const RegistrationStep1 = ({ currentStep, handleNextStep, formData, setFormData 
             return;
         }
 
-        // Update formData with user inputs
         setFormData({
             ...formData,
         });
 
-        // Proceed to the next step if validation passes
         handleNextStep();
     };
 
@@ -81,6 +154,7 @@ const RegistrationStep1 = ({ currentStep, handleNextStep, formData, setFormData 
                         value={formData.firstName}
                         onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
                         style={{ marginTop: '7%' }}
+                        fullWidth
                     />
                     <CustomTextField
                         required label="Last Name"
@@ -89,6 +163,7 @@ const RegistrationStep1 = ({ currentStep, handleNextStep, formData, setFormData 
                         value={formData.lastName}
                         onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
                         style={{ marginTop: '7%' }}
+                        fullWidth
                     />
                 </div>
                 <CustomTextField
@@ -96,16 +171,22 @@ const RegistrationStep1 = ({ currentStep, handleNextStep, formData, setFormData 
                     variant="outlined"
                     className={styles.regTextField}
                     value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    onChange={handleEmailChange}
                     style={{ marginTop: '7%' }}
+                    fullWidth
+                    error={!!emailError}
+                    helperText={emailError || ""}
                 />
                 <CustomTextField
                     required label="Phone Number"
                     variant="outlined"
                     className={styles.regTextField}
                     value={formData.phoneNumber}
-                    onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
+                    onChange={handlePhoneChange}
                     style={{ marginTop: '7%' }}
+                    fullWidth
+                    error={!!phoneError}
+                    helperText={phoneError || ""}
                 />
                 <CustomTextField
                     required label="Password"
@@ -113,8 +194,11 @@ const RegistrationStep1 = ({ currentStep, handleNextStep, formData, setFormData 
                     type={showPassword ? 'text' : 'password'}
                     className={styles.regTextField}
                     value={formData.password}
-                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    onChange={handlePasswordChange}
                     style={{ marginTop: '7%' }}
+                    fullWidth
+                    error={!!passwordError}
+                    helperText={passwordError || ""}
                     slotProps={{
                         input: {
                             endAdornment:
@@ -133,21 +217,24 @@ const RegistrationStep1 = ({ currentStep, handleNextStep, formData, setFormData 
                 <CustomTextField
                     required label="Re-enter Password"
                     variant="outlined"
-                    type={showPassword ? 'text' : 'password'}
+                    type={showConfirmPassword ? 'text' : 'password'}
                     className={styles.regTextField}
                     value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    onChange={handleConfirmPasswordChange}
                     style={{ marginTop: '7%' }}
+                    fullWidth
+                    error={!!confirmPasswordError}
+                    helperText={confirmPasswordError || ""}
                     slotProps={{
                         input: {
                             endAdornment:
                                 <InputAdornment position="end">
                                     <IconButton
                                         aria-label="toggle password visibility"
-                                        onClick={handleClickShowPassword}
+                                        onClick={handleClickShowConfirmPassword}
                                         onMouseDown={handleMouseDownPassword}
                                     >
-                                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                                        {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
                                     </IconButton>
                                 </InputAdornment>
                         },
