@@ -9,6 +9,7 @@ import styles from './DiscoverPage.module.css';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import LocalDiningIcon from '@mui/icons-material/LocalDining';
 import FavoriteButton from "@/app/components/addAndRemoveFavorites";
+import LoadingScreen from '../components/loading';
 
 const Discover = () => {
     const [loading, setLoading] = useState(true);
@@ -24,9 +25,26 @@ const Discover = () => {
         allergens: [],
         searchQuery: ''
     });
-    const recipesPerPage = 12;
+    const [recipesPerPage, setRecipesPerPage] = useState(8);
     const router = useRouter();
     const [favorites, setFavorites] = useState([]);
+
+    useEffect(() => {
+        const updateRecipesPerPage = () => {
+            if (window.innerWidth <= 1600) {
+                setRecipesPerPage(6);
+            } else {
+                setRecipesPerPage(8);
+            }
+        };
+
+        window.addEventListener('resize', updateRecipesPerPage);
+        updateRecipesPerPage();
+
+        return () => {
+            window.removeEventListener('resize', updateRecipesPerPage);
+        };
+    }, []);
 
     // Authentication logic
     useEffect(() => {
@@ -163,14 +181,12 @@ const Discover = () => {
         fetchRecipes();
     }, [page]);
 
-    if (loading) {
-        return <div>Loading...</div>;
-    }
-
     if (!authenticated) {
         return null;
     }
-console.log(recipes)
+
+    const displayedRecipes = recipes.slice(0, recipesPerPage);
+
     return (
         <div className={styles.pageWrapper}>
             <Navbar />
@@ -267,47 +283,50 @@ console.log(recipes)
             </div>
 
             {/* Recipe Grid */}
-            <div className={styles.recipesContainer}>
-                {recipes.length > 0 ? (
-                    recipes.map((recipe) => (
-                        <Link href={`/discover/${recipe.id}`} key={recipe.id} className={styles.recipeCard}>
-                            <img
-                                src={recipe.image || '/assets/noImage.png'}
-                                alt={recipe.title}
-                                className={styles.recipeImage}
-                                onClick={() => {
-                                    localStorage.setItem('selectedRecipe', JSON.stringify(recipe));
-                                }}
-                                onError={(e) => {
-                                    e.target.onerror = null;
-                                    e.target.src = '/assets/noImage.png';
-                                }}
-                            />
-                            <div className={styles.recipeTitleWrapper}>
-                                <div className={styles.recipeTitle}>{recipe.title}</div>
-                                <FavoriteButton
-                                    recipeId={recipe.id}
-                                    isFavorite={isFavorite(recipe.id)}
-                                    onToggleFavorite={fetchFavorites}
+            {loading ? (
+                <LoadingScreen title='Recipes' />
+            ) : (
+                <div className={styles.recipesContainer}>
+                    {displayedRecipes.length > 0 ? (
+                        displayedRecipes.map((recipe) => (
+                            <Link href={`/discover/${recipe.id}`} key={recipe.id} className={styles.recipeCard}>
+                                <img
+                                    src={recipe.image || '/assets/noImage.png'}
+                                    alt={recipe.title}
+                                    className={styles.recipeImage}
+                                    onClick={() => {
+                                        localStorage.setItem('selectedRecipe', JSON.stringify(recipe));
+                                    }}
+                                    onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = '/assets/noImage.png';
+                                    }}
                                 />
-                            </div>
-                            <div className={styles.recipeInfoWrapper}>
-                                <div className={styles.recipeTime}>
-                                    <AccessTimeIcon className={styles.recipeClock} />
-                                    {recipe.readyInMinutes} min
+                                <div className={styles.recipeTitleWrapper}>
+                                    <div className={styles.recipeTitle}>{recipe.title}</div>
+                                    <FavoriteButton
+                                        recipeId={recipe.id}
+                                        isFavorite={isFavorite(recipe.id)}
+                                        onToggleFavorite={fetchFavorites}
+                                    />
                                 </div>
-                                <div className={styles.recipeIngredients}>
-                                    <LocalDiningIcon className={styles.recipeClock} />
-                                    {recipe.totalIngredients} Ingredients
+                                <div className={styles.recipeInfoWrapper}>
+                                    <div className={styles.recipeTime}>
+                                        <AccessTimeIcon className={styles.recipeClock} />
+                                        {recipe.readyInMinutes} min
+                                    </div>
+                                    <div className={styles.recipeIngredients}>
+                                        <LocalDiningIcon className={styles.recipeClock} />
+                                        {recipe.totalIngredients} Ingredients
+                                    </div>
                                 </div>
-                            </div>
-                        </Link>
-                    ))
-                ) : (
-                    <p className={styles.noRecipes}>No recipes found.</p>
-                )}
-            </div>
-
+                            </Link>
+                        ))
+                    ) : (
+                        <p className={styles.noRecipes}>No recipes found.</p>
+                    )}
+                </div>
+            )}
             {/* Pagination */}
             <div className={styles.pagination}>
                 <div onClick={handlePreviousPage} disabled={page === 1} className={`${styles.pageButton} ${page === 1 ? styles.disabled : ''}`}>

@@ -191,10 +191,10 @@ const RecipePage = () => {
                 setRecipesPerPage(8);
             }
         };
-    
+
         window.addEventListener('resize', updateRecipesPerPage);
-        updateRecipesPerPage(); 
-    
+        updateRecipesPerPage();
+
         return () => {
             window.removeEventListener('resize', updateRecipesPerPage);
         };

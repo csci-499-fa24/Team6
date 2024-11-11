@@ -332,7 +332,8 @@
         padding-bottom: 35px;
     }
 
-    .filterSelect, .searchBar {
+    .filterSelect,
+    .searchBar {
         font-size: 13px;
     }
 
@@ -396,7 +397,8 @@
         font-size: 14px !important;
     }
 
-    .filterSelect, .searchBar {
+    .filterSelect,
+    .searchBar {
         font-size: 13px;
     }
 

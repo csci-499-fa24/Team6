@@ -6,6 +6,7 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import LocalDiningIcon from '@mui/icons-material/LocalDining';
 import FavoriteInfo from './favoriteInfo';
+import LoadingScreen from '../components/loading';
 
 const FavoritePage = () => {
     const [favorites, setFavorites] = useState([]);
@@ -80,11 +81,11 @@ const FavoritePage = () => {
         setSelectedRecipe(null);
     };
 
-    if (loading) return <div>Loading...</div>;
+    if (loading) return <div className={styles.favoriteWrapper}><Navbar/><LoadingScreen title='your favorite recipes' className={styles.loadingScreen}/></div>;
     if (error) return <div>Error: {error}</div>;
 
     return (
-        <div>
+        <div className={styles.favoriteWrapper}>
             <Navbar />
             <div className={styles.recipePageWrapper}>
                 <div className={styles.title}>
