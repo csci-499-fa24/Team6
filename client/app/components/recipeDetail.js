@@ -11,6 +11,7 @@ import LocalPrintshopOutlinedIcon from '@mui/icons-material/LocalPrintshopOutlin
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 import jsPDF from 'jspdf';
 import axios from 'axios';
+import IngredientPopUp from '@/app/components/ingredientPopUp';
 import LoadingScreen from './loading';
 
 // Recipe Image component
@@ -296,6 +297,7 @@ const RecipeDetails = ({ params }) => {
     const [recipe, setRecipe] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setEarror] = useState(null);
+    const [isPopupVisible, setIsPopupVisible] = useState(false);
 
     const fetchRecipeDetails = async (recipeIds) => {
         const storedRecipe = JSON.parse(localStorage.getItem('selectedRecipe'));
@@ -358,36 +360,11 @@ const RecipeDetails = ({ params }) => {
         }
     }, []);
 
-    const handleAdd = async () => {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            router.push('/login');
-            return;
-        }
-
-        try {
-            await fetch(process.env.NEXT_PUBLIC_SERVER_URL + '/api/plan/add-recipe', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`
-                },
-                body: JSON.stringify({ recipeId: recipe.id })
-            });
-
-            await fetch(process.env.NEXT_PUBLIC_SERVER_URL + '/api/discover/auto-remove', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`
-                },
-                body: JSON.stringify({ ingredients: recipe.usedIngredients })
-            });
-
-        } catch (error) {
-            console.error('Error adding recipe:', error);
-        }
+    const handleOpen = async() => {
+        setIsPopupVisible(true);
     };
+
+    const closePopup = () => { setIsPopupVisible(false); };
 
     return (
         <div className={styles.recipeDetailsWrapper}>
@@ -409,8 +386,9 @@ const RecipeDetails = ({ params }) => {
                             <LeftSideHeading recipe={recipe} />
                             <IngredientsList usedIngredients={recipe.usedIngredients} missedIngredients={recipe.missedIngredients} />
                             <InstructionsList instructions={recipe.instructions} />
-                            <CookedButton onClick={handleAdd} />
+                            <CookedButton onClick={handleOpen} />
                         </div>
+                        <IngredientPopUp isVisible={isPopupVisible} onClose={closePopup} recipe={recipe}/>
                     </div>
                 </div>
             ) : (

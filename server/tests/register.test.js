@@ -8,6 +8,7 @@ const bcrypt = require('bcrypt');
 jest.mock('../db');
 jest.mock('bcrypt');
 
+
 describe('Registration Endpoint', () => {
     beforeEach(() => {
         jest.clearAllMocks();
@@ -24,7 +25,9 @@ describe('Registration Endpoint', () => {
             {
                 ingredient: 'Salt',
                 quantity: 500,
-                units: 'g'
+                //units: 'g'
+                unit: 'g',
+                possibleUnits: ['g', 'kg', 'mg']
             }
         ],
         allergy: ['peanuts', 'dairy'],
@@ -117,8 +120,8 @@ describe('Registration Endpoint', () => {
             .post('/api/register')
             .send(validRegistrationData);
 
-        expect(response.status).toBe(201);
-        expect(response.body.message).toBe('User registered successfully');
+       expect(response.status).toBe(201);
+       expect(response.body.message).toBe('User registered successfully');
     });
 
     test('should handle nutritional goals with empty values', async () => {

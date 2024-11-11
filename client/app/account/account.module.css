@@ -6,7 +6,7 @@
 
 .allergiesWrapper {
     height: 80%;
-    width: 100%;
+    width: 100%; 
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -64,8 +64,8 @@
     align-items: center;
     justify-content: flex-start;
     width: 400px;
-    margin-top: 20px;
-    padding: 10px;
+    margin-top: 20px; 
+    padding: 10px; 
 }
 
 .allergyInput {
@@ -73,7 +73,8 @@
     display: flex;
     flex-direction: column;
     width: 100%;
-    margin-right: 1em;
+    margin-right: 1em;  
+    position:relative; 
 }
 
 .addButton {
@@ -272,8 +273,8 @@
     padding: 0;
     margin: 0;
     z-index: 1000;
-    /* Ensure dropdown is above other content */
-}
+    /*  Ensure dropdown is above other content  */
+}  
 
 .suggestionItem {
     padding: 8px;
