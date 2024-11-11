@@ -5,6 +5,7 @@ import RecipePage from './recipe'; // Import the RecipePage component
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import styles from './RecipePage.module.css'
 import Navbar from "../components/navbar";
 
 const Page = () => {
@@ -57,7 +58,7 @@ const Page = () => {
     }
 
     return (
-        <div>
+        <div className={styles.recipesWrapper}>
             <RecipePage /> {/* Render the RecipePage component */}
         </div>
     );

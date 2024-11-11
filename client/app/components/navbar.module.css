@@ -90,23 +90,35 @@
     }
 }
 
-@media (min-width: 1000px) and (max-width: 1300px) { 
+@media (min-width: 1000px) and (max-width: 2000px) { 
     .navWrapper {
         font-size: 17px;
+        font-weight: 550;
     }
 
     .navLinksWrapper *{
         margin: 0 .8em 0 .8em;
+    }
+
+    .navTitle {
+        font-size: 1.2em;
+        font-weight: 800;
     }
 }
 
 @media (min-width: 800px) and (max-width: 1000px) { 
     .navWrapper {
         font-size: 14px;
+        font-weight: 500;
     }
 
     .navLinksWrapper *{
         margin: 0 .6em 0 .6em;
+    }
+
+    .navTitle {
+        font-size: 1.2em;
+        font-weight: 800;
     }
 }
 

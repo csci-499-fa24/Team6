@@ -11,22 +11,23 @@ import LocalPrintshopOutlinedIcon from '@mui/icons-material/LocalPrintshopOutlin
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 import jsPDF from 'jspdf';
 import axios from 'axios';
+import LoadingScreen from './loading';
 
 // Recipe Image component
 const RecipeImage = ({ recipe }) => (
     <div className={styles.recipeImageWrapper}>
         <img
             className={styles.recipeImage}
-            src={recipe.image || '/assets/noImage.png'} 
+            src={recipe.image || '/assets/noImage.png'}
             alt={recipe.title}
             onError={(e) => {
                 e.target.onerror = null;
                 e.target.src = '/assets/noImage.png';
             }} />
         <div className={styles.recipeStatsWrapper}>
-            <div className={styles.recipeDetailTime}>{recipe.readyInMinutes} min</div>
-            <div className={styles.recipeDetailIngredients}>{recipe.usedIngredientCount}/{recipe.usedIngredientCount + recipe.missedIngredientCount} Ingredients</div>
-            <div className={styles.servingDetailSize}>Serves {recipe.servings}</div>
+            <div className={styles.recipeDetailTime}><AccessTimeIcon />{recipe.readyInMinutes} min</div>
+            <div className={styles.recipeDetailIngredients}><LocalDiningIcon />{recipe.usedIngredientCount}/{recipe.usedIngredientCount + recipe.missedIngredientCount} Ingredients</div>
+            <div className={styles.servingDetailSize}><PersonOutlineOutlinedIcon />Serves {recipe.servings}</div>
         </div>
     </div>
 );
@@ -392,7 +393,7 @@ const RecipeDetails = ({ params }) => {
         <div className={styles.recipeDetailsWrapper}>
             <Navbar />
             {loading ? (
-                <p>Loading recipe details...</p>
+                <LoadingScreen title='Recipe Details' />
             ) : error ? (
                 <p>Error: {error}</p>
             ) : recipe ? (
