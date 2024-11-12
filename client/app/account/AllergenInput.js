@@ -31,6 +31,7 @@ const AllergenInput = () => {
             if (response.ok) {
                 const data = await response.json();
                 setAllergies(data.allergies); // Update allergies state with server data
+                setError(null);
             } else {
                 setError('Error fetching allergies');
             }
