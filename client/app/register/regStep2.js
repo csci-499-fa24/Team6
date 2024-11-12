@@ -38,17 +38,17 @@ const RegistrationStep2 = ({ currentStep, handleNextStep, handlePrevStep, formDa
     const handleInputChange = (event) => {
         const value = event.target.value;
         setIngredient(value);
-        setUnit(''); 
+        setUnit('');
         setQuantity('');
         setPossibleUnits([]);
 
-          // Clear previous debounce timer
+        // Clear previous debounce timer
         if (debounceTimer) {
             clearTimeout(debounceTimer);
         }
 
-         // Set new debounce timer
-         const newTimer = setTimeout(() => {
+        // Set new debounce timer
+        const newTimer = setTimeout(() => {
             if (value.length > 0) {
                 fetchIngredients(value);
             } else {
@@ -103,6 +103,7 @@ const RegistrationStep2 = ({ currentStep, handleNextStep, handlePrevStep, formDa
                     <CustomTextField
                         value={ingredient}
                         onChange={handleInputChange}
+                        size="small"
                     />
                     {suggestions.length > 0 && (
                         <div className={styles.suggestions}>
@@ -125,6 +126,7 @@ const RegistrationStep2 = ({ currentStep, handleNextStep, handlePrevStep, formDa
                         <CustomDropdown
                             value={unit}
                             onChange={(event) => setUnit(event.target.value)}
+                            size="small"
                         >
                             {possibleUnits.map((unitOption, index) => (
                                 <MenuItem
@@ -146,6 +148,7 @@ const RegistrationStep2 = ({ currentStep, handleNextStep, handlePrevStep, formDa
                             type="number"
                             value={quantity}
                             onChange={(event) => setQuantity(event.target.value >= 0 ? event.target.value : '')}
+                            size="small"
                         />
                     </div>
                 )}

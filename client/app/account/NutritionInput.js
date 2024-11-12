@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import styles from './account.module.css';
 import { CustomTextField, CustomCircularProgress } from "../components/customComponents.js";
+import LoadingScreen from '../components/loading';
+import ErrorScreen from '../components/error';
 
 const colorMapping = {
     protein: {
@@ -130,7 +132,7 @@ const NutritionInput = () => {
 
 
     if (!consumed) {
-        return <div>Loading...</div>;
+        return <div className={styles.loadingWrapper}><LoadingScreen title='your nutritional goals' /></div>;
     }
 
 
@@ -174,7 +176,7 @@ const NutritionInput = () => {
                             <div
                                 className={`${styles.data} ${((consumed[nutrient] ?? 0) / goals[nutrient]) * 100 > 100 ? styles.exceeded : ''}`}
                             >
-                                {consumed[nutrient] || 0} / {goals[nutrient] || 0} g
+                                {(consumed[nutrient] ?? 0).toFixed(2)} / {goals[nutrient] || 0} g
                             </div>
                         </div>
                     ))}

@@ -12,15 +12,25 @@ import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 import jsPDF from 'jspdf';
 import axios from 'axios';
 import IngredientPopUp from '@/app/components/ingredientPopUp';
+import LoadingScreen from './loading';
+import { AddCircle } from '@mui/icons-material';
+import ErrorScreen from './error';
 
 // Recipe Image component
 const RecipeImage = ({ recipe }) => (
     <div className={styles.recipeImageWrapper}>
-        <img className={styles.recipeImage} src={recipe.image} alt={recipe.title} />
+        <img
+            className={styles.recipeImage}
+            src={recipe.image || '/assets/noImage.png'}
+            alt={recipe.title}
+            onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = '/assets/noImage.png';
+            }} />
         <div className={styles.recipeStatsWrapper}>
-            <div className={styles.recipeDetailTime}>{recipe.readyInMinutes} min</div>
-            <div className={styles.recipeDetailIngredients}>{recipe.usedIngredientCount}/{recipe.usedIngredientCount + recipe.missedIngredientCount} Ingredients</div>
-            <div className={styles.servingDetailSize}>Serves {recipe.servings}</div>
+            <div className={styles.recipeDetailTime}><AccessTimeIcon className={styles.recipeClock} />{recipe.readyInMinutes} min</div>
+            <div className={styles.recipeDetailIngredients}><LocalDiningIcon className={styles.recipeClock} />{recipe.usedIngredientCount}/{recipe.usedIngredientCount + recipe.missedIngredientCount} Ingredients</div>
+            <div className={styles.servingDetailSize}><PersonOutlineOutlinedIcon className={styles.recipeClock} />Serves {recipe.servings}</div>
         </div>
     </div>
 );
@@ -90,12 +100,10 @@ const IngredientsList = ({ usedIngredients = [], missedIngredients = [], onIngre
                             className={styles.ingredient}
                         >
                             {ingredient.original}
+                            {ingredient.status === 'missed' && (
+                                <AddCircle onClick={() => handleAddIngredient(ingredient)} className={styles.addButton} />
+                            )}
                         </div>
-                        {ingredient.status === 'missed' && (
-                            <button onClick={() => handleAddIngredient(ingredient)} className={styles.addButton}>
-                                Add
-                            </button>
-                        )}
                     </div>
                 ))
             ) : (
@@ -111,20 +119,21 @@ const InstructionsList = ({ instructions }) => {
         return <p>No instructions available.</p>;
     }
     return (
-        <div>
+        <div className={styles.instructionWrapper}>
             <div className={styles.title}>Instructions</div>
             <ol className={styles.instructionList}>
-                {instructions[0].steps.map((stepObj, index) => (
-                    <li key={index}>{stepObj.step}</li>
-                ))}
+                {instructions.flatMap((instruction) =>
+                    instruction.steps.map((stepObj, stepIndex) => (
+                        <li key={stepIndex}>{stepObj.step}</li>
+                    ))
+                )}
             </ol>
         </div>
-)
-    ;
+    );
 };
 
 // Nutrient Tracker component
-const NutrientTracker = ({recipe}) => {
+const NutrientTracker = ({ recipe }) => {
 
     const nutrients = [
         { name: "Calories", color: "#74DE72", backgroundColor: "#C3F5C2" },
@@ -169,7 +178,7 @@ const NutrientTracker = ({recipe}) => {
 };
 
 // Left Side heading component
-const LeftSideHeading = ({recipe}) =>{
+const LeftSideHeading = ({ recipe }) => {
     const generatePDF = () => {
         const doc = new jsPDF();
         const margin = 10; // Define side margin
@@ -270,22 +279,22 @@ const LeftSideHeading = ({recipe}) =>{
         <div className={styles.titleWrapper}>
             <div className={styles.title}>Ingredients</div>
             <div className={styles.titleButtons}>
-                <FileDownloadOutlinedIcon className={styles.button} onClick={generatePDF}/>
-                <LocalPrintshopOutlinedIcon className={styles.button}/>
+                <FileDownloadOutlinedIcon className={styles.button} onClick={generatePDF} />
+                <LocalPrintshopOutlinedIcon className={styles.button} />
             </div>
         </div>
     )
 }
 
 // Cooked Button component
-const CookedButton = ({onClick}) => (
+const CookedButton = ({ onClick }) => (
     <div className={styles.madeButton} onClick={onClick}>
         <div className={styles.madeButtonText}>Cooked</div>
     </div>
 );
 
 //Main
-const RecipeDetails = ({params}) => {
+const RecipeDetails = ({ params }) => {
     const [recipe, setRecipe] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setEarror] = useState(null);
@@ -352,35 +361,35 @@ const RecipeDetails = ({params}) => {
         }
     }, []);
 
-    const handleOpen = async() => {
+    const handleOpen = async () => {
         setIsPopupVisible(true);
     };
 
     const closePopup = () => { setIsPopupVisible(false); };
-
+    console.log(recipe)
     return (
         <div className={styles.recipeDetailsWrapper}>
             <Navbar />
             {loading ? (
-                <p>Loading recipe details...</p>
+                <LoadingScreen title='Recipe Details' />
             ) : error ? (
-                <p>Error: {error}</p>
+                <div className={styles.errorWrapper}><ErrorScreen error={error}/></div>
             ) : recipe ? (
                 <div className={styles.recipeWrapper}>
                     <div className={styles.recipeTitle}>{recipe.title}</div>
                     <div className={styles.recipeContent}>
                         <div className={styles.recipeLeft}>
                             <RecipeImage recipe={recipe} />
-                            <NutrientTracker recipe={recipe}/>
+                            <NutrientTracker recipe={recipe} />
                         </div>
 
                         <div className={styles.recipeInstructionWrapper}>
-                            <LeftSideHeading recipe={recipe}/>
+                            <LeftSideHeading recipe={recipe} />
                             <IngredientsList usedIngredients={recipe.usedIngredients} missedIngredients={recipe.missedIngredients} />
                             <InstructionsList instructions={recipe.instructions} />
                             <CookedButton onClick={handleOpen} />
                         </div>
-                        <IngredientPopUp isVisible={isPopupVisible} onClose={closePopup} recipe={recipe}/>
+                        <IngredientPopUp isVisible={isPopupVisible} onClose={closePopup} recipe={recipe} />
                     </div>
                 </div>
             ) : (

@@ -1,0 +1,15 @@
+.errorWrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: red;
+    font-weight: 400;
+}
+
+.errorImage {
+    width: 200px;
+    margin-bottom: 30px;
+}

@@ -51,9 +51,7 @@ const Page = () => {
     }
 
     return (
-        <div>
-            <FavoritePage />
-        </div>
+        <FavoritePage />
     );
 };
 

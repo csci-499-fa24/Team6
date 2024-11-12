@@ -10,6 +10,7 @@ import Settings from './Settings';
 
 import React, { useState, useEffect } from "react";
 import styles from './account.module.css';
+import LoadingScreen from '../components/loading';
 
 const Pantry = () => {
   const router = useRouter();
@@ -59,7 +60,7 @@ const Pantry = () => {
   }, [router]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div className={styles.accountLoading}><Navbar /><LoadingScreen title='your account' /></div>;
   }
 
   if (!authenticated) {

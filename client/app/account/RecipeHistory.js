@@ -6,6 +6,8 @@ import Link from 'next/link';
 import styles from './account.module.css';
 import AccessTimeIcon from '@mui/icons-material/AccessTime'; // Importing the icon
 import LocalDiningIcon from '@mui/icons-material/LocalDining';
+import LoadingScreen from '../components/loading';
+import ErrorScreen from '../components/error';
 
 const RecipeHistory = () => {
     const [loading, setLoading] = useState(true);
@@ -66,11 +68,11 @@ const RecipeHistory = () => {
     }, [router]);
 
     if (loading) {
-        return <div>Loading...</div>;
+        return <div className={styles.loadingWrapper}><LoadingScreen title='your recipe history' /></div>;
     }
 
     if (error) {
-        return <div>Error: {error}</div>;
+        return <div className={styles.historyError}><ErrorScreen error={error} /></div>;
     }
 
     return (

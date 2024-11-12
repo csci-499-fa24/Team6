@@ -8,6 +8,8 @@ import styles from './RecipePage.module.css';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import LocalDiningIcon from '@mui/icons-material/LocalDining';
 import FavoriteButton from "@/app/components/addAndRemoveFavorites";
+import LoadingScreen from '../components/loading';
+import ErrorScreen from '../components/error';
 
 const Filters = ({ filters, setFilters, setPage }) => {
     const handleFilterChange = (e) => {
@@ -179,8 +181,25 @@ const RecipePage = () => {
         searchQuery: ''
     });
     const [page, setPage] = useState(1);
-    const recipesPerPage = 12;
+    const [recipesPerPage, setRecipesPerPage] = useState(8);
     const [favoriteRecipes, setFavoriteRecipes] = useState([]);
+
+    useEffect(() => {
+        const updateRecipesPerPage = () => {
+            if (window.innerWidth <= 1600) {
+                setRecipesPerPage(6);
+            } else {
+                setRecipesPerPage(8);
+            }
+        };
+
+        window.addEventListener('resize', updateRecipesPerPage);
+        updateRecipesPerPage();
+
+        return () => {
+            window.removeEventListener('resize', updateRecipesPerPage);
+        };
+    }, []);
 
     const fetchUserIngredients = async () => {
         try {
@@ -289,24 +308,22 @@ const RecipePage = () => {
         if (userIngredients.length > 0) {
             fetchRecipes();
         }
-    }, [userIngredients, filters, page]);
+    }, [userIngredients, filters, page, recipesPerPage]);
 
     useEffect(() => {
         fetchFavoriteRecipes();
     }, []);
 
     return (
-        <div>
+        <div className={styles.recipesWrapper}>
             <Navbar />
             <div className={styles.recipePageWrapper}>
                 <HeadLine />
-
                 <Filters filters={filters} setFilters={setFilters} setPage={setPage} />
-
                 {loading ? (
-                    <p>Loading recipes...</p>
+                    <LoadingScreen title='Recipes'/>
                 ) : error ? (
-                    <p>Error: {error}</p>
+                    <ErrorScreen error={error}/>
                 ) : (
                     <div className={styles.recipesContainer}>
                         {recipes.length > 0 ? (

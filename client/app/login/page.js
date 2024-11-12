@@ -57,7 +57,7 @@ const Login = () => {
           window.location.href = "/2FA";
         } else {
           // If 2FA is not required, proceed to the account page
-          window.location.href = "/discover";
+          window.location.href = "/account";
         }
       } else {
         setError(data.message || 'Login failed');
@@ -74,14 +74,14 @@ const Login = () => {
         <div className={styles.loginWrapper}>
           <img src="../assets/logoTitle.png" className={styles.loginImage} />
           <div className={styles.loginTitle}>Login to your Pantry<span className={styles.titleOrange}>Pal</span> account</div>
-          {error && <p style={{ color: 'red' }}>{error}</p>}
+          <div className={styles.errorMessage}>{error ? error : ''}</div>
           <CustomTextField
             required label="Email"
             variant="outlined"
             className={styles.loginEmail}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            style={{ marginTop: '3vh' }}
+            style={{ marginTop: '1vh' }}
           />
           <CustomTextField
             required label="Password"

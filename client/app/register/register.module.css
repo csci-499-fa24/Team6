@@ -73,7 +73,6 @@
     text-align: center;
     border-radius: 10px;
     padding: .7rem 0;
-    margin-top: 2.5rem;
 
     &:hover {
         background-color: rgb(233, 69, 15);
@@ -100,7 +99,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    width: 65%;
+    width: 67%;
     margin-top: 2rem;
 }
 
@@ -267,16 +266,40 @@
     width: 30%;
 }
 
-.error {
-    color:#EC4A27;
-    font-size: 15px;
-    margin-top: 10px;
+.message {
+    font-size: 12px;
+    color: red;
+    min-height: 20px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    padding: 5px;
+}
+
+.errorMessage {
+    font-size: 12px;
+    color: red;
+    min-height: 20px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    padding-top: 5px;
+    margin-bottom: -15px;
+}
+
+.helperText {
+    min-height: 2em;
+    display: block;
+    font-size: 11px;
+    color: red;
+    padding-bottom: 10px;
 }
 
 @media (min-width: 900px) and (max-width: 2000px) { 
     .regWrapper {
         width: 750px;
-        height: 700px;
+        height: 720px;
+        padding: 20px 0;
     }
 
     .regTitle {
@@ -291,7 +314,6 @@
     .regButton {
         font-size: 20px;
         padding: .7rem 0;
-        margin-top: 3%;
     }
 
     .regImage {
@@ -325,7 +347,8 @@
     }
     
     .addIngredient, .nutritionalGoals, .addAllergy {
-        margin-top: 20px;
+        margin-top: 35px;
+        width: 68%;
     }
 
     .addButton {
@@ -336,12 +359,17 @@
         padding-bottom: .5rem;
         font-size: 16px;
     }
+
+    .helperText {
+        padding-bottom: 5px;
+    }
 }
 
 @media (min-width: 650px) and (max-width: 900px) { 
     .regWrapper {
         width: 550px;
         height: 700px;
+        padding: 20px 0px;
     }
 
     .regTitle {
@@ -356,7 +384,6 @@
     .regButton {
         font-size: 17px;
         padding: .7rem 0;
-        margin-top: 4%;
         width: 65%;
     }
 
@@ -391,7 +418,8 @@
     }
     
     .addIngredient, .nutritionalGoals, .addAllergy {
-        margin-top: 20px;
+        margin-top: 30px;
+        width: 70%;
     }
 
     .addButton {
@@ -416,12 +444,17 @@
         flex-direction: column;
         width: 65%;
     }
+
+    .helperText {
+        padding-bottom: 5px;
+    }
 }
 
 @media (min-width: 499px) and (max-width: 650px) { 
     .regWrapper {
         width: 450px;
         height: 650px;
+        padding: 20px 0px;
     }
 
     .regTitle {
@@ -436,13 +469,12 @@
     .regButton {
         font-size: 14px;
         padding: .7rem 0;
-        margin-top: 5%;
         width: 70%;
     }
 
     .regImage {
-        height: 7%;
-        width: 11%;
+        height: 9%;
+        width: 14%;
     }
 
     .quantity, .unit, .ingredient, .allergyInput{
@@ -471,8 +503,8 @@
     }
     
     .addIngredient, .nutritionalGoals, .addAllergy {
-        margin-top: 18px;
-        width: 70%;
+        margin-top: 30px;
+        width: 74%;
     }
 
     .addButton {
@@ -497,12 +529,17 @@
         flex-direction: column;
         width: 70%;
     }
+
+    .helperText {
+        padding-bottom: 5px;
+    }
 }
 
 @media screen and (max-width: 499px) { 
     .regWrapper {
         width: 350px;
         height: 600px;
+        padding: 20px 0;
     }
 
     .regTitle {
@@ -517,7 +554,6 @@
     .regButton {
         font-size: 12px;
         padding: .6rem 0;
-        margin-top: 5%;
         width: 80%;
     }
 
@@ -577,5 +613,10 @@
         display: flex;
         flex-direction: column;
         width: 80%;
+    }
+
+    .helperText {
+        padding-bottom: 5px;
+        font-size: 10px;
     }
 }

@@ -5,6 +5,7 @@ import React, { useState, useEffect } from 'react';
 import styles from './account.module.css';
 import { CustomTextField } from "../components/customComponents.js";
 import { AddCircleOutlineRounded, RemoveCircleOutlineRounded } from '@mui/icons-material';
+import ErrorScreen from '../components/error';
 
 const AllergenInput = () => {
     const [allergies, setAllergies] = useState([]);
@@ -173,7 +174,7 @@ const AllergenInput = () => {
 
             <div className={styles.allergies}>
                 <div className={styles.header}>Your Food Allergies</div>
-                {error && <div className={styles.error}>{error}</div>}
+                {error && <div className={styles.errorWrapper}><ErrorScreen error={error}/></div>}
                 {allergies.length > 0 && (
                     <div className={styles.allergyScrollableContainer}>
                         {allergies.map((item, index) => (
