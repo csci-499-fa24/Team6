@@ -48,7 +48,7 @@ const IngredientsList = ({ usedIngredients = [], missedIngredients = [], onIngre
 
         const payload = {
             ingredient_name: ingredient.name,
-            amount: parseInt(ingredient.amount),
+            amount: parseFloat(ingredient.amount),
             unit: ingredient.unit,
             possibleUnits: ingredient.possibleUnits || []
         };
