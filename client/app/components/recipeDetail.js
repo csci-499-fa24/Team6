@@ -13,6 +13,7 @@ import jsPDF from 'jspdf';
 import axios from 'axios';
 import IngredientPopUp from '@/app/components/ingredientPopUp';
 import LoadingScreen from './loading';
+import { AddCircle } from '@mui/icons-material';
 
 // Recipe Image component
 const RecipeImage = ({ recipe }) => (
@@ -26,9 +27,9 @@ const RecipeImage = ({ recipe }) => (
                 e.target.src = '/assets/noImage.png';
             }} />
         <div className={styles.recipeStatsWrapper}>
-            <div className={styles.recipeDetailTime}><AccessTimeIcon />{recipe.readyInMinutes} min</div>
-            <div className={styles.recipeDetailIngredients}><LocalDiningIcon />{recipe.usedIngredientCount}/{recipe.usedIngredientCount + recipe.missedIngredientCount} Ingredients</div>
-            <div className={styles.servingDetailSize}><PersonOutlineOutlinedIcon />Serves {recipe.servings}</div>
+            <div className={styles.recipeDetailTime}><AccessTimeIcon className={styles.recipeClock} />{recipe.readyInMinutes} min</div>
+            <div className={styles.recipeDetailIngredients}><LocalDiningIcon className={styles.recipeClock} />{recipe.usedIngredientCount}/{recipe.usedIngredientCount + recipe.missedIngredientCount} Ingredients</div>
+            <div className={styles.servingDetailSize}><PersonOutlineOutlinedIcon className={styles.recipeClock} />Serves {recipe.servings}</div>
         </div>
     </div>
 );
@@ -98,12 +99,10 @@ const IngredientsList = ({ usedIngredients = [], missedIngredients = [], onIngre
                             className={styles.ingredient}
                         >
                             {ingredient.original}
+                            {ingredient.status === 'missed' && (
+                                <AddCircle onClick={() => handleAddIngredient(ingredient)} className={styles.addButton} />
+                            )}
                         </div>
-                        {ingredient.status === 'missed' && (
-                            <button onClick={() => handleAddIngredient(ingredient)} className={styles.addButton}>
-                                Add
-                            </button>
-                        )}
                     </div>
                 ))
             ) : (
@@ -119,16 +118,17 @@ const InstructionsList = ({ instructions }) => {
         return <p>No instructions available.</p>;
     }
     return (
-        <div>
+        <div className={styles.instructionWrapper}>
             <div className={styles.title}>Instructions</div>
             <ol className={styles.instructionList}>
-                {instructions[0].steps.map((stepObj, index) => (
-                    <li key={index}>{stepObj.step}</li>
-                ))}
+                {instructions.flatMap((instruction) =>
+                    instruction.steps.map((stepObj, stepIndex) => (
+                        <li key={stepIndex}>{stepObj.step}</li>
+                    ))
+                )}
             </ol>
         </div>
-    )
-        ;
+    );
 };
 
 // Nutrient Tracker component
@@ -360,12 +360,12 @@ const RecipeDetails = ({ params }) => {
         }
     }, []);
 
-    const handleOpen = async() => {
+    const handleOpen = async () => {
         setIsPopupVisible(true);
     };
 
     const closePopup = () => { setIsPopupVisible(false); };
-
+    console.log(recipe)
     return (
         <div className={styles.recipeDetailsWrapper}>
             <Navbar />
@@ -388,7 +388,7 @@ const RecipeDetails = ({ params }) => {
                             <InstructionsList instructions={recipe.instructions} />
                             <CookedButton onClick={handleOpen} />
                         </div>
-                        <IngredientPopUp isVisible={isPopupVisible} onClose={closePopup} recipe={recipe}/>
+                        <IngredientPopUp isVisible={isPopupVisible} onClose={closePopup} recipe={recipe} />
                     </div>
                 </div>
             ) : (
