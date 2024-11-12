@@ -5,7 +5,7 @@ import styles from './loading.module.css';
 const LoadingScreen = ({ title = "" }) => {
     return (
         <div className={styles.loadingWrapper}>
-            <img src="/assets/loading.gif" alt="Loading" className={styles.loadingAnimation} />
+            <img src="/assets/loading1.gif" alt="Loading" className={styles.loadingAnimation} />
             <div>Loading {title}...</div>
         </div>
     );
