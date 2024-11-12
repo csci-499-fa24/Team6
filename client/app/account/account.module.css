@@ -534,6 +534,20 @@
     color: #ec4924;
 }
 
+.errorWrapper {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.historyError {
+    height: 70%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 @media (min-width: 2000px) and (max-width: 2560px) {
     .sidebar {
         padding-right: 100px;
@@ -1017,7 +1031,7 @@
 
 @media (min-width: 700px) and (max-width: 950px) {
     .loadingWrapper {
-        scale:calc(85%)
+        scale: calc(85%)
     }
 
     .sidebar {
@@ -1224,7 +1238,7 @@
 @media (min-width: 430px) and (max-width: 700px) {
     .loadingWrapper {
         margin-top: 150px;
-        scale:calc(75%)
+        scale: calc(75%)
     }
 
     .pantryContent {

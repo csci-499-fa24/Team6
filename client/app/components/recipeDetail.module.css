@@ -322,6 +322,13 @@
     font-size: 18px !important;
 }
 
+.errorWrapper {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+}
+
 @media (min-width: 1500px) and (max-width: 2000px) {
     .recipeImage {
         width: 450px;
@@ -389,6 +396,10 @@
 
     .button {
         font-size: 1.7em !important;
+    }
+
+    .addButton {
+        padding-right: 30px;
     }
 }
 
@@ -458,6 +469,10 @@
 
     .button {
         font-size: 1.6em !important;
+    }
+
+    .addButton {
+        padding-right: 10px;
     }
 }
 
@@ -546,6 +561,10 @@
 
     .recipeInstructionWrapper {
         width: 700px;
+    }
+
+    .addButton {
+        padding-right: 10px;
     }
 }
 
@@ -644,6 +663,10 @@
 
     .instructionList li {
         padding-left: 40px;
+    }
+
+    .addButton {
+        padding-right: 0px;
     }
 }
 

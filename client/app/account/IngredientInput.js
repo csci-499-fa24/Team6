@@ -5,6 +5,7 @@ import { MenuItem, IconButton, Button } from '@mui/material';
 import { RemoveCircleOutlineRounded, AddCircleOutlineRounded } from '@mui/icons-material';
 import styles from './account.module.css';
 import { CustomTextField, CustomDropdown } from "../components/customComponents.js"
+import ErrorScreen from '../components/error';
 
 // Main IngredientList Component
 const IngredientInput = () => {
@@ -267,7 +268,7 @@ const IngredientInput = () => {
             </div>
             <div className={styles.ingredientInputContainer}>
                 <div className={styles.header}>Your Ingredients</div>
-                {error && <p style={{ color: 'red' }}>{error}</p>}
+                {error && <div className={styles.errorWrapper}><ErrorScreen error={error}/></div>}
                 {userIngredients.length === 0 ? (
                     <p>No ingredients found. Please add some ingredients.</p>
                 ) : (

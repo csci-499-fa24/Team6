@@ -144,7 +144,7 @@ const RegistrationStep1 = ({ currentStep, handleNextStep, formData, setFormData 
                 value={(currentStep / 4) * 100}
                 className={styles.progressBar}
             />
-            {errorMessage && <div className={styles.error}>{errorMessage}</div>}
+            <div className={styles.errorMessage}>{errorMessage ? errorMessage : ''}</div>
             <div className={styles.regInput}>
                 <div className={styles.regName}>
                     <CustomTextField
@@ -175,7 +175,7 @@ const RegistrationStep1 = ({ currentStep, handleNextStep, formData, setFormData 
                     style={{ marginTop: '7%' }}
                     fullWidth
                     error={!!emailError}
-                    helperText={emailError || ""}
+                    helperText={<span className={styles.helperText}>{emailError || ' '}</span>}
                 />
                 <CustomTextField
                     required label="Phone Number"
@@ -183,10 +183,9 @@ const RegistrationStep1 = ({ currentStep, handleNextStep, formData, setFormData 
                     className={styles.regTextField}
                     value={formData.phoneNumber}
                     onChange={handlePhoneChange}
-                    style={{ marginTop: '7%' }}
                     fullWidth
                     error={!!phoneError}
-                    helperText={phoneError || ""}
+                    helperText={<span className={styles.helperText}>{phoneError || ""}</span>}
                 />
                 <CustomTextField
                     required label="Password"
@@ -195,10 +194,9 @@ const RegistrationStep1 = ({ currentStep, handleNextStep, formData, setFormData 
                     className={styles.regTextField}
                     value={formData.password}
                     onChange={handlePasswordChange}
-                    style={{ marginTop: '7%' }}
                     fullWidth
                     error={!!passwordError}
-                    helperText={passwordError || ""}
+                    helperText={<span className={styles.helperText}>{passwordError || ""}</span>}
                     slotProps={{
                         input: {
                             endAdornment:
@@ -221,10 +219,9 @@ const RegistrationStep1 = ({ currentStep, handleNextStep, formData, setFormData 
                     className={styles.regTextField}
                     value={confirmPassword}
                     onChange={handleConfirmPasswordChange}
-                    style={{ marginTop: '7%' }}
                     fullWidth
                     error={!!confirmPasswordError}
-                    helperText={confirmPasswordError || ""}
+                    helperText={<span className={styles.helperText}>{confirmPasswordError || ""}</span>}
                     slotProps={{
                         input: {
                             endAdornment:

@@ -62,6 +62,7 @@ const RegistrationStep4 = ({ currentStep, handlePrevStep, handleFinish, formData
                             className={styles.nutritionInput}
                             value={nutritionGoals[nutrition.toLowerCase().replace(" ", "_")] || ''}  // Make sure that empty fields show as blank
                             onChange={handleInputChange}  // Handle input change
+                            size="small"
                         />
                         grams
                     </div>

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import styles from './account.module.css';
 import { CustomTextField, CustomCircularProgress } from "../components/customComponents.js";
 import LoadingScreen from '../components/loading';
+import ErrorScreen from '../components/error';
 
 const colorMapping = {
     protein: {

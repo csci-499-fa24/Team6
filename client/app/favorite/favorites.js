@@ -7,6 +7,7 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import LocalDiningIcon from '@mui/icons-material/LocalDining';
 import FavoriteInfo from './favoriteInfo';
 import LoadingScreen from '../components/loading';
+import ErrorScreen from '../components/error';
 
 const FavoritePage = () => {
     const [favorites, setFavorites] = useState([]);
@@ -82,7 +83,7 @@ const FavoritePage = () => {
     };
 
     if (loading) return <div className={styles.favoriteWrapper}><Navbar/><LoadingScreen title='your favorite recipes' className={styles.loadingScreen}/></div>;
-    if (error) return <div>Error: {error}</div>;
+    if (error) return <div className={styles.favoriteWrapper}><Navbar/><ErrorScreen error={error} className={styles.loadingScreen}/></div>;
 
     return (
         <div className={styles.favoriteWrapper}>

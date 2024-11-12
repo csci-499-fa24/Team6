@@ -14,6 +14,7 @@ import axios from 'axios';
 import IngredientPopUp from '@/app/components/ingredientPopUp';
 import LoadingScreen from './loading';
 import { AddCircle } from '@mui/icons-material';
+import ErrorScreen from './error';
 
 // Recipe Image component
 const RecipeImage = ({ recipe }) => (
@@ -372,7 +373,7 @@ const RecipeDetails = ({ params }) => {
             {loading ? (
                 <LoadingScreen title='Recipe Details' />
             ) : error ? (
-                <p>Error: {error}</p>
+                <div className={styles.errorWrapper}><ErrorScreen error={error}/></div>
             ) : recipe ? (
                 <div className={styles.recipeWrapper}>
                     <div className={styles.recipeTitle}>{recipe.title}</div>

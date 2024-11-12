@@ -77,8 +77,8 @@ const Register = () => {
         <div className={styles.regWrapper}>
           <img src="../assets/logoTitle.png" className={styles.regImage} alt="Logo" />
 
-          {error && <p style={{ color: 'red' }}>{error}</p>}
-          {success && <p style={{ color: 'green' }}>{success}</p>}
+          {error && <div style={{ color: 'red' }}>{error}</div>}
+          {success && <div style={{ color: 'green' }}>{success}</div>}
 
           {currentStep === 1 && (
             <RegistrationStep1

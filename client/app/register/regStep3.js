@@ -35,13 +35,13 @@ const RegistrationStep3 = ({ currentStep, handleNextStep, handlePrevStep, formDa
         const value = e.target.value;
         setAllergy(value);
 
-          // Clear previous debounce timer
+        // Clear previous debounce timer
         if (debounceTimer) {
             clearTimeout(debounceTimer);
         }
 
-         // Set new debounce timer
-         const newTimer = setTimeout(() => {
+        // Set new debounce timer
+        const newTimer = setTimeout(() => {
             if (value.length > 0) {
                 fetchIngredients(value);
             } else {
@@ -103,6 +103,7 @@ const RegistrationStep3 = ({ currentStep, handleNextStep, handlePrevStep, formDa
                         value={allergy}
                         onChange={handleInputChange}
                         onKeyDown={handleKeyDown}
+                        size="small"
                     />
                     {suggestions.length > 0 && (
                         <div className={styles.suggestions}>

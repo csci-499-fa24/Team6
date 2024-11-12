@@ -9,6 +9,7 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import LocalDiningIcon from '@mui/icons-material/LocalDining';
 import FavoriteButton from "@/app/components/addAndRemoveFavorites";
 import LoadingScreen from '../components/loading';
+import ErrorScreen from '../components/error';
 
 const Filters = ({ filters, setFilters, setPage }) => {
     const handleFilterChange = (e) => {
@@ -322,7 +323,7 @@ const RecipePage = () => {
                 {loading ? (
                     <LoadingScreen title='Recipes'/>
                 ) : error ? (
-                    <p>Error: {error}</p>
+                    <ErrorScreen error={error}/>
                 ) : (
                     <div className={styles.recipesContainer}>
                         {recipes.length > 0 ? (

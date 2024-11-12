@@ -10,6 +10,8 @@ import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined
 import LocalPrintshopOutlinedIcon from '@mui/icons-material/LocalPrintshopOutlined';
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 import { CustomCircularProgress } from '../../components/customComponents';
+import LoadingScreen from '@/app/components/loading';
+import ErrorScreen from '@/app/components/error';
 
 const RecipeDetailPlan = ({ params }) => {
     const { id } = params;
@@ -91,11 +93,11 @@ const RecipeDetailPlan = ({ params }) => {
     };
 
     if (loading) {
-        return <div>Loading...</div>;
+        return <div className={styles.mainLoadingWrapper}><LoadingScreen title='your account details'/></div>;
     }
 
     if (error) {
-        return <div>Error: {error}</div>;
+        return <div className={styles.mainLoadingWrapper}><ErrorScreen error={error}/></div>;
     }
 
     return (
