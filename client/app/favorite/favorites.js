@@ -74,7 +74,7 @@ const FavoritePage = () => {
                     {favorites.length > 0 ? (
                         favorites.map((recipe) => (
                             <Link
-                                href={`/discover/${recipe.id}`}
+                                href={`/favorite/${recipe.id}`}
                                 key={recipe.id}
                                 className={styles.recipeCard}
                                 onClick={() => {
