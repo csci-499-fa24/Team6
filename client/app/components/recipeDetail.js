@@ -90,27 +90,44 @@ const IngredientsList = ({ usedIngredients = [], missedIngredients = [], onIngre
         }
     };
 
+    const handleAddAllMissedIngredients = async () => {
+        const missedIngredients = mergedIngredients.filter(ingredient => ingredient.status === 'missed');
+        if (missedIngredients.length === 0) return;
+    
+        try {
+            await Promise.all(missedIngredients.map(ingredient => handleAddIngredient(ingredient)));
+        } catch (error) {
+            console.error('Error adding one or more missed ingredients:', error);
+        }
+    };
+    
+
     return (
         <div className={styles.ingredientWrapper}>
             {mergedIngredients.length > 0 ? (
-                mergedIngredients.map((ingredient, i) => (
-                    <div key={i} className={styles.ingredientContainer}>
-                        <div
-                            style={{ color: ingredient.status === 'missed' ? "red" : "#506264" }}
-                            className={styles.ingredient}
-                        >
-                            {ingredient.original}
-                            {ingredient.status === 'missed' && (
-                                <AddCircle onClick={() => handleAddIngredient(ingredient)} className={styles.addButton} />
-                            )}
+                <>
+                    {mergedIngredients.map((ingredient, i) => (
+                        <div key={i} className={styles.ingredientContainer}>
+                            <div
+                                style={{ color: ingredient.status === 'missed' ? "red" : "#506264" }}
+                                className={styles.ingredient}
+                            >
+                                {ingredient.original}
+                                {ingredient.status === 'missed' && (
+                                    <AddCircle onClick={() => handleAddIngredient(ingredient)} className={styles.addButton} />
+                                )}
+                            </div>
                         </div>
+                    ))}
+                    <div className={styles.addAllButton} onClick={() => handleAddAllMissedIngredients()}>
+                        <div className={styles.addAllButtonText}>Add All Missing Ingredinets</div>
                     </div>
-                ))
+                </>
             ) : (
                 <div className={styles.noIngredientsMessage}>No ingredients available.</div>
             )}
         </div>
-    );
+    );    
 };
 
 // InstructionsList Component

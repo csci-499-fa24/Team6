@@ -329,6 +329,35 @@
     justify-content: center;
 }
 
+.addAllButton {
+    display: inline-block;
+    padding: 12px 24px;
+    margin: 20px auto;
+    background-color: #4caf50;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.3s;
+}
+
+.addAllButton:hover {
+    background-color: #45a049;
+}
+
+.addAllButton:active {
+    background-color: #3e8e41;
+    transform: scale(0.98);
+}
+
+.addAllButtonText {
+    display: block;
+}
+
+
 @media (min-width: 1500px) and (max-width: 2000px) {
     .recipeImage {
         width: 450px;
