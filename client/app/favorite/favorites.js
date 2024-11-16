@@ -5,15 +5,16 @@ import styles from './favorite.module.css';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import LocalDiningIcon from '@mui/icons-material/LocalDining';
-import FavoriteInfo from './favoriteInfo';
 import LoadingScreen from '../components/loading';
 import ErrorScreen from '../components/error';
+import FavoriteButton from '../components/addAndRemoveFavorites';
+import Link from 'next/link';
 
 const FavoritePage = () => {
     const [favorites, setFavorites] = useState([]);
-    const [selectedRecipe, setSelectedRecipe] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [userIngredients, setUserIngredients] = useState([]);
 
     const fetchFavoriteRecipes = async (token) => {
         try {
@@ -38,28 +39,29 @@ const FavoritePage = () => {
         }
     };
 
-    const removeFavoriteRecipe = async (recipeId, token) => {
+    const fetchUserIngredients = async (token) => {
         try {
-            await new Promise((resolve) => setTimeout(resolve, 500));
-            const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/favorites`, {
-                method: 'DELETE',
+            const response = await fetch(process.env.NEXT_PUBLIC_SERVER_URL + '/api/user-ingredients', {
+                method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify({ recipeId }),
+                    'Authorization': `Bearer ${token}`
+                }
             });
-
-            if (!response.ok) {
-                throw new Error('Failed to remove favorite.');
-            }
-
-            setFavorites((prevFavorites) =>
-                prevFavorites.filter((recipe) => recipe.id !== recipeId)
-            );
+            const data = await response.json();
+            const ingredientNames = data.map(ingredient => ingredient.name.toLowerCase());
+            setUserIngredients(ingredientNames);
         } catch (error) {
-            console.error('Error removing favorite recipe:', error);
+            console.error('Error fetching user ingredients:', error);
+            setError('Failed to fetch user ingredients.');
         }
+    };
+
+    const toggleFavoriteState = (recipeId, isFavorite) => {
+        setFavorites((prevFavorites) =>
+            isFavorite
+                ? [...prevFavorites, { id: recipeId }]
+                : prevFavorites.filter((recipe) => recipe.id !== recipeId)
+        );
     };
 
     useEffect(() => {
@@ -72,15 +74,8 @@ const FavoritePage = () => {
         }
 
         fetchFavoriteRecipes(token);
+        fetchUserIngredients(token);
     }, []);
-
-    const handleRecipeClick = (recipe) => {
-        setSelectedRecipe(recipe);
-    };
-
-    const closeRecipeInfo = () => {
-        setSelectedRecipe(null);
-    };
 
     if (loading) return <div className={styles.favoriteWrapper}><Navbar/><LoadingScreen title='your favorite recipes' className={styles.loadingScreen}/></div>;
     if (error) return <div className={styles.favoriteWrapper}><Navbar/><ErrorScreen error={error} className={styles.loadingScreen}/></div>;
@@ -96,20 +91,29 @@ const FavoritePage = () => {
                 <div className={styles.recipesContainer}>
                     {favorites.length > 0 ? (
                         favorites.map((recipe) => (
-                            <div
+                            <Link
+                                href={`/discover/${recipe.id}`}
                                 key={recipe.id}
                                 className={styles.recipeCard}
-                                onClick={() => handleRecipeClick(recipe)}
+                                onClick={() => {
+                                    localStorage.setItem('selectedRecipe', JSON.stringify(recipe));
+                                }}
                             >
-                                <img src={recipe.image} alt={recipe.title} className={styles.recipeImage} />
+                                <img
+                                    src={recipe.image || '/assets/noImage.png'}
+                                    alt={recipe.title}
+                                    className={styles.recipeImage}
+                                    onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = '/assets/noImage.png';
+                                    }}
+                                />
                                 <div className={styles.recipeTitleWrapper}>
                                     <div className={styles.recipeTitle}>{recipe.title}</div>
-                                    <FavoriteIcon
-                                        className={styles.recipeHeart}
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            removeFavoriteRecipe(recipe.id, localStorage.getItem('token'));
-                                        }}
+                                    <FavoriteButton
+                                        recipeId={recipe.id}
+                                        isFavorite={true}
+                                        onToggleFavorite={(isFavorite) => toggleFavoriteState(recipe.id, isFavorite)}
                                     />
                                 </div>
                                 <div className={styles.recipeInfoWrapper}>
@@ -119,18 +123,16 @@ const FavoritePage = () => {
                                     </div>
                                     <div className={styles.recipeIngredients}>
                                         <LocalDiningIcon className={styles.recipeClock} />
-                                        {recipe.extendedIngredients?.length || 0} Ingredients
+                                        {recipe.usedIngredientCount}/{recipe.usedIngredientCount + recipe.missedIngredientCount} Ingredients
                                     </div>
                                 </div>
-                            </div>
+                            </Link>
                         ))
                     ) : (
                         <p>No favorite recipes yet.</p>
                     )}
                 </div>
             </div>
-            {/* Display FavoriteInfo component when a recipe is selected */}
-            {selectedRecipe && <FavoriteInfo recipe={selectedRecipe} onClose={closeRecipeInfo} />}
         </div>
     );
 };
