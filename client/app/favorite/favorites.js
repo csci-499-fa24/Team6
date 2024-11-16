@@ -14,7 +14,6 @@ const FavoritePage = () => {
     const [favorites, setFavorites] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [userIngredients, setUserIngredients] = useState([]);
 
     const fetchFavoriteRecipes = async (token) => {
         try {
@@ -30,29 +29,13 @@ const FavoritePage = () => {
             }
 
             const data = await response.json();
+            console.log('Fetched recipes:', data.recipes);
             setFavorites(data.recipes);
         } catch (error) {
             console.error('Error fetching favorite recipes:', error);
             setError('Failed to load your favorite recipes.');
         } finally {
             setLoading(false);
-        }
-    };
-
-    const fetchUserIngredients = async (token) => {
-        try {
-            const response = await fetch(process.env.NEXT_PUBLIC_SERVER_URL + '/api/user-ingredients', {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            const data = await response.json();
-            const ingredientNames = data.map(ingredient => ingredient.name.toLowerCase());
-            setUserIngredients(ingredientNames);
-        } catch (error) {
-            console.error('Error fetching user ingredients:', error);
-            setError('Failed to fetch user ingredients.');
         }
     };
 
@@ -74,7 +57,6 @@ const FavoritePage = () => {
         }
 
         fetchFavoriteRecipes(token);
-        fetchUserIngredients(token);
     }, []);
 
     if (loading) return <div className={styles.favoriteWrapper}><Navbar/><LoadingScreen title='your favorite recipes' className={styles.loadingScreen}/></div>;
@@ -123,7 +105,7 @@ const FavoritePage = () => {
                                     </div>
                                     <div className={styles.recipeIngredients}>
                                         <LocalDiningIcon className={styles.recipeClock} />
-                                        {recipe.usedIngredientCount}/{recipe.usedIngredientCount + recipe.missedIngredientCount} Ingredients
+                                        {recipe.extendedIngredients?.length || 'N/A'} Ingredients
                                     </div>
                                 </div>
                             </Link>
