@@ -13,7 +13,11 @@ const RecipeHistory = () => {
     const [loading, setLoading] = useState(true);
     const [recipes, setRecipes] = useState([]);
     const [error, setError] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [recipesPerPage, setRecipesPerPage] = useState(6); 
     const router = useRouter();
+
+    const totalPages = Math.ceil(recipes.length / recipesPerPage);
 
     // Fetch user's recipes
     const fetchUserRecipes = async (token) => {
@@ -33,6 +37,23 @@ const RecipeHistory = () => {
             setLoading(false);
         }
     };
+
+    useEffect(() => {
+        const updateRecipesPerPage = () => {
+            if (window.innerWidth <= 1300) {
+                setRecipesPerPage(4); 
+            } else {
+                setRecipesPerPage(6); 
+            }
+        };
+
+        window.addEventListener('resize', updateRecipesPerPage);
+        updateRecipesPerPage();
+
+        return () => {
+            window.removeEventListener('resize', updateRecipesPerPage);
+        };
+    }, []);
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -67,6 +88,14 @@ const RecipeHistory = () => {
         verifyToken();
     }, [router]);
 
+    const handlePageChange = (page) => {
+        if (page >= 1 && page <= totalPages) {
+            setCurrentPage(page);
+        }
+    };
+
+    const displayedRecipes = recipes.slice((currentPage - 1) * recipesPerPage, currentPage * recipesPerPage);
+
     if (loading) {
         return <div className={styles.loadingWrapper}><LoadingScreen title='your recipe history' /></div>;
     }
@@ -79,8 +108,8 @@ const RecipeHistory = () => {
         <div className={styles.recipeHistoryWrapper}>
             <div className={styles.header}>Your Recipe History</div>
             <div className={styles.recipesContainer}>
-                {recipes?.length > 0 ? (
-                    recipes.map((recipe) => (
+                {displayedRecipes.length > 0 ? (
+                    displayedRecipes.map((recipe) => (
                         <Link href={`/account/${recipe.id}`} key={recipe.id} className={styles.recipeCard}>
                             <img src={recipe.image} alt={recipe.title} className={styles.recipeImage} />
                             <div className={styles.recipeTitleWrapper}>
@@ -96,8 +125,28 @@ const RecipeHistory = () => {
                     <p>No recipes in your plan.</p>
                 )}
             </div>
+            {totalPages > 1 && (
+                <div className={styles.paginationWrapper}>
+                    <div
+                        onClick={() => handlePageChange(currentPage - 1)}
+                        disabled={currentPage === 1}
+                        className={styles.paginationButton}
+                    >
+                        Previous
+                    </div>
+                    <span className={styles.pageIndicator}>
+                        Page {currentPage} of {totalPages}
+                    </span>
+                    <div
+                        onClick={() => handlePageChange(currentPage + 1)}
+                        disabled={currentPage === totalPages}
+                        className={styles.paginationButton}
+                    >
+                        Next
+                    </div>
+                </div>
+            )}
         </div>
-
     );
 };
 
