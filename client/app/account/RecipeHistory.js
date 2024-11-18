@@ -14,7 +14,7 @@ const RecipeHistory = () => {
     const [recipes, setRecipes] = useState([]);
     const [error, setError] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
-    const [recipesPerPage, setRecipesPerPage] = useState(6); 
+    const [recipesPerPage, setRecipesPerPage] = useState(6);
     const router = useRouter();
 
     const totalPages = Math.ceil(recipes.length / recipesPerPage);
@@ -41,9 +41,9 @@ const RecipeHistory = () => {
     useEffect(() => {
         const updateRecipesPerPage = () => {
             if (window.innerWidth <= 1300) {
-                setRecipesPerPage(4); 
+                setRecipesPerPage(4);
             } else {
-                setRecipesPerPage(6); 
+                setRecipesPerPage(6);
             }
         };
 
@@ -111,7 +111,18 @@ const RecipeHistory = () => {
                 {displayedRecipes.length > 0 ? (
                     displayedRecipes.map((recipe) => (
                         <Link href={`/account/${recipe.id}`} key={recipe.id} className={styles.recipeCard}>
-                            <img src={recipe.image} alt={recipe.title} className={styles.recipeImage} />
+                            <img
+                                src={recipe.image}
+                                alt={recipe.title}
+                                className={styles.recipeImage}
+                                onClick={() => {
+                                    localStorage.setItem('selectedRecipe', JSON.stringify(recipe));
+                                }}
+                                onError={(e) => {
+                                    e.target.onerror = null;
+                                    e.target.src = '/assets/noImage.png';
+                                }} 
+                                />
                             <div className={styles.recipeTitleWrapper}>
                                 <div className={styles.recipeTitle}>{recipe.title}</div>
                             </div>
