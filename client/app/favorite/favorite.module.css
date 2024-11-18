@@ -34,7 +34,9 @@
     grid-template-columns: repeat(4, 1fr);
     grid-column-gap: 5em;
     grid-row-gap: 3em;
-    margin: 2em 8em;
+    margin: 0 107px;
+    padding-top: 3vh;
+    justify-items: center;
 }
 
 .recipeCard {
@@ -118,5 +120,347 @@
 
     &:hover {
         color: #fbfafa;
+    }
+}
+
+@media (min-width: 1600px) and (max-width: 2000px) {
+    .recipeCard {
+        width: 300px;
+        height: 240px;
+    }
+
+    .recipesContainer {
+        grid-column-gap: 0;
+        margin: 0 75px;
+        grid-row-gap: 2em;
+        margin-bottom: 30px;
+    }
+
+    .recipeTitle {
+        font-size: .9em;
+        font-weight: 450;
+    }
+
+    .recipeTime {
+        font-size: .6em;
+    }
+
+    .recipeIngredients {
+        font-size: .6em;
+    }
+
+    .recipeHeart {
+        font-size: 1em !important;
+    }
+
+    .searchButton {
+        height: 32px;
+    }
+
+    .recipePageTitle {
+        font-size: 1.6rem;
+        font-weight: 500;
+    }
+
+    .recipePageDescription {
+        font-size: 1em;
+        font-weight: 500;
+    }
+
+    .filtersContainer {
+        margin: 25px 130px;
+    }
+
+    .recipeImage {
+        height: 185px;
+        width: 300px;
+        border-radius: 10px;
+        object-fit: cover;
+    }
+
+    .title {
+        margin-top: 3em;
+    }
+
+    .pageButton {
+        font-size: 16px;
+        padding: 10px 7px;
+    }
+
+    .pagination {
+        padding-bottom: 35px;
+    }
+
+    .filterSelect,
+    .searchBar {
+        font-size: 13px;
+    }
+
+    .searchButton {
+        height: 28px;
+        font-size: 14px !important;
+    }
+}
+
+@media (min-width: 1200px) and (max-width: 1600px) {
+    .recipeCard {
+        width: 300px;
+        height: 240px;
+    }
+
+    .recipeImage {
+        height: 185px;
+        width: 300px;
+        border-radius: 10px;
+        object-fit: cover;
+    }
+
+    .recipesContainer {
+        grid-column-gap: 0;
+        grid-template-columns: repeat(3, 1fr);
+        margin: 0 50px;
+        grid-row-gap: 2em;
+        margin-bottom: 30px;
+    }
+
+    .recipeTitle {
+        font-size: .9em;
+        font-weight: 450;
+    }
+
+    .recipeTime {
+        font-size: .6em;
+    }
+
+    .recipeIngredients {
+        font-size: .6em;
+    }
+
+    .recipeHeart {
+        font-size: 1em !important;
+    }
+
+    .searchBar {
+        width: 275px;
+        min-width: 275px;
+        font-size: 13px;
+    }
+
+    .filtersContainer {
+        gap: 25px;
+        margin: 25px 130px;
+    }
+
+    .searchButton {
+        height: 28px;
+        font-size: 14px !important;
+    }
+
+    .filterSelect,
+    .searchBar {
+        font-size: 13px;
+    }
+
+    .recipePageTitle {
+        font-size: 1.6rem;
+        font-weight: 500;
+    }
+
+    .recipePageDescription {
+        font-size: 1em;
+        font-weight: 500;
+    }
+
+    .pagination {
+        padding-bottom: 35px;
+    }
+
+    .pageButton {
+        font-size: 16px;
+        padding: 10px 7px;
+    }
+
+    .title {
+        margin-top: 3em;
+    }
+}
+
+@media (min-width: 750px) and (max-width: 1200px) {
+    .recipeCard {
+        width: 300px;
+        height: 240px;
+    }
+
+    .recipeImage {
+        height: 185px;
+        width: 300px;
+        border-radius: 10px;
+        object-fit: cover;
+    }
+
+    .recipesContainer {
+        grid-column-gap: 0;
+        grid-template-columns: repeat(2, 1fr);
+        margin: 0 20px;
+        margin-bottom: 30px;
+        grid-row-gap: 2em;
+    }
+
+    .recipeTitle {
+        font-size: .9em;
+        font-weight: 450;
+    }
+
+    .recipeTime {
+        font-size: .6em;
+    }
+
+    .recipeIngredients {
+        font-size: .6em;
+    }
+
+    .recipeHeart {
+        font-size: 1em !important;
+    }
+
+    .searchBar {
+        width: 220px;
+        min-width: 220px;
+        font-size: 12px;
+    }
+
+    .filtersContainer {
+        gap: 10px;
+    }
+
+    .filterSelect {
+        font-size: 12px;
+        width: 248px;
+    }
+
+    .searchButton {
+        height: 27px;
+        font-size: 13px !important;
+    }
+
+    .recipePageTitle {
+        font-size: 1.7rem;
+    }
+
+    .recipePageDescription {
+        font-size: 1em;
+    }
+
+    .filtersContainer {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .title {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-left: 0;
+    }
+
+    .pagination {
+        padding-bottom: 35px;
+    }
+
+    .pageButton {
+        font-size: 16px;
+        padding: 10px 7px;
+    }
+
+    .title {
+        margin-top: 3em;
+    }
+}
+
+@media (min-width: 0px) and (max-width: 750px) {
+    .recipeCard {
+        width: 300px;
+        height: 240px;
+    }
+
+    .recipeImage {
+        height: 185px;
+        width: 300px;
+        border-radius: 10px;
+        object-fit: cover;
+    }
+
+    .recipesContainer {
+        grid-column-gap: 0;
+        grid-template-columns: repeat(1, 1fr);
+        margin: 0 0px;
+        grid-row-gap: 2em;
+        margin-bottom: 30px;
+    }
+
+    .recipeTitle {
+        font-size: .9em;
+        font-weight: 450;
+    }
+
+    .recipeTime {
+        font-size: .6em;
+    }
+
+    .recipeIngredients {
+        font-size: .6em;
+    }
+
+    .recipeHeart {
+        font-size: 1em !important;
+    }
+
+    .searchBar {
+        width: 220px;
+        min-width: 220px;
+        font-size: 12px;
+    }
+
+    .filtersContainer {
+        gap: 10px;
+    }
+
+    .filterSelect {
+        font-size: 12px;
+        width: 248px;
+    }
+
+    .searchButton {
+        height: 27px;
+        font-size: 13px !important;
+    }
+
+    .recipePageTitle {
+        font-size: 1.7rem;
+    }
+
+    .recipePageDescription {
+        font-size: 1em;
+    }
+
+    .filtersContainer {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .title {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-left: 0;
+    }
+
+    .pagination {
+        padding-bottom: 35px;
+    }
+
+    .pageButton {
+        font-size: 16px;
+        padding: 10px 7px;
     }
 }

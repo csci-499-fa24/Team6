@@ -548,6 +548,47 @@
     justify-content: center;
 }
 
+.paginationWrapper {
+    display: flex;
+    align-items: center;
+    width: 475px;
+    justify-content: space-between;
+    padding-top: 50px;
+}
+
+
+.paginationButton {
+    background-color: #EC4A27;
+    width: 150px;
+    padding: 10px 7px;
+    text-align: center;
+    border-radius: 5px;
+    font-size: 16px;
+    color: white;
+
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+.paginationButton[disabled] {
+    background-color: #a8a5a2;
+    width: 150px;
+    padding: 10px 7px;
+    text-align: center;
+    border-radius: 5px;
+    color: white;
+
+    &:hover {
+        cursor: default;
+    }
+}
+
+.pageIndicator {
+    color: #506264;
+    font-weight: 500;
+}
+
 @media (min-width: 2000px) and (max-width: 2560px) {
     .sidebar {
         padding-right: 100px;
@@ -709,6 +750,27 @@
     .recipeIngredients {
         font-size: .9em;
     }
+
+    .paginationWrapper {
+        width: 500px;
+        padding-top: 150px;
+    }
+    
+    
+    .paginationButton {
+        padding: 10px 10px;
+        font-size: 20px;
+    }
+    
+    .paginationButton[disabled] {
+        padding: 10px 10px;
+        font-size: 20px;
+    }
+    
+    .pageIndicator {
+        color: #506264;
+        font-weight: 500;
+    }
 }
 
 @media (min-width: 1300px) and (max-width: 1650px) {
@@ -851,6 +913,10 @@
     .recipeTime,
     .recipeIngredients {
         font-size: .6em;
+    }
+
+    .paginationWrapper {
+        padding-top: 60px;
     }
 }
 
@@ -1023,7 +1089,7 @@
     .recipesContainer {
         grid-template-columns: repeat(2, 1fr);
         grid-row-gap: 2em;
-        grid-column-gap: 6em;
+        grid-column-gap: 3em;
         margin-bottom: 30px;
         width: auto;
     }
@@ -1232,6 +1298,31 @@
         grid-row-gap: 2em;
         margin-bottom: 30px;
         width: auto;
+    }
+
+    .paginationWrapper {
+        width: 350px;
+        padding-top: 20px;
+        padding-bottom: 40px;
+    }
+    
+    
+    .paginationButton {
+        padding: 9px 6px;
+        font-size: 13px;
+        width: 100px;
+    }
+    
+    .paginationButton[disabled] {
+        padding: 9px 6px;
+        font-size: 13px;
+        width: 100px;
+    }
+    
+    .pageIndicator {
+        color: #506264;
+        font-weight: 500;
+        font-size: 14px;
     }
 }
 
@@ -1455,6 +1546,31 @@
         margin-bottom: 30px;
         width: auto;
     }
+
+    .paginationWrapper {
+        width: 350px;
+        padding-top: 20px;
+        padding-bottom: 40px;
+    }
+    
+    
+    .paginationButton {
+        padding: 9px 6px;
+        font-size: 13px;
+        width: 100px;
+    }
+    
+    .paginationButton[disabled] {
+        padding: 9px 6px;
+        font-size: 13px;
+        width: 100px;
+    }
+    
+    .pageIndicator {
+        color: #506264;
+        font-weight: 500;
+        font-size: 14px;
+    }
 }
 
 @media (max-width: 430px) {
@@ -1672,5 +1788,29 @@
         margin-bottom: 30px;
         width: auto;
         margin-top: .6em;
+    }
+
+    .paginationWrapper {
+        width: 320px;
+        padding-top: 20px;
+        padding-bottom: 40px;
+    }
+    
+    .paginationButton {
+        padding: 9px 6px;
+        font-size: 13px;
+        width: 100px;
+    }
+    
+    .paginationButton[disabled] {
+        padding: 9px 6px;
+        font-size: 13px;
+        width: 100px;
+    }
+    
+    .pageIndicator {
+        color: #506264;
+        font-weight: 500;
+        font-size: 12px;
     }
 }

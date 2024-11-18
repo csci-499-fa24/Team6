@@ -525,7 +525,7 @@ const RecipeDetails = ({ params }) => {
     };
 
     const closePopup = () => { setIsPopupVisible(false); };
-    console.log(recipe)
+
     return (
         <div className={styles.recipeDetailsWrapper}>
             <Navbar />
