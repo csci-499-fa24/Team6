@@ -15,6 +15,7 @@ import axios from 'axios';
 import IngredientPopUp from '@/app/components/ingredientPopUp';
 import LoadingScreen from './loading';
 import { AddCircle, ConnectingAirportsOutlined } from '@mui/icons-material';
+import { useRouter } from 'next/navigation';
 import ErrorScreen from './error';
 
 // Recipe Image component
@@ -37,17 +38,60 @@ const RecipeImage = ({ recipe }) => (
 );
 
 // IngredientsList Component
-const IngredientsList = ({ usedIngredients = [], missedIngredients = [], onIngredientAdded }) => {
+const IngredientsList = ({ usedIngredients = [], missedIngredients = [], onIngredientAdded, isAuthenticated }) => {
     const [showOptions, setShowOptions] = useState(false);
     const [showCustomInput, setShowCustomInput] = useState(false);
     const [selectedIngredient, setSelectedIngredient] = useState(null);
     const [customAmount, setCustomAmount] = useState('');
     const [customUnit, setCustomUnit] = useState('');
-    const storedRecipe = JSON.parse(localStorage.getItem('selectedRecipe'));
-    const [mergedIngredients, setMergedIngredients] = useState([
-        ...usedIngredients.map(ingredient => ({ ...ingredient, status: 'used' })),
-        ...missedIngredients.map(ingredient => ({ ...ingredient, status: 'missed' }))
-    ]);
+    const [userIngredients, setUserIngredients] = useState([]);
+    const [mergedIngredients, setMergedIngredients] = useState([]);
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            fetchUserIngredients();
+        }
+    }, [isAuthenticated]);
+
+    const fetchUserIngredients = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/user-ingredients`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            const data = await response.json();
+            const ingredientNames = data.map(ingredient => ingredient.name.toLowerCase());
+            setUserIngredients(ingredientNames);
+        } catch (error) {
+            console.error('Error fetching user ingredients:', error);
+        }
+    };
+
+    useEffect(() => {
+        setMergedIngredients([
+            ...usedIngredients.map(ingredient => ({ 
+                ...ingredient, 
+                status: userIngredients.includes(ingredient.name?.toLowerCase()) ? 'used' : 'missed' 
+            }))
+        ]);
+    }, [userIngredients, usedIngredients]);
+
+    if (!isAuthenticated) {
+        return (
+            <div className={styles.ingredientWrapper}>
+                {mergedIngredients.map((ingredient, i) => (
+                    <div key={i} className={styles.ingredientContainer}>
+                        <div className={styles.ingredient}>
+                            {ingredient.original}
+                        </div>
+                    </div>
+                ))}
+            </div>
+        );
+    }
 
     const handleAddIngredient = async (ingredient) => {
         if (!ingredient) return;
@@ -452,23 +496,23 @@ const CookedButton = ({ onClick }) => (
     </div>
 );
 
-//Main
 const RecipeDetails = ({ params }) => {
     const [recipe, setRecipe] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [error, setEarror] = useState(null);
+    const [error, setError] = useState(null);
     const [isPopupVisible, setIsPopupVisible] = useState(false);
-
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const router = useRouter();
+ 
     const fetchRecipeDetails = async (recipeIds) => {
         const storedRecipe = JSON.parse(localStorage.getItem('selectedRecipe'));
-
+ 
         console.log("call api")
         try {
-            setLoading(true);  // Set loading to true when fetching data
-            // Make a request to fetch the recipe details in bulk (using the recipeIds)
+            setLoading(true);
             const recipeDetails = await axios.get(`https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/informationBulk`, {
                 params: {
-                    ids: recipeIds,  // Assuming recipeIds is an array of IDs
+                    ids: recipeIds,
                     includeNutrition: true,
                 },
                 headers: {
@@ -476,38 +520,50 @@ const RecipeDetails = ({ params }) => {
                     'X-RapidAPI-Host': 'spoonacular-recipe-food-nutrition-v1.p.rapidapi.com'
                 }
             });
-
-            // Merge storedRecipe and detailedRecipe based on `id` (or `title` if you prefer)
+ 
             const combinedRecipe = {
-                ...storedRecipe, // Spread basic recipe data
+                ...storedRecipe,
                 id: recipeDetails.data[0].id,
                 image: recipeDetails.data[0].image,
                 title: recipeDetails.data[0].title,
                 readyInMinutes: recipeDetails.data[0].readyInMinutes,
-                instructions: recipeDetails.data[0].analyzedInstructions, // Add detailed instructions
-                nutrition: recipeDetails.data[0].nutrition, // Add nutrition info
-                servings: recipeDetails.data[0].servings, // Add nutrition info
+                instructions: recipeDetails.data[0].analyzedInstructions,
+                nutrition: recipeDetails.data[0].nutrition,
+                servings: recipeDetails.data[0].servings,
                 usedIngredients: recipeDetails.data[0].extendedIngredients
             };
-            // Save combinedRecipes to state or localStorage
             setRecipe(combinedRecipe);
-
-            // Save combinedRecipes to localStorage if needed
             localStorage.setItem('selectedRecipe', JSON.stringify(combinedRecipe));
-
+ 
         } catch (error) {
             console.error('Error fetching recipe details:', error);
         } finally {
-            setLoading(false);  // Set loading to false after the fetch is complete
+            setLoading(false);
         }
     };
-
+ 
+    const verifyAuth = async () => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            setIsAuthenticated(false);
+            return;
+        }
+        try {
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/protected`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setIsAuthenticated(response.status === 200);
+        } catch (error) {
+            setIsAuthenticated(false);
+        }
+    };
+ 
     useEffect(() => {
+        verifyAuth();
         const storedRecipe = JSON.parse(localStorage.getItem('selectedRecipe'));
-
+ 
         if (storedRecipe) {
             setRecipe(storedRecipe);
-            // Check if instructions or nutrients are missing
             if (!storedRecipe.instructions || !storedRecipe.nutrition?.nutrients) {
                 console.log("no instruction or nutrients")
                 fetchRecipeDetails(storedRecipe.id);
@@ -519,13 +575,17 @@ const RecipeDetails = ({ params }) => {
             setLoading(false);
         }
     }, []);
-
+ 
     const handleOpen = async () => {
+        if (!isAuthenticated) {
+            router.push('/login');
+            return;
+        }
         setIsPopupVisible(true);
     };
-
+ 
     const closePopup = () => { setIsPopupVisible(false); };
-
+ 
     return (
         <div className={styles.recipeDetailsWrapper}>
             <Navbar />
@@ -541,22 +601,27 @@ const RecipeDetails = ({ params }) => {
                             <RecipeImage recipe={recipe} />
                             <NutrientTracker recipe={recipe} />
                         </div>
-
+ 
                         <div className={styles.recipeInstructionWrapper}>
                             <LeftSideHeading recipe={recipe} />
-                            <IngredientsList usedIngredients={recipe.usedIngredients} missedIngredients={recipe.missedIngredients} />
+                            <IngredientsList 
+                                usedIngredients={recipe.usedIngredients} 
+                                missedIngredients={recipe.missedIngredients}
+                                isAuthenticated={isAuthenticated}
+                            />
                             <InstructionsList instructions={recipe.instructions} />
                             <CookedButton onClick={handleOpen} />
                         </div>
-                        <IngredientPopUp isVisible={isPopupVisible} onClose={closePopup} recipe={recipe} />
+                        {isAuthenticated && (
+                            <IngredientPopUp isVisible={isPopupVisible} onClose={closePopup} recipe={recipe} />
+                        )}
                     </div>
                 </div>
             ) : (
                 <p>No recipe details found.</p>
-            )
-            }
-        </div >
+            )}
+        </div>
     );
-};
-
-export default RecipeDetails;
+ };
+ 
+ export default RecipeDetails;
