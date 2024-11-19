@@ -117,6 +117,10 @@ const IngredientsList = ({ usedIngredients = [], missedIngredients = [], onIngre
     
 
     const handleAddClick = async (ingredient) => {
+        if (showCustomInput) {
+            handleCustomCancel();
+        }
+        
         setSelectedIngredient(ingredient);
         let updatedIngredient = {...ingredient};
 
