@@ -181,6 +181,101 @@
     align-items: center;
 }
 
+.optionButton {
+    background-color: rgba(255, 207, 150, .8);
+    color: #506264;
+    font-size: 0.9em;
+    font-weight: 500;
+    padding: 0.4em 1em;
+    border: none;
+    border-radius: 7px;
+    margin-right: 0.5em;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.optionButton:hover {
+    background-color: rgba(255, 207, 150, 1);
+}
+
+.cancelButton {
+    background-color: rgba(227, 167, 255, .8);
+    color: #506264;
+    font-size: 0.9em;
+    font-weight: 500;
+    padding: 0.4em 1em;
+    border: none;
+    border-radius: 7px;
+    margin-top: 0.5em;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.cancelButton:hover {
+    background-color: rgba(227, 167, 255, 1);
+}
+
+.saveButton {
+    background-color: #0b9c2d;
+    color: white;
+    font-size: 0.9em;
+    font-weight: 600;
+    padding: 0.4em 1em;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+    margin-top: 0.5em;
+    transition: background-color 0.3s;
+}
+
+.saveButton:hover {
+    background-color: rgb(15, 233, 48);
+}
+
+.customInputContainer label {
+    color: #506264;
+    font-size: 0.9em;
+    margin-bottom: 0.2em;
+    display: block;
+}
+
+.customInputContainer {
+    border-radius: 7px;
+    padding: 0.5em;
+    margin-top: 1em;
+}
+
+.unitSelect {
+    border-radius: 5px;
+    background-color: rgba(227, 167, 255, .6);
+    color: #506264;
+    font-size: 0.9em;
+    padding: 0.3em;
+    margin-top: 0.5em;
+}
+
+.addAllButton {
+    background-color: rgba(143, 195, 255, .73);
+    color: #506264;
+    font-size: 1em;
+    font-weight: 600;
+    text-align: center;
+    padding: 0.6em 1.2em;
+    border-radius: 7px;
+    margin-top: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.addAllButton:hover {
+    background-color: rgba(143, 195, 255, 1);
+}
+
+.addAllButtonText {
+    display: inline-block;
+}
+
+
 .instructionList::-webkit-scrollbar,
 .ingredientWrapper::-webkit-scrollbar {
     width: 12px;
