@@ -275,12 +275,17 @@ const IngredientsList = ({ usedIngredients = [], missedIngredients = [], onIngre
                     {/* Show options for exact or custom when an ingredient is selected */}
                     {showOptions && selectedIngredient && (
                         <div className={styles.optionContainer}>
+                            {/* Display the selected ingredient information */}
+                            <h1>{selectedIngredient.name}</h1>  {/* Display the name of the ingredient */}
+
+                            {/* Option buttons */}
                             <button onClick={handleExactAmount} className={styles.optionButton}>Exact Amount</button>
                             <button onClick={handleCustomSelect} className={styles.optionButton}>Custom Amount</button>
                             <button onClick={handleOptionsCancel} className={styles.cancelButton}>Cancel</button> {/* New cancel button */}
                         </div>
                     )}
-    
+
+
                     {/* Show custom input fields if custom amount is chosen */}
                     {showCustomInput && (
                         <div className={styles.customInputContainer}>

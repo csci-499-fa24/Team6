@@ -181,9 +181,23 @@
     align-items: center;
 }
 
-.optionContainer{
-    position: fixed;
+.optionContainer {
+    display: flex;                /* Enable flexbox layout */
+    align-items: center;          /* Vertically center the content */
+    justify-content: center;      /* Horizontally center the content */
+    position: fixed;              /* Fix the position to the viewport */
+    top: 0;                       /* Set the top edge to 0 to align with the top of the screen */
+    left: 0;                      /* Set the left edge to 0 to align with the left of the screen */
+    width: 100vw;                 /* Make the container span the entire width of the viewport */
+    height: 100vh;                /* Make the container span the entire height of the viewport */
+    background: rgba(255, 255, 255, 0.8);  /* White background with slight transparency */
+    z-index: 1000;                /* Ensure the modal is on top of other content */
+    flex-direction: column;       /* Stack items vertically */
+    gap: 20px;                    /* Add space between items inside the container */
+    padding: 20px;                /* Optional: add padding around the edges */
 }
+
+
 
 .optionButton {
     background-color: rgba(255, 207, 150, .8);
@@ -245,10 +259,17 @@
 
 .customInputContainer {
     background: white;
-    position: fixed;
-    border-radius: 7px;
-    padding: 0.5em;
-    margin-top: 1em;
+    display: flex;                /* Enable flexbox layout */
+    align-items: center;          /* Vertically center the content */
+    justify-content: center;      /* Horizontally center the content */
+    position: fixed;              /* Fix the position to the viewport */
+    top: 0;                       /* Set the top edge to 0 to align with the top of the screen */
+    left: 0;                      /* Set the left edge to 0 to align with the left of the screen */
+    width: 100vw;                 /* Make the container span the entire width of the viewport */
+    height: 100vh;                /* Make the container span the entire height of the viewport */
+    background: rgba(255, 255, 255, 0.8);  /* White background with slight transparency */
+    z-index: 1000;                /* Ensure the modal is on top of other content */
+    flex-direction: column;
 }
 
 .unitSelect {
