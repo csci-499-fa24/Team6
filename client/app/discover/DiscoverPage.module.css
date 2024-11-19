@@ -579,3 +579,42 @@
         padding: 10px 7px;
     }
 }
+
+.listItemsContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 10px;
+    width: 30vw;
+}
+
+.listItem {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    width: 100%;
+}
+
+.recipeName {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    margin-right: 10px;
+    flex: 1;
+    text-align: left;
+}
+
+.listImage {
+    width: 100px;
+    height: auto;
+    object-fit: cover;
+}
+
+.listItem button {
+    background-color: transparent;
+    border: none;
+    color: red;
+    font-size: 16px;
+    cursor: pointer;
+}
