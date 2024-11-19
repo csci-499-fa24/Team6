@@ -18,13 +18,14 @@ const nutritionGetRoute = require('./nutrition/nutritionGet');
 const nutritionUpdateRoute = require('./nutrition/nutritionUpdate');
 const { body, validationResult } = require('express-validator');
 const { initializeCronJobs } = require('./email_noti/cronJobs');
-const userRoutes = require('./user/user'); 
+const userRoutes = require('./user/user');
 
 const app = express();
 const registerRoute = require('./register');
 const discoverRoutes = require('./discover/discoverPage');
 const favoriteRoutes = require('./favoriteBackend/favorites');
 const autoRoute = require('./discover/autoRemove');
+const shoppingListRouter = require('./discover/shoppingList');
 
 
 const corsOptions = {
@@ -75,6 +76,7 @@ app.use('/api/nutrition-update', nutritionUpdateRoute);
 app.use('/api/favorites', favoriteRoutes);
 app.use('/api/discover/auto-remove', autoRoute);
 app.use('/api/user', userRoutes);
+app.use('/api/discover', shoppingListRouter);
 
 
 

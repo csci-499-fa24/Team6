@@ -10,6 +10,7 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import LocalDiningIcon from '@mui/icons-material/LocalDining';
 import FavoriteButton from "@/app/components/addAndRemoveFavorites";
 import LoadingScreen from '../components/loading';
+import { Button } from '@mui/material';
 
 const Discover = () => {
     const [loading, setLoading] = useState(true);
@@ -28,6 +29,8 @@ const Discover = () => {
     const [recipesPerPage, setRecipesPerPage] = useState(8);
     const router = useRouter();
     const [favorites, setFavorites] = useState([]);
+    const [checkedState, setCheckedState] = useState({});
+    const [shoppingList, setShoppingList] = useState([]);
 
     useEffect(() => {
         const updateRecipesPerPage = () => {
@@ -176,6 +179,92 @@ const Discover = () => {
         return favorites.some(recipe => recipe.id === recipeId);
     };
 
+    const handleCheck = (recipeId, recipe) => {
+        setCheckedState((prevState) => {
+            const newState = { ...prevState };
+
+            if (newState[recipeId]) {
+                delete newState[recipeId];
+            } else {
+                newState[recipeId] = recipe;
+            }
+
+            return newState;
+        });
+    };
+
+    const handleClear = () => {
+        localStorage.removeItem('checkedState');
+        setCheckedState({});
+    };
+
+    const removeItemFromList = (item) => {
+        const newCheckedState = { ...checkedState };
+        delete newCheckedState[item];
+
+        setCheckedState(newCheckedState);
+
+        localStorage.setItem('checkedState', JSON.stringify(newCheckedState));
+    };
+
+    const generateShoppingList = async () => {
+        try {
+            const checkState = JSON.parse(localStorage.getItem('checkedState')) || [];
+            const recipeIds = Object.values(checkState).map((item) => item.id);
+
+            if (!recipeIds.length) {
+                console.error('No recipe IDs found in localStorage.');
+                return;
+            }
+
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/discover/shopping-list`, { recipeIds });
+
+            const token = localStorage.getItem('token');
+            if (!token) {
+                console.error('User is not authenticated.');
+                return;
+            }
+
+            const userIngredientsResponse = await axios.post(
+                `${process.env.NEXT_PUBLIC_SERVER_URL}/api/user-ingredients`,
+                {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            const adjustedResponse = await axios.post(
+                `${process.env.NEXT_PUBLIC_SERVER_URL}/api/discover/adjust-shopping-list`,
+                {
+                    combinedIngredients: response.data.combinedIngredients,
+                    userIngredients: userIngredientsResponse.data,
+                }
+            );
+
+            console.log('Recipe Details:', response.data);
+            console.log('User Ingredients:', userIngredientsResponse.data);
+            console.log('Adjusted Shopping List:', adjustedResponse.data);
+            setShoppingList(adjustedResponse.data.adjustedIngredients);
+            console.log('Updated Shopping List State:', adjustedResponse.data.adjustedIngredients);
+
+        } catch (error) {
+            console.error('Error fetching shopping list:', error.message);
+        }
+    };
+
+    useEffect(() => {
+        const savedCheckedState = JSON.parse(localStorage.getItem('checkedState')) || {};
+        setCheckedState(savedCheckedState);
+    }, []);
+
+    useEffect(() => {
+        if (Object.keys(checkedState).length > 0) {
+            localStorage.setItem('checkedState', JSON.stringify(checkedState));
+        }
+    }, [checkedState]);
+
     // Fetch random recipes on initial load
     useEffect(() => {
         fetchRecipes();
@@ -309,6 +398,15 @@ const Discover = () => {
                                         isFavorite={isFavorite(recipe.id)}
                                         onToggleFavorite={fetchFavorites}
                                     />
+                                    <input
+                                        type="checkbox"
+                                        checked={!!checkedState[recipe.id]}
+                                        onClick={(e) => e.stopPropagation()}
+                                        onChange={(e) => {
+                                            handleCheck(recipe.id, recipe);
+                                        }}
+                                        className={styles.checkbox}
+                                    />
                                 </div>
                                 <div className={styles.recipeInfoWrapper}>
                                     <div className={styles.recipeTime}>
@@ -327,6 +425,45 @@ const Discover = () => {
                     )}
                 </div>
             )}
+            <div className={styles.listContainer}>
+                <h3 className={styles.listTitle}>Selected Recipes</h3>
+                {Object.values(checkedState).length > 0 ? (
+                <div className={styles.listItemsContainer}>
+                    {Object.values(checkedState).map((recipe) => (
+                    <div key={recipe.id} className={styles.listItem}>
+                        <img
+                        src={recipe.image || '/assets/noImage.png'}
+                        alt={recipe.title}
+                        className={styles.listImage}
+                        onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = '/assets/noImage.png';
+                        }}
+                        />
+                        <p className={styles.recipeName}>{recipe.title}</p>
+                        <button onClick={() => removeItemFromList(recipe.id)}>x</button>
+                    </div>
+                    ))}
+                </div>
+                ) : (
+                <p className={styles.noRecipes}>No recipes selected.</p>
+                )}
+                <h2>Your Shopping List</h2>
+                {shoppingList.length > 0 ? (
+                    <ul className={styles.shoppingList}>
+                        {shoppingList.map((item, index) => (
+                            <li key={index} className={styles.shoppingListItem}>
+                                {item.name} - {item.amount} {item.unit}
+                            </li>
+                        ))}
+                    </ul>
+                ) : (
+                    <p>No items in your shopping list. Select recipes and generate a list.</p>
+                )}
+                <button onClick={generateShoppingList}>Shopping List</button>
+                <button onClick={handleClear}>Clear</button>
+            </div>
+
             {/* Pagination */}
             <div className={styles.pagination}>
                 <div onClick={handlePreviousPage} disabled={page === 1} className={`${styles.pageButton} ${page === 1 ? styles.disabled : ''}`}>
