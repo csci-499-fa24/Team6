@@ -6,14 +6,15 @@ import styles from '@/app/components/recipeDetail.module.css';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import LocalDiningIcon from '@mui/icons-material/LocalDining';
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
-import { CustomCircularProgress } from '@/app/components/customComponents'
+import { CustomCircularProgress, CustomTextField, CustomDropdown } from '@/app/components/customComponents'
+import { MenuItem } from '@mui/material';
 import LocalPrintshopOutlinedIcon from '@mui/icons-material/LocalPrintshopOutlined';
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 import jsPDF from 'jspdf';
 import axios from 'axios';
 import IngredientPopUp from '@/app/components/ingredientPopUp';
 import LoadingScreen from './loading';
-import { AddCircle } from '@mui/icons-material';
+import { AddCircle, ConnectingAirportsOutlined } from '@mui/icons-material';
 import ErrorScreen from './error';
 
 // Recipe Image component
@@ -37,6 +38,11 @@ const RecipeImage = ({ recipe }) => (
 
 // IngredientsList Component
 const IngredientsList = ({ usedIngredients = [], missedIngredients = [], onIngredientAdded }) => {
+    const [showOptions, setShowOptions] = useState(false);
+    const [showCustomInput, setShowCustomInput] = useState(false);
+    const [selectedIngredient, setSelectedIngredient] = useState(null);
+    const [customAmount, setCustomAmount] = useState('');
+    const [customUnit, setCustomUnit] = useState('');
     const storedRecipe = JSON.parse(localStorage.getItem('selectedRecipe'));
     const [mergedIngredients, setMergedIngredients] = useState([
         ...usedIngredients.map(ingredient => ({ ...ingredient, status: 'used' })),
@@ -95,13 +101,111 @@ const IngredientsList = ({ usedIngredients = [], missedIngredients = [], onIngre
         if (missedIngredients.length === 0) return;
     
         try {
-            await Promise.all(missedIngredients.map(ingredient => handleAddIngredient(ingredient)));
+            await Promise.all(missedIngredients.map(ingredient => {
+                const updatedIngredient = {
+                    ...ingredient,
+                    possibleUnits: [ingredient.unit],
+                };
+                // Call handleAddIngredient with the updated ingredient
+                return handleAddIngredient(updatedIngredient);
+            }));
         } catch (error) {
             console.error('Error adding one or more missed ingredients:', error);
         }
     };
     
+    
 
+    const handleAddClick = async (ingredient) => {
+        setSelectedIngredient(ingredient);
+        let updatedIngredient = {...ingredient};
+
+            try {
+                const url = `https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/food/ingredients/${ingredient.id}/information`;
+                const options = {
+                    method: 'GET',
+                    headers: {
+                        'x-rapidapi-key': process.env.NEXT_PUBLIC_SPOONACULAR_API_KEY,
+                        'x-rapidapi-host': 'spoonacular-recipe-food-nutrition-v1.p.rapidapi.com'
+                    }
+                };
+
+                const response = await fetch(url, options);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                const data = await response.json();
+                const poss = data.possibleUnits;
+                updatedIngredient = {
+                    ...ingredient,
+                    possibleUnits: poss || [ingredient.unit] // Ensure possibleUnits exists in data
+                };
+            } catch (error) {
+                console.error();
+                updatedIngredient = {
+                    ...ingredient,
+                    possibleUnits: [ingredient.unit] // Fallback option
+                };
+            }
+        setSelectedIngredient(updatedIngredient);
+        setShowOptions(true); // Show the choice between exact and custom
+    };
+    
+    // Called when exact amount is chosen
+    const handleExactAmount = async () => {
+        if (selectedIngredient) {
+            const updatedIngredient = {
+                ...selectedIngredient,
+                possibleUnits: selectedIngredient.possibleUnits // Create an array with the unit as its only element
+            };
+            setShowOptions(false);
+            setShowCustomInput(false);
+            try {
+            await handleAddIngredient(updatedIngredient);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+    };
+    
+    // Called when custom amount is chosen
+    const handleCustomSelect = () => {
+        setShowOptions(false);
+        setShowCustomInput(true); // Show custom input fields
+    };
+    
+    const handleCustomSave = async () => {
+        if (selectedIngredient && customAmount && customUnit) {
+            try {
+                const updatedIngredient = {
+                    ...selectedIngredient,
+                    amount: customAmount,
+                    unit: customUnit
+                }
+                await handleAddIngredient(updatedIngredient);
+            } catch (error) {
+                console.error('Error saving custom ingredient:', error);
+            } finally {
+                setShowCustomInput(false);
+                setCustomUnit('');
+                setCustomAmount('');
+                setSelectedIngredient(null);
+            }
+        }
+    };
+
+    const handleCustomCancel = () => {
+        setShowCustomInput(false);
+        setShowOptions(true);
+    };
+
+    const handleOptionsCancel = () => {
+        setShowOptions(false);
+        setSelectedIngredient(null);
+        setCustomAmount('');
+        setCustomUnit('');
+    };
+    
     return (
         <div className={styles.ingredientWrapper}>
             {mergedIngredients.length > 0 ? (
@@ -114,20 +218,58 @@ const IngredientsList = ({ usedIngredients = [], missedIngredients = [], onIngre
                             >
                                 {ingredient.original}
                                 {ingredient.status === 'missed' && (
-                                    <AddCircle onClick={() => handleAddIngredient(ingredient)} className={styles.addButton} />
+                                    <AddCircle onClick={() => handleAddClick(ingredient)} className={styles.addButton} />
                                 )}
                             </div>
                         </div>
                     ))}
+                    
+                    {/* Show options for exact or custom when an ingredient is selected */}
+                    {showOptions && selectedIngredient && (
+                        <div className={styles.optionContainer}>
+                            <button onClick={handleExactAmount} className={styles.optionButton}>Exact Amount</button>
+                            <button onClick={handleCustomSelect} className={styles.optionButton}>Custom Amount</button>
+                            <button onClick={handleOptionsCancel} className={styles.cancelButton}>Cancel</button> {/* New cancel button */}
+                        </div>
+                    )}
+    
+                    {/* Show custom input fields if custom amount is chosen */}
+                    {showCustomInput && (
+                        <div className={styles.customInputContainer}>
+                            <div>
+                                <label>Custom Amount:</label>
+                                <CustomTextField value={customAmount} onChange={(e) => setCustomAmount(e.target.value)} />
+                            </div>
+                            <div>
+                                <label>Custom Unit:</label>
+                                <CustomDropdown
+                                    value={customUnit} // Controlled value for the dropdown
+                                    onChange={(e) => setCustomUnit(e.target.value)} // Update state when an option is selected
+                                    className={styles.unitSelect}
+                                    size="small"
+                                    sx={{ width: '100%' }}
+                                >
+                                    {selectedIngredient.possibleUnits.map((unit) => (
+                                        <MenuItem key={unit} value={unit} sx={{ '&.MuiMenuItem-root': { fontFamily: 'Inter' } }}>
+                                            {unit}
+                                        </MenuItem>
+                                    ))}
+                                </CustomDropdown>
+                            </div>
+                            <button onClick={handleCustomSave} className={styles.saveButton}>Save</button>
+                            <button onClick={handleCustomCancel} className={styles.cancelButton}>Cancel</button> {/* Modified cancel button */}
+                        </div>
+                    )}
+                    
                     <div className={styles.addAllButton} onClick={() => handleAddAllMissedIngredients()}>
-                        <div className={styles.addAllButtonText}>Add All Missing Ingredinets</div>
+                        <div className={styles.addAllButtonText}>Add All Missing Ingredients</div>
                     </div>
                 </>
             ) : (
                 <div className={styles.noIngredientsMessage}>No ingredients available.</div>
             )}
         </div>
-    );    
+    );
 };
 
 // InstructionsList Component
@@ -383,7 +525,7 @@ const RecipeDetails = ({ params }) => {
     };
 
     const closePopup = () => { setIsPopupVisible(false); };
-    console.log(recipe)
+
     return (
         <div className={styles.recipeDetailsWrapper}>
             <Navbar />

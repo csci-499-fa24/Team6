@@ -153,6 +153,7 @@ const Pagination = ({ page, handleNextPage, handlePreviousPage }) => {
             >
                 Previous
             </div>
+            <span className={styles.pageNumber}>Page {page}</span>
             <div onClick={handleNextPage} className={styles.pageButton}>
                 Next
             </div>

@@ -63,7 +63,7 @@ router.post('/', authenticateToken, async (req, res) => {
             ingredient_id = ingredientQuery.rows[0].ingredient_id;
         } else {
             // Insert the ingredient if it doesn't exist
-            fetchPossibleUnits(ingredient_name)
+            //fetchPossibleUnits(ingredient_name)
             const insertQuery = await pool.query(
                 'INSERT INTO ingredients (name) VALUES ($1) RETURNING ingredient_id',
                 [lowerCaseIngredientName]

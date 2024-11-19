@@ -142,7 +142,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 70px;
+    gap: 40px;
     padding-bottom: 70px;
     margin-top: auto;
 }
@@ -572,11 +572,19 @@
 
     .pagination {
         padding-bottom: 35px;
+        gap: 30px;
     }
 
     .pageButton {
-        font-size: 16px;
-        padding: 10px 7px;
+        padding: 9px 6px;
+        font-size: 13px;
+        width: 100px;
+    }
+
+    .pageNumber {
+        color: #506264;
+        font-weight: 500;
+        font-size: 12px;
     }
 }
 
