@@ -210,9 +210,7 @@ const Discover = () => {
     const generateShoppingList = async () => {
         try {
             const checkState = JSON.parse(localStorage.getItem('checkedState')) || [];
-
             const recipeIds = Object.values(checkState).map((item) => item.id);
-            console.log('Extracted Recipe IDs:', recipeIds);
 
             if (!recipeIds.length) {
                 console.error('No recipe IDs found in localStorage.');
@@ -221,7 +219,34 @@ const Discover = () => {
 
             const response = await axios.post(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/discover/shopping-list`, { recipeIds });
 
+            const token = localStorage.getItem('token');
+            if (!token) {
+                console.error('User is not authenticated.');
+                return;
+            }
+
+            const userIngredientsResponse = await axios.post(
+                `${process.env.NEXT_PUBLIC_SERVER_URL}/api/user-ingredients`,
+                {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            const adjustedResponse = await axios.post(
+                `${process.env.NEXT_PUBLIC_SERVER_URL}/api/discover/adjust-shopping-list`,
+                {
+                    combinedIngredients: response.data.combinedIngredients,
+                    userIngredients: userIngredientsResponse.data,
+                }
+            );
+
             console.log('Recipe Details:', response.data);
+            console.log('User Ingredients:', userIngredientsResponse.data);
+            console.log('Adjusted Shopping List:', adjustedResponse.data);
+
         } catch (error) {
             console.error('Error fetching shopping list:', error.message);
         }

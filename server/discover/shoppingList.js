@@ -68,4 +68,38 @@ router.post('/shopping-list', async (req, res) => {
     }
 });
 
+router.post('/adjust-shopping-list', (req, res) => {
+    const { combinedIngredients, userIngredients } = req.body;
+
+    if (!Array.isArray(combinedIngredients) || !Array.isArray(userIngredients)) {
+        return res.status(400).json({ error: 'Invalid input format.' });
+    }
+
+    try {
+        const adjustedIngredients = combinedIngredients.map((combinedIngredient) => {
+            const userIngredient = userIngredients.find(
+                (userIngredient) => userIngredient.name === combinedIngredient.name
+            );
+
+            if (userIngredient) {
+                if (userIngredient.amount >= combinedIngredient.amount) {
+                    return null;
+                } else {
+                    return {
+                        ...combinedIngredient,
+                        amount: combinedIngredient.amount - userIngredient.amount
+                    };
+                }
+            }
+
+            return combinedIngredient;
+        }).filter(Boolean);
+
+        res.json({ adjustedIngredients });
+    } catch (error) {
+        console.error('Error adjusting shopping list:', error.message);
+        res.status(500).json({ error: 'Failed to adjust shopping list.' });
+    }
+});
+
 module.exports = router;
