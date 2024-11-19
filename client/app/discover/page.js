@@ -246,6 +246,8 @@ const Discover = () => {
             console.log('Recipe Details:', response.data);
             console.log('User Ingredients:', userIngredientsResponse.data);
             console.log('Adjusted Shopping List:', adjustedResponse.data);
+            setShoppingList(adjustedResponse.data.adjustedIngredients);
+            console.log('Updated Shopping List State:', adjustedResponse.data.adjustedIngredients);
 
         } catch (error) {
             console.error('Error fetching shopping list:', error.message);
@@ -445,6 +447,18 @@ const Discover = () => {
                 </div>
                 ) : (
                 <p className={styles.noRecipes}>No recipes selected.</p>
+                )}
+                <h2>Your Shopping List</h2>
+                {shoppingList.length > 0 ? (
+                    <ul className={styles.shoppingList}>
+                        {shoppingList.map((item, index) => (
+                            <li key={index} className={styles.shoppingListItem}>
+                                {item.name} - {item.amount} {item.unit}
+                            </li>
+                        ))}
+                    </ul>
+                ) : (
+                    <p>No items in your shopping list. Select recipes and generate a list.</p>
                 )}
                 <button onClick={generateShoppingList}>Shopping List</button>
                 <button onClick={handleClear}>Clear</button>
