@@ -181,6 +181,10 @@
     align-items: center;
 }
 
+.optionContainer{
+    position: fixed;
+}
+
 .optionButton {
     background-color: rgba(255, 207, 150, .8);
     color: #506264;
@@ -240,6 +244,8 @@
 }
 
 .customInputContainer {
+    background: white;
+    position: fixed;
     border-radius: 7px;
     padding: 0.5em;
     margin-top: 1em;
