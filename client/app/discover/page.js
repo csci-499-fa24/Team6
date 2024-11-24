@@ -10,7 +10,7 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import LocalDiningIcon from '@mui/icons-material/LocalDining';
 import FavoriteButton from "@/app/components/addAndRemoveFavorites";
 import LoadingScreen from '../components/loading';
-import { Button } from '@mui/material';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 
 const Discover = () => {
     const [loading, setLoading] = useState(true);
@@ -31,6 +31,7 @@ const Discover = () => {
     const [favorites, setFavorites] = useState([]);
     const [checkedState, setCheckedState] = useState({});
     const [shoppingList, setShoppingList] = useState([]);
+    const [showDropdown, setShowDropdown] = useState(false);
 
     useEffect(() => {
         const updateRecipesPerPage = () => {
@@ -196,6 +197,7 @@ const Discover = () => {
     const handleClear = () => {
         localStorage.removeItem('checkedState');
         setCheckedState({});
+        setShoppingList([]);
     };
 
     const removeItemFromList = (item) => {
@@ -203,6 +205,7 @@ const Discover = () => {
         delete newCheckedState[item];
 
         setCheckedState(newCheckedState);
+        setShoppingList([]);
 
         localStorage.setItem('checkedState', JSON.stringify(newCheckedState));
     };
@@ -254,6 +257,10 @@ const Discover = () => {
         }
     };
 
+    const toggleDropdown = () => {
+        setShowDropdown((prev) => !prev);
+      };
+
     useEffect(() => {
         const savedCheckedState = JSON.parse(localStorage.getItem('checkedState')) || {};
         setCheckedState(savedCheckedState);
@@ -280,9 +287,68 @@ const Discover = () => {
         <div className={styles.pageWrapper}>
             <Navbar />
             <div className={styles.title}>
-                <div className={styles.pageTitle}>Discover Random Recipes</div>
-                <div className={styles.pageDescription}>Explore new dishes</div>
+            <div className={styles.pageTitle}>
+                Discover Random Recipes
+                <ShoppingCartIcon
+                    onClick={toggleDropdown}
+                    className={styles.cartIcon}
+                />
             </div>
+
+            {showDropdown && (
+                <div className={styles.cartDropdown}>
+                    <div className={styles.cartHeader}>
+                        <h3>Your Shopping Cart</h3>
+                    </div>
+
+                    <div className={styles.listContainer}>
+                        <h3 className={styles.listTitle}>Selected Recipes</h3>
+                        {Object.values(checkedState).length > 0 ? (
+                            <div className={styles.listItemsContainer}>
+                                {Object.values(checkedState).map((recipe) => (
+                                    <div key={recipe.id} className={styles.listItem}>
+                                        <img
+                                            src={recipe.image || '/assets/noImage.png'}
+                                            alt={recipe.title}
+                                            className={styles.listImage}
+                                            onError={(e) => {
+                                                e.target.onerror = null;
+                                                e.target.src = '/assets/noImage.png';
+                                            }}
+                                        />
+                                        <p className={styles.recipeName}>{recipe.title}</p>
+                                        <button onClick={() => removeItemFromList(recipe.id)}>x</button>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <p className={styles.noRecipes}>No recipes selected.</p>
+                        )}
+
+                        <h3>Your Shopping List</h3>
+                        {shoppingList.length > 0 ? (
+                            <ul className={styles.shoppingList}>
+                                {shoppingList.map((item, index) => (
+                                    <li key={index} className={styles.shoppingListItem}>
+                                        {item.name} - {item.amount} {item.unit}
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : (
+                            <p> Select recipes and generate a list.</p>
+                        )}
+                        <div className = {styles.buttonContainer}>
+                            <button onClick={generateShoppingList}>Shopping List</button>
+                            <button onClick={handleClear}>Clear</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            <div className={styles.pageDescription}>
+                Explore new dishes
+            </div>
+        </div>
 
             {/* Filter Section */}
             <div className={styles.filtersContainer}>
@@ -425,44 +491,6 @@ const Discover = () => {
                     )}
                 </div>
             )}
-            <div className={styles.listContainer}>
-                <h3 className={styles.listTitle}>Selected Recipes</h3>
-                {Object.values(checkedState).length > 0 ? (
-                <div className={styles.listItemsContainer}>
-                    {Object.values(checkedState).map((recipe) => (
-                    <div key={recipe.id} className={styles.listItem}>
-                        <img
-                        src={recipe.image || '/assets/noImage.png'}
-                        alt={recipe.title}
-                        className={styles.listImage}
-                        onError={(e) => {
-                            e.target.onerror = null;
-                            e.target.src = '/assets/noImage.png';
-                        }}
-                        />
-                        <p className={styles.recipeName}>{recipe.title}</p>
-                        <button onClick={() => removeItemFromList(recipe.id)}>x</button>
-                    </div>
-                    ))}
-                </div>
-                ) : (
-                <p className={styles.noRecipes}>No recipes selected.</p>
-                )}
-                <h2>Your Shopping List</h2>
-                {shoppingList.length > 0 ? (
-                    <ul className={styles.shoppingList}>
-                        {shoppingList.map((item, index) => (
-                            <li key={index} className={styles.shoppingListItem}>
-                                {item.name} - {item.amount} {item.unit}
-                            </li>
-                        ))}
-                    </ul>
-                ) : (
-                    <p>No items in your shopping list. Select recipes and generate a list.</p>
-                )}
-                <button onClick={generateShoppingList}>Shopping List</button>
-                <button onClick={handleClear}>Clear</button>
-            </div>
 
             {/* Pagination */}
             <div className={styles.pagination}>
