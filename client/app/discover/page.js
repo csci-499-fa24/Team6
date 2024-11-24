@@ -205,6 +205,7 @@ const Discover = () => {
         delete newCheckedState[item];
 
         setCheckedState(newCheckedState);
+        setShoppingList([]);
 
         localStorage.setItem('checkedState', JSON.stringify(newCheckedState));
     };
@@ -324,7 +325,7 @@ const Discover = () => {
                             <p className={styles.noRecipes}>No recipes selected.</p>
                         )}
 
-                        <h2>Your Shopping List</h2>
+                        <h3>Your Shopping List</h3>
                         {shoppingList.length > 0 ? (
                             <ul className={styles.shoppingList}>
                                 {shoppingList.map((item, index) => (
@@ -336,8 +337,10 @@ const Discover = () => {
                         ) : (
                             <p> Select recipes and generate a list.</p>
                         )}
-                        <button onClick={generateShoppingList}>Shopping List</button>
-                        <button onClick={handleClear}>Clear</button>
+                        <div className = {styles.buttonContainer}>
+                            <button onClick={generateShoppingList}>Shopping List</button>
+                            <button onClick={handleClear}>Clear</button>
+                        </div>
                     </div>
                 </div>
             )}
