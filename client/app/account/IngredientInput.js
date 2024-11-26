@@ -32,6 +32,32 @@ const IngredientInput = () => {
             .join(' ');
     };
 
+    const handleQuantityChange = (ingredientId, newAmount) => {
+        // Convert to number and handle empty string
+        const numericAmount = newAmount === '' ? '' : Number(newAmount);
+        
+        // Update the amount in state
+        setUserAmounts(prev => ({ ...prev, [ingredientId]: newAmount }));
+
+        // If amount becomes 0 or negative, ask user if they want to remove the ingredient
+        if (numericAmount <= 0) {
+            if (window.confirm('Do you want to remove this ingredient from your pantry?')) {
+                handleRemove(ingredientId);
+            } else {
+                // Reset to previous value or 0
+                setUserAmounts(prev => ({ ...prev, [ingredientId]: 0 }));
+            }
+        }
+    };
+
+    const validateAmount = (value) => {
+        // Allow empty string for input clearing
+        if (value === '') return true;
+        
+        const numValue = Number(value);
+        return !isNaN(numValue) && numValue > 0;
+    };
+
     const fetchIngredients = async (query) => {
         try {
             const response = await fetch(`https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/food/ingredients/autocomplete?query=${query}&number=5&metaInformation=true`, {
@@ -79,46 +105,44 @@ const IngredientInput = () => {
     };
 
     const handleAdd = () => {
-        if (ingredient && amount && unit) {
+        if (ingredient && validateAmount(amount) && unit) {
             const payload = {
                 ingredient_name: ingredient,
-                amount: parseInt(amount),
+                amount: parseFloat(amount),
                 unit: unit,
                 possibleUnits: possibleUnits
             };
 
-            // Retrieve the token from local storage
             const token = localStorage.getItem("token");
 
             fetch(process.env.NEXT_PUBLIC_SERVER_URL + '/api/ingredient', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}` // Add the token in the Authorization header
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify(payload),
             })
-                .then((response) => {
-                    console.log(response);
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then((data) => {
-                    setIngredient('');
-                    setAmount('');
-                    setUnit('');
-                    setSuggestions([]);
-                    setPossibleUnits([])
-
-                    fetchUserIngredients();
-                })
-                .catch((error) => {
-                    console.error('Error adding ingredient:', error);
-                });
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then((data) => {
+                setIngredient('');
+                setAmount('');
+                setUnit('');
+                setSuggestions([]);
+                setPossibleUnits([]);
+                fetchUserIngredients();
+            })
+            .catch((error) => {
+                console.error('Error adding ingredient:', error);
+                setError('Failed to add ingredient.');
+            });
         } else {
-            console.error('Please select an ingredient, specify an amount, and choose a unit.');
+            setError('Please enter a valid amount greater than 0.');
         }
     };
 
@@ -183,7 +207,12 @@ const IngredientInput = () => {
     const handleSaveAll = async () => {
         const token = localStorage.getItem('token');
         try {
-            const promises = userIngredients.map(ingredient => {
+            const updates = userIngredients.filter(ingredient => {
+                const amount = userAmounts[ingredient.ingredient_id];
+                return amount !== '' && Number(amount) > 0;
+            });
+
+            const promises = updates.map(ingredient => {
                 return fetch(process.env.NEXT_PUBLIC_SERVER_URL + '/api/user-ingredients/update', {
                     method: 'POST',
                     headers: {
@@ -275,17 +304,20 @@ const IngredientInput = () => {
                     <ul className={styles.scrollableContainer}>
                         {userIngredients.map((ingredient) => (
                             <li key={ingredient.ingredient_id} className={styles.ingredientItem}>
-                                {/* Always in edit mode */}
                                 <CustomTextField
                                     value={userAmounts[ingredient.ingredient_id] || ''}
-                                    onChange={(e) => setUserAmounts((prev) => ({ ...prev, [ingredient.ingredient_id]: e.target.value }))}
+                                    onChange={(e) => handleQuantityChange(ingredient.ingredient_id, e.target.value)}
                                     type="number"
                                     size="small"
                                     className={styles.amountTextField}
+                                    inputProps={{ min: "0", step: "0.01" }}
                                 />
                                 <CustomDropdown
                                     value={userUnits[ingredient.ingredient_id] || ""}
-                                    onChange={(e) => setUserUnits((prev) => ({ ...prev, [ingredient.ingredient_id]: e.target.value }))}
+                                    onChange={(e) => setUserUnits((prev) => ({
+                                        ...prev,
+                                        [ingredient.ingredient_id]: e.target.value
+                                    }))}
                                     className={styles.unitSelect}
                                     size="small"
                                 >
@@ -295,17 +327,19 @@ const IngredientInput = () => {
                                         </MenuItem>
                                     ))}
                                 </CustomDropdown>
-                                <div className={styles.ingredientName}>{capitalizeFirstLetter(ingredient.name)}</div>
-                                <RemoveCircleOutlineRounded onClick={() => handleRemove(ingredient.ingredient_id)} className={styles.removeButton} />
+                                <div className={styles.ingredientName}>
+                                    {capitalizeFirstLetter(ingredient.name)}
+                                </div>
+                                <RemoveCircleOutlineRounded
+                                    onClick={() => handleRemove(ingredient.ingredient_id)}
+                                    className={styles.removeButton}
+                                />
                             </li>
                         ))}
                     </ul>
                 )}
             </div>
-            <div
-                onClick={handleSaveAll}
-                className={styles.saveButton}
-            >
+            <div onClick={handleSaveAll} className={styles.saveButton}>
                 Save Changes
             </div>
         </div>
