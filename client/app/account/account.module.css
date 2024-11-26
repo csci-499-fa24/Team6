@@ -184,9 +184,11 @@
 
 .nutritionalGoals {
     display: flex;
+    flex-direction: row; /* Arrange goals and tracker side by side */
+    justify-content: space-between;
+    align-items: flex-start;
     margin-top: 20px;
-    justify-content: space-around;
-    padding: 0px 70px;
+    gap: 2em; /* Add spacing between the sections */
 }
 
 .nutritionInputs {
@@ -198,11 +200,8 @@
 }
 
 .nutritionSection {
-    width: 35%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    width: 100%;
+    margin-bottom: 2em; /* Add spacing between sections */
 }
 
 .nutritionInput {
@@ -220,6 +219,14 @@
 
 .nutritionName {
     width: 40%;
+}
+
+.addMacrosSection {
+    margin-top: 2em;
+    width: 100%; /* Full width beneath goals */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .ingredient {
@@ -1037,10 +1044,7 @@
     }
 
     .trackerSection {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        margin-bottom: 60px;
+        width: 50%; /* Tracker takes the other half */
     }
 
     .trackerItemTitle {
@@ -1219,7 +1223,7 @@
     }
 
     .nutritionSection {
-        width: 90%;
+        width: 50%; /* Nutritional goals take half the width */
     }
 
     .nutritionInputs {
