@@ -49,7 +49,6 @@ const colorMapping = {
     }
 };
 
-
 const NutritionInput = () => {
     const [goals, setGoals] = useState({
         protein: '',
@@ -62,25 +61,32 @@ const NutritionInput = () => {
         calories: '',
     });
     const [consumed, setConsumed] = useState(null);
+    const [manualMacros, setManualMacros] = useState({
+        protein: '',
+        carbohydrates: '',
+        total_fat: '',
+        saturated_fat: '',
+        fiber: '',
+        sodium: '',
+        sugar: '',
+        calories: '',
+    });
 
     useEffect(() => {
         const fetchNutritionData = async () => {
             const token = localStorage.getItem('token');
             try {
                 const response = await fetch(process.env.NEXT_PUBLIC_SERVER_URL + '/api/nutrition-get', {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
+                    headers: { 'Authorization': `Bearer ${token}` }
                 });
                 const data = await response.json();
                 const { goals, consumed } = data;
-                // Remove user_id and set goals
                 const filteredGoals = { ...goals };
                 delete filteredGoals.user_id;
                 const filteredConsumed = { ...consumed };
                 delete filteredConsumed.user_id;
                 setGoals(filteredGoals);
-                setConsumed(consumed);
+                setConsumed(filteredConsumed);
             } catch (error) {
                 console.error("Error fetching nutrition data", error);
             }
@@ -90,16 +96,16 @@ const NutritionInput = () => {
 
     const handleGoalChange = (e) => {
         const { name, value } = e.target;
-        setGoals(prevGoals => ({
-            ...prevGoals,
-            [name]: value
-        }));
+        setGoals(prevGoals => ({ ...prevGoals, [name]: value }));
+    };
+
+    const handleManualMacroChange = (e) => {
+        const { name, value } = e.target;
+        setManualMacros(prevMacros => ({ ...prevMacros, [name]: value }));
     };
 
     const handleSaveGoals = async () => {
         const token = localStorage.getItem('token');
-
-        // Convert empty strings to null before sending to the backend
         const cleanedGoals = Object.fromEntries(
             Object.entries(goals).map(([key, value]) => [key, value === "" ? null : value])
         );
@@ -111,17 +117,14 @@ const NutritionInput = () => {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ goals: cleanedGoals })  // Send cleaned goals
+                body: JSON.stringify({ goals: cleanedGoals })
             });
             if (response.ok) {
-                // Fetch the latest consumed data after saving the goals
                 const fetchResponse = await fetch(process.env.NEXT_PUBLIC_SERVER_URL + '/api/nutrition-get', {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
+                    headers: { 'Authorization': `Bearer ${token}` }
                 });
                 const data = await fetchResponse.json();
-                setConsumed(data.consumed);  // Update the consumed data
+                setConsumed(data.consumed);
             } else {
                 console.error('Error updating nutritional goals');
             }
@@ -130,26 +133,104 @@ const NutritionInput = () => {
         }
     };
 
+    const handleAddMacros = async () => {
+        const token = localStorage.getItem('token');
+
+        try {
+            const response = await fetch(process.env.NEXT_PUBLIC_SERVER_URL + '/api/nutrition-add', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ macros: manualMacros }),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                setConsumed(data.updatedConsumed);
+
+                setManualMacros({
+                    protein: '',
+                    carbohydrates: '',
+                    total_fat: '',
+                    saturated_fat: '',
+                    fiber: '',
+                    sodium: '',
+                    sugar: '',
+                    calories: '',
+                });
+            } else {
+                console.error('Failed to add macros to the database');
+            }
+        } catch (error) {
+            console.error('Error adding macros:', error);
+        }
+    };
 
     if (!consumed) {
         return <div className={styles.loadingWrapper}><LoadingScreen title='your nutritional goals' /></div>;
     }
 
-
     const NutritionalGoals = Object.keys(goals).filter((key) => goals[key] !== null);
 
     return (
-        <div className={styles.nutritionalGoals}>
-            <div className={styles.nutritionSection}>
-                <div className={styles.header}>Modify your nutritional goals</div>
+        <div className={styles.nutritionalGoalsWrapper}>
+            <div className={styles.nutritionalGoals}>
+                <div className={styles.nutritionSection}>
+                    <div className={styles.header}>Modify Your Nutritional Goals</div>
+                    <div className={styles.nutritionInputs}>
+                        {Object.keys(goals).map((goal) => (
+                            <div key={goal} className={styles.nutritionalItem}>
+                                <label className={styles.nutritionName}>{goal.charAt(0).toUpperCase() + goal.slice(1)}</label>
+                                <CustomTextField
+                                    name={goal}
+                                    value={goals[goal] || ''}
+                                    onChange={handleGoalChange}
+                                    size="small"
+                                    className={styles.nutritionInput}
+                                />
+                                <div className={styles.nutritionGram} style={{ marginLeft: '1.5em' }}>grams</div>
+                            </div>
+                        ))}
+                    </div>
+                    <div onClick={handleSaveGoals} className={styles.saveButton}>Save Changes</div>
+                </div>
+
+                <div className={styles.trackerSection}>
+                    <div className={styles.header}>Daily Nutrition Tracker</div>
+                    <div className={styles.trackerWrapper}>
+                        {NutritionalGoals.map((nutrient) => (
+                            <div key={nutrient} className={styles.trackerItem}>
+                                <div className={styles.trackerVisual}>
+                                    <div className={styles.trackerItemTitle}>{colorMapping[nutrient]?.title || nutrient}</div>
+                                    <CustomCircularProgress
+                                        value={Math.min(((consumed[nutrient] ?? 0) / goals[nutrient]) * 100, 100)}
+                                        progressColor={colorMapping[nutrient]?.progressColor || '#74DE72'}
+                                        backgroundColor={colorMapping[nutrient]?.backgroundColor || '#C3F5C2'}
+                                    />
+                                </div>
+                                <div
+                                    className={`${styles.data} ${((consumed[nutrient] ?? 0) / goals[nutrient]) * 100 > 100 ? styles.exceeded : ''}`}
+                                >
+                                    {(consumed[nutrient] ?? 0).toFixed(2)} / {goals[nutrient] || 0} g
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
+            <div className={styles.addMacrosSection}>
+                <div className={styles.header}>Add Consumed Macros</div>
                 <div className={styles.nutritionInputs}>
-                    {Object.keys(goals).map((goal) => (
-                        <div key={goal} className={styles.nutritionalItem}>
-                            <label className={styles.nutritionName}>{goal.charAt(0).toUpperCase() + goal.slice(1)}</label>
+                    {Object.keys(manualMacros).map((macro) => (
+                        <div key={macro} className={styles.nutritionalItem}>
+                            <label className={styles.nutritionName}>{macro.charAt(0).toUpperCase() + macro.slice(1)}</label>
                             <CustomTextField
-                                name={goal}
-                                value={goals[goal] || ''}
-                                onChange={handleGoalChange}
+                                name={macro}
+                                value={manualMacros[macro] || ''}
+                                onChange={handleManualMacroChange}
                                 size="small"
                                 className={styles.nutritionInput}
                             />
@@ -157,33 +238,10 @@ const NutritionInput = () => {
                         </div>
                     ))}
                 </div>
-                <div onClick={handleSaveGoals} className={styles.saveButton}>Save Changes</div>
-            </div>
-
-            <div className={styles.trackerSection}>
-                <div className={styles.header}>Daily Nutrition Tracker</div>
-                <div className={styles.trackerWrapper}>
-                    {NutritionalGoals.map((nutrient) => (
-                        <div key={nutrient} className={styles.trackerItem}>
-                            <div className={styles.trackerVisual}>
-                                <div className={styles.trackerItemTitle}>{colorMapping[nutrient]?.title || nutrient} </div>
-                                <CustomCircularProgress
-                                    value={Math.min(((consumed[nutrient] ?? 0) / goals[nutrient]) * 100, 100)}
-                                    progressColor={colorMapping[nutrient]?.progressColor || '#74DE72'}
-                                    backgroundColor={colorMapping[nutrient]?.backgroundColor || '#C3F5C2'}
-                                />
-                            </div>
-                            <div
-                                className={`${styles.data} ${((consumed[nutrient] ?? 0) / goals[nutrient]) * 100 > 100 ? styles.exceeded : ''}`}
-                            >
-                                {(consumed[nutrient] ?? 0).toFixed(2)} / {goals[nutrient] || 0} g
-                            </div>
-                        </div>
-                    ))}
-                </div>
+                <div onClick={handleAddMacros} className={styles.saveButton}>Add Macros</div>
             </div>
         </div>
     );
-}
+};
 
 export default NutritionInput;
