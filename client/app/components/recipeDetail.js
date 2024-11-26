@@ -46,6 +46,11 @@ const IngredientsList = ({ usedIngredients = [], missedIngredients = [], onIngre
     const [customUnit, setCustomUnit] = useState('');
     const [userIngredients, setUserIngredients] = useState([]);
     const [mergedIngredients, setMergedIngredients] = useState([]);
+    const [showReviewPopup, setShowReviewPopup] = useState(false);
+    const [reviewIngredients, setReviewIngredients] = useState([]);
+    const [modifiedReviewIngredients, setModifiedReviewIngredients] = useState([]);
+
+
 
     useEffect(() => {
         if (isAuthenticated) {
@@ -140,25 +145,46 @@ const IngredientsList = ({ usedIngredients = [], missedIngredients = [], onIngre
         }
     };
 
-    const handleAddAllMissedIngredients = async () => {
-        const missedIngredients = mergedIngredients.filter(ingredient => ingredient.status === 'missed');
+    const handleAddAllMissedIngredients = () => {
+        const missedIngredients = mergedIngredients.filter((ingredient) => ingredient.status === 'missed');
         if (missedIngredients.length === 0) return;
-    
+
+        // Initialize the review list
+        const initializedIngredients = missedIngredients.map((ingredient) => ({
+            ...ingredient,
+            modifiedAmount: ingredient.amount || '',
+            modifiedUnit: ingredient.unit || '',
+        }));
+
+        setReviewIngredients(initializedIngredients);
+        setModifiedReviewIngredients(initializedIngredients);
+        setShowReviewPopup(true); // Show the review popup
+    };
+
+    const handleReviewChange = (index, key, value) => {
+        setModifiedReviewIngredients((prev) =>
+            prev.map((ingredient, i) =>
+                i === index ? { ...ingredient, [key]: value } : ingredient
+            )
+        );
+    };
+
+    const handleSubmitReviewedIngredients = async () => {
         try {
-            await Promise.all(missedIngredients.map(ingredient => {
-                const updatedIngredient = {
+            for (const ingredient of modifiedReviewIngredients) {
+                await handleAddIngredient({
                     ...ingredient,
-                    possibleUnits: [ingredient.unit],
-                };
-                // Call handleAddIngredient with the updated ingredient
-                return handleAddIngredient(updatedIngredient);
-            }));
+                    amount: ingredient.modifiedAmount,
+                    unit: ingredient.modifiedUnit,
+                });
+            }
         } catch (error) {
-            console.error('Error adding one or more missed ingredients:', error);
+            console.error('Error adding reviewed ingredients:', error);
+        } finally {
+            setShowReviewPopup(false); // Close the popup
         }
     };
-    
-    
+
 
     const handleAddClick = async (ingredient) => {
         if (showCustomInput) {
@@ -313,10 +339,52 @@ const IngredientsList = ({ usedIngredients = [], missedIngredients = [], onIngre
                             <button onClick={handleCustomCancel} className={styles.cancelButton}>Cancel</button> {/* Modified cancel button */}
                         </div>
                     )}
-                    
+
                     <div className={styles.addAllButton} onClick={() => handleAddAllMissedIngredients()}>
                         <div className={styles.addAllButtonText}>Add All Missing Ingredients</div>
                     </div>
+                    {showReviewPopup && (
+                        <div className={styles.popupContainer}>
+                            <div className={styles.popupContent}>
+                                <h2>Review and Modify Ingredients</h2>
+                                <ul className={styles.ingredientList}>
+                                    {reviewIngredients.map((ingredient, index) => (
+                                        <li key={ingredient.name} className={styles.ingredientItem}>
+                                            <span>{ingredient.name}</span>
+                                            <div className={styles.ingredientAmount}>
+                                                <div className={styles.inputGroup}>
+                                                    <label>Amount:</label>
+                                                    <CustomTextField
+                                                        value={modifiedReviewIngredients[index]?.modifiedAmount}
+                                                        onChange={(e) =>
+                                                            handleReviewChange(index, 'modifiedAmount', e.target.value)
+                                                        }
+                                                    />
+                                                </div>
+                                                <div className={styles.inputGroup}>
+                                                    <label>Unit:</label>
+                                                    <CustomDropdown
+                                                        value={modifiedReviewIngredients[index]?.modifiedUnit}
+                                                        onChange={(e) =>
+                                                            handleReviewChange(index, 'modifiedUnit', e.target.value)
+                                                        }
+                                                    >
+                                                    </CustomDropdown>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    ))}
+                                </ul>
+                                <button onClick={handleSubmitReviewedIngredients} className={styles.submitButton}>
+                                    Submit All
+                                </button>
+                                <button onClick={() => setShowReviewPopup(false)} className={styles.cancelButton}>
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
                 </>
             ) : (
                 <div className={styles.noIngredientsMessage}>No ingredients available.</div>
@@ -326,7 +394,7 @@ const IngredientsList = ({ usedIngredients = [], missedIngredients = [], onIngre
 };
 
 // InstructionsList Component
-const InstructionsList = ({ instructions }) => {
+const InstructionsList = ({instructions}) => {
     if (!instructions || instructions.length === 0 || !instructions[0].steps) {
         return <p>No instructions available.</p>;
     }
