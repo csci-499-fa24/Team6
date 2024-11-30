@@ -100,7 +100,6 @@ const IngredientsList = ({ usedIngredients = [], missedIngredients = [], onIngre
 
     const handleAddIngredient = async (ingredient) => {
         if (!ingredient) return;
-
         const payload = {
             ingredient_name: ingredient.name,
             amount: parseFloat(ingredient.amount),
@@ -228,9 +227,12 @@ const IngredientsList = ({ usedIngredients = [], missedIngredients = [], onIngre
     // Called when exact amount is chosen
     const handleExactAmount = async () => {
         if (selectedIngredient) {
+            const updatedPossibleUnits = selectedIngredient.possibleUnits.includes(selectedIngredient.unit)
+            ? selectedIngredient.possibleUnits
+            : [...selectedIngredient.possibleUnits, selectedIngredient.unit];
             const updatedIngredient = {
                 ...selectedIngredient,
-                possibleUnits: selectedIngredient.possibleUnits // Create an array with the unit as its only element
+                possibleUnits: updatedPossibleUnits // Create an array with the unit as its only element
             };
             setShowOptions(false);
             setShowCustomInput(false);
@@ -440,8 +442,6 @@ const NutrientTracker =  ({ recipe }) => {
             delete filteredConsumed.user_id;
             setGoals(filteredGoals);
             setConsumed(filteredConsumed);
-            console.log(filteredConsumed);
-            console.log(filteredGoals);
         } catch (error) {
             console.error("Error fetching nutrition data", error);
         }
@@ -631,7 +631,6 @@ const RecipeDetails = ({ params }) => {
     const fetchRecipeDetails = async (recipeIds) => {
         const storedRecipe = JSON.parse(localStorage.getItem('selectedRecipe'));
  
-        console.log("call api")
         try {
             setLoading(true);
             const recipeDetails = await axios.get(`https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/informationBulk`, {
@@ -689,7 +688,6 @@ const RecipeDetails = ({ params }) => {
         if (storedRecipe) {
             setRecipe(storedRecipe);
             if (!storedRecipe.instructions || !storedRecipe.nutrition?.nutrients) {
-                console.log("no instruction or nutrients")
                 fetchRecipeDetails(storedRecipe.id);
             } else {
                 setLoading(false);
