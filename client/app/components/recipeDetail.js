@@ -100,7 +100,6 @@ const IngredientsList = ({ usedIngredients = [], missedIngredients = [], onIngre
 
     const handleAddIngredient = async (ingredient) => {
         if (!ingredient) return;
-
         const payload = {
             ingredient_name: ingredient.name,
             amount: parseFloat(ingredient.amount),
@@ -228,9 +227,12 @@ const IngredientsList = ({ usedIngredients = [], missedIngredients = [], onIngre
     // Called when exact amount is chosen
     const handleExactAmount = async () => {
         if (selectedIngredient) {
+            const updatedPossibleUnits = selectedIngredient.possibleUnits.includes(selectedIngredient.unit)
+            ? selectedIngredient.possibleUnits
+            : [...selectedIngredient.possibleUnits, selectedIngredient.unit];
             const updatedIngredient = {
                 ...selectedIngredient,
-                possibleUnits: selectedIngredient.possibleUnits // Create an array with the unit as its only element
+                possibleUnits: updatedPossibleUnits // Create an array with the unit as its only element
             };
             setShowOptions(false);
             setShowCustomInput(false);
@@ -413,7 +415,37 @@ const InstructionsList = ({instructions}) => {
 };
 
 // Nutrient Tracker component
-const NutrientTracker = ({ recipe }) => {
+const NutrientTracker =  ({ recipe }) => {
+    const [goals, setGoals] = useState({
+        protein: '',
+        carbohydrates: '',
+        total_fat: '',
+        saturated_fat: '',
+        fiber: '',
+        sodium: '',
+        sugar: '',
+        calories: '',
+    });
+    const [consumed, setConsumed] = useState(null);
+
+    const fetchNutriGoals = async () => {
+        const token = localStorage.getItem('token');
+        try {
+            const response = await fetch(process.env.NEXT_PUBLIC_SERVER_URL + '/api/nutrition-get', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const data = await response.json();
+            const { goals, consumed } = data;
+            const filteredGoals = { ...goals };
+            delete filteredGoals.user_id;
+            const filteredConsumed = { ...consumed };
+            delete filteredConsumed.user_id;
+            setGoals(filteredGoals);
+            setConsumed(filteredConsumed);
+        } catch (error) {
+            console.error("Error fetching nutrition data", error);
+        }
+    }
 
     const nutrients = [
         { name: "Calories", color: "#74DE72", backgroundColor: "#C3F5C2" },
@@ -434,6 +466,19 @@ const NutrientTracker = ({ recipe }) => {
         return nutrient ? `${Math.round(nutrient.amount)} ${nutrient.unit}` : 0;
     };
 
+    const calculatePercentage = (nutrientName) => {
+        const amount = parseFloat(getRoundedNutrientAmount(nutrientName));
+        const goalAmount = parseFloat(goals[nutrientName.toLowerCase()]);
+        if(!goalAmount) {
+            return 0;
+        }
+        return Math.min((amount / goalAmount) * 100, 100);
+    };
+
+    useEffect(() => {
+        fetchNutriGoals(); // Fetch nutrition goals on component mount
+    }, []);
+
     return (
         <div className={styles.trackerWrapper}>
             {nutrients.map((nutrient, index) => (
@@ -441,7 +486,7 @@ const NutrientTracker = ({ recipe }) => {
                     <div className={styles.trackerVisual}>
                         <div className={styles.trackerItemTitle}>{nutrient.name}</div>
                         <CustomCircularProgress
-                            value={75} // Assuming a static value for progress, you can adjust this as needed
+                            value={calculatePercentage(nutrient.name)} // Assuming a static value for progress, you can adjust this as needed
                             progressColor={nutrient.color}
                             backgroundColor={nutrient.backgroundColor}
                             size={50}
@@ -449,7 +494,9 @@ const NutrientTracker = ({ recipe }) => {
                     </div>
                     <div className={styles.data}>
                         {getRoundedNutrientAmount(nutrient.name)}{" "}
-                        <span style={{ color: nutrient.color }}>(30%)</span>
+                        <span style={{ color: nutrient.color }}>
+                            ({Math.round(calculatePercentage(nutrient.name))}%)
+                        </span>
                     </div>
                 </div>
             ))}
@@ -584,7 +631,6 @@ const RecipeDetails = ({ params }) => {
     const fetchRecipeDetails = async (recipeIds) => {
         const storedRecipe = JSON.parse(localStorage.getItem('selectedRecipe'));
  
-        console.log("call api")
         try {
             setLoading(true);
             const recipeDetails = await axios.get(`https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/informationBulk`, {
@@ -642,7 +688,6 @@ const RecipeDetails = ({ params }) => {
         if (storedRecipe) {
             setRecipe(storedRecipe);
             if (!storedRecipe.instructions || !storedRecipe.nutrition?.nutrients) {
-                console.log("no instruction or nutrients")
                 fetchRecipeDetails(storedRecipe.id);
             } else {
                 setLoading(false);
