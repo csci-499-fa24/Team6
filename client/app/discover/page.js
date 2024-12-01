@@ -506,6 +506,7 @@ const Discover = () => {
                                     <div className={styles.cartIconContainer}>
                                         <ShoppingCartIcon
                                             onClick={(e) => {
+                                                e.preventDefault();
                                                 e.stopPropagation();
                                                 handleCheck(recipe.id, recipe);
                                             }}
