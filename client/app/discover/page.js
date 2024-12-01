@@ -31,7 +31,9 @@ const Discover = () => {
     const [favorites, setFavorites] = useState([]);
     const [checkedState, setCheckedState] = useState({});
     const [shoppingList, setShoppingList] = useState([]);
+    const [allIngredients, setAllIngredients] = useState([]);
     const [showDropdown, setShowDropdown] = useState(false);
+    const [showModal, setShowModal] = useState(false);
 
     useEffect(() => {
         const updateRecipesPerPage = () => {
@@ -221,6 +223,7 @@ const Discover = () => {
             }
 
             const response = await axios.post(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/discover/shopping-list`, { recipeIds });
+            setAllIngredients(response.data.combinedIngredients);
 
             const token = localStorage.getItem('token');
             if (!token) {
@@ -250,11 +253,16 @@ const Discover = () => {
             console.log('User Ingredients:', userIngredientsResponse.data);
             console.log('Adjusted Shopping List:', adjustedResponse.data);
             setShoppingList(adjustedResponse.data.adjustedIngredients);
+            setShowModal(true);
             console.log('Updated Shopping List State:', adjustedResponse.data.adjustedIngredients);
 
         } catch (error) {
             console.error('Error fetching shopping list:', error.message);
         }
+    };
+
+    const handleCloseModal = () => {
+        setShowModal(false);
     };
 
     const toggleDropdown = () => {
@@ -325,22 +333,50 @@ const Discover = () => {
                             <p className={styles.noRecipes}>No recipes selected.</p>
                         )}
 
-                        <h3>Your Shopping List</h3>
-                        {shoppingList.length > 0 ? (
-                            <ul className={styles.shoppingList}>
-                                {shoppingList.map((item, index) => (
-                                    <li key={index} className={styles.shoppingListItem}>
-                                        {item.name} - {item.amount} {item.unit}
-                                    </li>
-                                ))}
-                            </ul>
-                        ) : (
-                            <p> Select recipes and generate a list.</p>
-                        )}
                         <div className = {styles.buttonContainer}>
                             <button onClick={generateShoppingList}>Shopping List</button>
                             <button onClick={handleClear}>Clear</button>
                         </div>
+                        {showModal && (
+                            <div className={styles.overlay}>
+                                <div className={styles.modal}>
+                                    <button className={styles.closeButton} onClick={handleCloseModal}>×</button>
+                                    <h2>Your Shopping List</h2>
+
+                                    <div className={styles.modalListContainer}>
+                                        <div className={styles.listSection}>
+                                            <h3>Ingredient List</h3>
+                                            {allIngredients.length > 0 ? (
+                                                <ul className={styles.shoppingList}>
+                                                    {allIngredients.map((item, index) => (
+                                                        <li key={index} className={styles.shoppingListItem}>
+                                                            {item.name} - {item.amount} {item.unit}
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            ) : (
+                                                <p>No original ingredients available.</p>
+                                            )}
+                                        </div>
+
+                                        <div className={styles.listSection}>
+                                            <h3>Adjusted Ingredients List</h3>
+                                            {shoppingList.length > 0 ? (
+                                                <ul className={styles.shoppingList}>
+                                                    {shoppingList.map((item, index) => (
+                                                        <li key={index} className={styles.shoppingListItem}>
+                                                            {item.name} - {item.amount} {item.unit}
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            ) : (
+                                                <p>No items in the shopping list.</p>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
             )}
@@ -459,20 +495,24 @@ const Discover = () => {
                                 />
                                 <div className={styles.recipeTitleWrapper}>
                                     <div className={styles.recipeTitle}>{recipe.title}</div>
-                                    <FavoriteButton
-                                        recipeId={recipe.id}
-                                        isFavorite={isFavorite(recipe.id)}
-                                        onToggleFavorite={fetchFavorites}
-                                    />
-                                    <input
-                                        type="checkbox"
-                                        checked={!!checkedState[recipe.id]}
-                                        onClick={(e) => e.stopPropagation()}
-                                        onChange={(e) => {
-                                            handleCheck(recipe.id, recipe);
-                                        }}
-                                        className={styles.checkbox}
-                                    />
+
+                                    <div className={styles.favoriteButton}>
+                                        <FavoriteButton
+                                            recipeId={recipe.id}
+                                            isFavorite={isFavorite(recipe.id)}
+                                            onToggleFavorite={fetchFavorites}
+                                        />
+                                    </div>
+                                    <div className={styles.cartIconContainer}>
+                                        <ShoppingCartIcon
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleCheck(recipe.id, recipe);
+                                            }}
+                                            className={styles.cartIcon}
+                                            style={{ color: checkedState[recipe.id] ? 'green' : 'grey' }}
+                                        />
+                                </div>
                                 </div>
                                 <div className={styles.recipeInfoWrapper}>
                                     <div className={styles.recipeTime}>
