@@ -100,6 +100,11 @@ const IngredientsList = ({ usedIngredients = [], missedIngredients = [], onIngre
 
     const handleAddIngredient = async (ingredient) => {
         if (!ingredient) return;
+        if (ingredient.unit === '') {
+            if (ingredient.possibleUnits.length > 0) {
+                ingredient.unit = ingredient.possibleUnits[0];
+            }
+        }
         const payload = {
             ingredient_name: ingredient.name,
             amount: parseFloat(ingredient.amount),
@@ -144,21 +149,64 @@ const IngredientsList = ({ usedIngredients = [], missedIngredients = [], onIngre
         }
     };
 
-    const handleAddAllMissedIngredients = () => {
+    const handleAddAllMissedIngredients = async () => {
         const missedIngredients = mergedIngredients.filter((ingredient) => ingredient.status === 'missed');
         if (missedIngredients.length === 0) return;
+    
+        try {
+            // Make API calls for all missed ingredients to fetch possible units
+            const updatedIngredients = await Promise.all(
+                missedIngredients.map(async (ingredient) => {
+                    try {
+                        const url = `https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/food/ingredients/${ingredient.id}/information`;
+                        const options = {
+                            method: 'GET',
+                            headers: {
+                                'x-rapidapi-key': process.env.NEXT_PUBLIC_SPOONACULAR_API_KEY,
+                                'x-rapidapi-host': 'spoonacular-recipe-food-nutrition-v1.p.rapidapi.com',
+                            },
+                        };
+    
+                        const response = await fetch(url, options);
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        }
+                        const data = await response.json();
+                        const possibleUnits = data.possibleUnits || [ingredient.unit];
+                        const updatedPossibleUnits = possibleUnits.includes(ingredient.unit)
+                            ? possibleUnits
+                            : [...possibleUnits, ingredient.unit];
+                        if (ingredient.unit === '') {
+                            if (possibleUnits.length > 0) {
+                                ingredient.unit = possibleUnits[0];
+                            }
+                        }
+                        // Return ingredient with updated possibleUnits
+                        return { ...ingredient, possibleUnits: updatedPossibleUnits };
+                    } catch (error) {
+                        console.error(`Error fetching data for ingredient ${ingredient.name}:`, error);
+    
+                        // Fallback to default units if API call fails
+                        return { ...ingredient, possibleUnits: [ingredient.unit] };
+                    }
+                })
+            );
 
-        // Initialize the review list
-        const initializedIngredients = missedIngredients.map((ingredient) => ({
-            ...ingredient,
-            modifiedAmount: ingredient.amount || '',
-            modifiedUnit: ingredient.unit || '',
-        }));
-
-        setReviewIngredients(initializedIngredients);
-        setModifiedReviewIngredients(initializedIngredients);
-        setShowReviewPopup(true); // Show the review popup
+            // Initialize the review list with updated ingredients
+            const initializedIngredients = updatedIngredients.map((ingredient) => ({
+                ...ingredient,
+                modifiedAmount: ingredient.amount || '',
+                modifiedUnit: ingredient.unit || '',
+            }));
+    
+            setReviewIngredients(initializedIngredients);
+            setModifiedReviewIngredients(initializedIngredients);
+            setShowReviewPopup(true); // Show the review popup
+        } catch (error) {
+            console.error('Error processing missed ingredients:', error);
+        }
     };
+    
 
     const handleReviewChange = (index, key, value) => {
         setModifiedReviewIngredients((prev) =>
@@ -371,6 +419,11 @@ const IngredientsList = ({ usedIngredients = [], missedIngredients = [], onIngre
                                                             handleReviewChange(index, 'modifiedUnit', e.target.value)
                                                         }
                                                     >
+                                                        {modifiedReviewIngredients[index].possibleUnits.map((unit) => (
+                                                            <MenuItem key={unit} value={unit} sx={{ '&.MuiMenuItem-root': { fontFamily: 'Inter' } }}>
+                                                                {unit}
+                                                            </MenuItem>
+                                                        ))}
                                                     </CustomDropdown>
                                                 </div>
                                             </div>
