@@ -17,6 +17,7 @@ import LoadingScreen from './loading';
 import { AddCircle, ConnectingAirportsOutlined } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
 import ErrorScreen from './error';
+import FavoriteButton from "@/app/components/FavoriteButton";
 
 // Recipe Image component
 const RecipeImage = ({ recipe }) => (
@@ -770,7 +771,10 @@ const RecipeDetails = ({ params }) => {
                 <div className={styles.errorWrapper}><ErrorScreen error={error}/></div>
             ) : recipe ? (
                 <div className={styles.recipeWrapper}>
-                    <div className={styles.recipeTitle}>{recipe.title}</div>
+                    <div className={styles.TitleWrapper}>
+                        <div className={styles.recipeTitle}>{recipe.title}</div>
+                        <FavoriteButton recipeId={recipe.id}/>
+                    </div>
                     <div className={styles.recipeContent}>
                         <div className={styles.recipeLeft}>
                             <RecipeImage recipe={recipe} />

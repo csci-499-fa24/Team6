@@ -1,0 +1,20 @@
+.favoriteButton {
+    background: none;
+    border: none;
+    font-size: 2rem; /* Adjust icon size */
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.favoriteButton:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.favoriteButton:hover {
+    transform: scale(1.2);
+}
+
+.favoriteButton.active {
+    color: red;
+}
