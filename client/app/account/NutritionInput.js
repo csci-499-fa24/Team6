@@ -50,6 +50,10 @@ const colorMapping = {
 };
 
 const NutritionInput = () => {
+    const [isAddMacrosVisible, setIsAddMacrosVisible] = useState(false);
+    const handleToggleAddMacros = () => {
+        setIsAddMacrosVisible((prev) => !prev);
+    };
     const [goals, setGoals] = useState({
         protein: '',
         carbohydrates: '',
@@ -219,27 +223,55 @@ const NutritionInput = () => {
                         ))}
                     </div>
                 </div>
+                <button
+                    onClick={handleToggleAddMacros}
+                    className={styles.toggleButton}
+                >
+                    {isAddMacrosVisible ? '-' : '+'}
+                </button>
+
+                {isAddMacrosVisible && (
+                    <div className={styles.addMacrosSection}>
+                        <div className={styles.header}>Add Macros</div>
+                        <div className={styles.nutritionInputs}>
+                            {Object.keys(manualMacros).map((macro) => (
+                                <div key={macro} className={styles.nutritionalItem}>
+                                    <label className={styles.nutritionName}>
+                                        {macro.charAt(0).toUpperCase() + macro.slice(1)}
+                                    </label>
+                                    <CustomTextField
+                                        name={macro}
+                                        value={manualMacros[macro] || ''}
+                                        onChange={handleManualMacroChange}
+                                        size="small"
+                                        className={styles.nutritionInput}
+                                    />
+                                    <div
+                                        className={styles.nutritionGram}
+                                        style={{ marginLeft: '1.5em' }}
+                                    >
+                                        grams
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                        <div className={styles.buttonGroup}>
+                            <div
+                                onClick={handleAddMacros}
+                                className={styles.saveButton}
+                            >
+                                Add Macros
+                            </div>
+                            <div
+                                onClick={() => setIsAddMacrosVisible(false)} // Cancel button functionality
+                                className={styles.cancelButton}
+                            >Cancel</div>
+                        </div>
+                    </div>
+                )}
             </div>
 
-            <div className={styles.addMacrosSection}>
-                <div className={styles.header}>Add Consumed Macros</div>
-                <div className={styles.nutritionInputs}>
-                    {Object.keys(manualMacros).map((macro) => (
-                        <div key={macro} className={styles.nutritionalItem}>
-                            <label className={styles.nutritionName}>{macro.charAt(0).toUpperCase() + macro.slice(1)}</label>
-                            <CustomTextField
-                                name={macro}
-                                value={manualMacros[macro] || ''}
-                                onChange={handleManualMacroChange}
-                                size="small"
-                                className={styles.nutritionInput}
-                            />
-                            <div className={styles.nutritionGram} style={{ marginLeft: '1.5em' }}>grams</div>
-                        </div>
-                    ))}
-                </div>
-                <div onClick={handleAddMacros} className={styles.saveButton}>Add Macros</div>
-            </div>
+
         </div>
     );
 };
