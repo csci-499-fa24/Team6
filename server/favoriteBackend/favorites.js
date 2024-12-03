@@ -138,4 +138,27 @@ router.get('/favorite-id', authenticateToken, async (req, res) => {
     }
 })
 
+// Check if a recipe is in favorites
+router.get('/check', authenticateToken, async (req, res) => {
+    const { recipeId } = req.query; // Expecting the recipe ID as a query parameter
+    const user_id = req.user.id;
+
+    try {
+        const favoriteQuery = await pool.query(
+            'SELECT * FROM user_favorites WHERE user_id = $1 AND recipe_id = $2',
+            [user_id, recipeId]
+        );
+
+        if (favoriteQuery.rows.length > 0) {
+            return res.status(200).json({ inFavorites: true, message: 'Recipe is in favorites.' });
+        }
+
+        res.status(200).json({ inFavorites: false, message: 'Recipe is not in favorites.' });
+    } catch (error) {
+        console.error('Error checking recipe in favorites:', error);
+        res.status(500).json({ message: 'Failed to check if recipe is in favorites.' });
+    }
+});
+
+
 module.exports = router;
