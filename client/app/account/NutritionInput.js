@@ -176,13 +176,39 @@ const NutritionInput = () => {
 
     return (
         <div className={styles.nutritionalGoalsWrapper}>
+            <div className={styles.trackerSection}>
+                <div className={styles.header}>Daily Nutrition Tracker</div>
+                <div className={styles.trackerWrapper}>
+                    {NutritionalGoals.map((nutrient) => (
+                        <div key={nutrient} className={styles.trackerItem}>
+                            <div className={styles.trackerItemTitle}>{colorMapping[nutrient]?.title || nutrient}</div>
+                            <CustomCircularProgress
+                                value={Math.min(((consumed[nutrient] ?? 0) / goals[nutrient]) * 100, 100)}
+                                progressColor={colorMapping[nutrient]?.progressColor || '#74DE72'}
+                                backgroundColor={colorMapping[nutrient]?.backgroundColor || '#C3F5C2'}
+                            />
+                            <div
+                                className={`${styles.data} ${((consumed[nutrient] ?? 0) / goals[nutrient]) * 100 > 100 ? styles.exceeded : ''}`}
+                            >
+                                {(consumed[nutrient] ?? 0).toFixed(2)} / {goals[nutrient] || 0} g
+                            </div>
+
+                        </div>
+                    ))}
+                </div>
+            </div>
             <div className={styles.nutritionalGoals}>
                 <div className={styles.nutritionSection}>
-                    <div className={styles.header}>Modify Your Nutritional Goals</div>
+                    <div className={styles.nutritionHeader}>Modify Your Nutritional Goals</div>
                     <div className={styles.nutritionInputs}>
                         {Object.keys(goals).map((goal) => (
                             <div key={goal} className={styles.nutritionalItem}>
-                                <label className={styles.nutritionName}>{goal.charAt(0).toUpperCase() + goal.slice(1)}</label>
+                                <label className={styles.nutritionName}>
+                                    {goal
+                                        .replace(/_/g, ' ')
+                                        .charAt(0)
+                                        .toUpperCase() + goal.replace(/_/g, ' ').slice(1)}
+                                </label>
                                 <CustomTextField
                                     name={goal}
                                     value={goals[goal] || ''}
@@ -197,48 +223,30 @@ const NutritionInput = () => {
                     <div onClick={handleSaveGoals} className={styles.saveButton}>Save Changes</div>
                 </div>
 
-                <div className={styles.trackerSection}>
-                    <div className={styles.header}>Daily Nutrition Tracker</div>
-                    <div className={styles.trackerWrapper}>
-                        {NutritionalGoals.map((nutrient) => (
-                            <div key={nutrient} className={styles.trackerItem}>
-                                <div className={styles.trackerVisual}>
-                                    <div className={styles.trackerItemTitle}>{colorMapping[nutrient]?.title || nutrient}</div>
-                                    <CustomCircularProgress
-                                        value={Math.min(((consumed[nutrient] ?? 0) / goals[nutrient]) * 100, 100)}
-                                        progressColor={colorMapping[nutrient]?.progressColor || '#74DE72'}
-                                        backgroundColor={colorMapping[nutrient]?.backgroundColor || '#C3F5C2'}
-                                    />
-                                </div>
-                                <div
-                                    className={`${styles.data} ${((consumed[nutrient] ?? 0) / goals[nutrient]) * 100 > 100 ? styles.exceeded : ''}`}
-                                >
-                                    {(consumed[nutrient] ?? 0).toFixed(2)} / {goals[nutrient] || 0} g
-                                </div>
+                <div className={styles.addMacrosSection}>
+                    <div className={styles.nutritionHeader}>Add Consumed Macros</div>
+                    <div className={styles.nutritionInputs}>
+                        {Object.keys(manualMacros).map((macro) => (
+                            <div key={macro} className={styles.nutritionalItem}>
+                                <label className={styles.nutritionName}>
+                                    {macro
+                                        .replace(/_/g, ' ')
+                                        .charAt(0)
+                                        .toUpperCase() + macro.replace(/_/g, ' ').slice(1)}
+                                </label>
+                                <CustomTextField
+                                    name={macro}
+                                    value={manualMacros[macro] || ''}
+                                    onChange={handleManualMacroChange}
+                                    size="small"
+                                    className={styles.nutritionInput}
+                                />
+                                <div className={styles.nutritionGram} style={{ marginLeft: '1.5em' }}>grams</div>
                             </div>
                         ))}
                     </div>
+                    <div onClick={handleAddMacros} className={styles.saveButton}>Add Macros</div>
                 </div>
-            </div>
-
-            <div className={styles.addMacrosSection}>
-                <div className={styles.header}>Add Consumed Macros</div>
-                <div className={styles.nutritionInputs}>
-                    {Object.keys(manualMacros).map((macro) => (
-                        <div key={macro} className={styles.nutritionalItem}>
-                            <label className={styles.nutritionName}>{macro.charAt(0).toUpperCase() + macro.slice(1)}</label>
-                            <CustomTextField
-                                name={macro}
-                                value={manualMacros[macro] || ''}
-                                onChange={handleManualMacroChange}
-                                size="small"
-                                className={styles.nutritionInput}
-                            />
-                            <div className={styles.nutritionGram} style={{ marginLeft: '1.5em' }}>grams</div>
-                        </div>
-                    ))}
-                </div>
-                <div onClick={handleAddMacros} className={styles.saveButton}>Add Macros</div>
             </div>
         </div>
     );

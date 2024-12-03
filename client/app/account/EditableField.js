@@ -15,9 +15,9 @@ const EditableField = ({ label, value, onSave, isPassword = false, separator = f
     const [errorMessage, setErrorMessage] = useState('');
 
     const handleCancel = () => {
-        setNewValue(value); 
+        setNewValue(value);
         setIsEditing(false);
-        setErrorMessage(''); 
+        setErrorMessage('');
     };
 
     const validatePassword = (password) => {
@@ -152,8 +152,25 @@ const EditableField = ({ label, value, onSave, isPassword = false, separator = f
         <>
             <div className={styles.editableField}>
                 <label className={styles.label}>{label}</label>
+                {isPassword && isEditing && (
+                    <div className={styles.passwordRules}>
+                        {!validationStatus.length && (
+                            <div>✗ At least 8 characters</div>
+                        )}
+                        {!validationStatus.uppercase && (
+                            <div>✗ At least one uppercase letter</div>
+                        )}
+                        {!validationStatus.specialChar && (
+                            <div>✗ At least one special character</div>
+                        )}
+                        {!validationStatus.number && (
+                            <div>✗ At least one number</div>
+                        )}
+                    </div>
+                )}
                 {isEditing ? (
                     <div className={styles.editContainer}>
+                        <div className={styles.passwordContainer}>
                         <input
                             type={isPassword ? 'password' : 'text'}
                             value={newValue}
@@ -161,37 +178,23 @@ const EditableField = ({ label, value, onSave, isPassword = false, separator = f
                                 setNewValue(e.target.value);
                                 if (isPassword) validatePassword(e.target.value);
                             }}
-                            className={styles.input}
+                            className={isPassword ? styles.passwordInput : styles.input}
                             placeholder={label}
+                            size='sm'
                         />
                         {isPassword && (
-                            <>
-                                <input
-                                    type="password"
-                                    value={confirmValue}
-                                    onChange={(e) => setConfirmValue(e.target.value)}
-                                    className={styles.input}
-                                    placeholder="Confirm Password"
-                                />
-                                <ul className={styles.passwordRules}>
-                                    <li style={{ color: validationStatus.length ? 'green' : 'red' }}>
-                                        {validationStatus.length ? '✓' : '✗'} At least 8 characters
-                                    </li>
-                                    <li style={{ color: validationStatus.uppercase ? 'green' : 'red' }}>
-                                        {validationStatus.uppercase ? '✓' : '✗'} At least one uppercase letter
-                                    </li>
-                                    <li style={{ color: validationStatus.specialChar ? 'green' : 'red' }}>
-                                        {validationStatus.specialChar ? '✓' : '✗'} At least one special character (e.g., !@#$%^&)
-                                    </li>
-                                    <li style={{ color: validationStatus.number ? 'green' : 'red' }}>
-                                        {validationStatus.number ? '✓' : '✗'} At least one number
-                                    </li>
-                                </ul>
-                            </>
+                            <input
+                                type="password"
+                                value={confirmValue}
+                                onChange={(e) => setConfirmValue(e.target.value)}
+                                className={styles.passwordInput}
+                                placeholder="Confirm Password"
+                            />
                         )}
+                        </div>
                         <div className={styles.buttonContainer}>
-                            <button onClick={handleSave} className={styles.bubbleButton}>Save</button>
-                            <button onClick={handleCancel} className={styles.cancelButton}>Cancel</button>
+                            <div onClick={handleSave} className={styles.saveBubble}>Save</div>
+                            <div onClick={handleCancel} className={styles.cancelButton}>Cancel</div>
                         </div>
                     </div>
                 ) : (
@@ -211,6 +214,7 @@ const EditableField = ({ label, value, onSave, isPassword = false, separator = f
                 )}
             </div>
             {separator && <div className={styles.separator}></div>}
+
         </>
     );
 };
