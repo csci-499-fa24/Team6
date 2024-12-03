@@ -170,6 +170,7 @@ const EditableField = ({ label, value, onSave, isPassword = false, separator = f
                 )}
                 {isEditing ? (
                     <div className={styles.editContainer}>
+                        <div className={styles.passwordContainer}>
                         <input
                             type={isPassword ? 'password' : 'text'}
                             value={newValue}
@@ -179,6 +180,7 @@ const EditableField = ({ label, value, onSave, isPassword = false, separator = f
                             }}
                             className={isPassword ? styles.passwordInput : styles.input}
                             placeholder={label}
+                            size='sm'
                         />
                         {isPassword && (
                             <input
@@ -189,6 +191,7 @@ const EditableField = ({ label, value, onSave, isPassword = false, separator = f
                                 placeholder="Confirm Password"
                             />
                         )}
+                        </div>
                         <div className={styles.buttonContainer}>
                             <div onClick={handleSave} className={styles.saveBubble}>Save</div>
                             <div onClick={handleCancel} className={styles.cancelButton}>Cancel</div>
