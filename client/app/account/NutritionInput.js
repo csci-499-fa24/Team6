@@ -129,7 +129,7 @@ const NutritionInput = () => {
                 console.error('Error updating nutritional goals');
             }
         } catch (error) {
-            console.error("Error saving nutritional goals", error);
+            console.error("Error saving nutritional goals.", error);
         }
     };
 
