@@ -28,19 +28,23 @@ const RegistrationStep4 = ({ currentStep, handlePrevStep, handleFinish, formData
 
     const handleInputChange = (event) => {
         const { name, value } = event.target;
-        // Ensure the value is either a number or null (if the field is empty)
+        const updatedValue = value === '' ? '' : parseFloat(value) || '';
+
         setNutritionGoals((prevGoals) => ({
             ...prevGoals,
-            [name]: value === '' ? null : parseFloat(value)
+            [name]: updatedValue,
+        }));
+
+        setFormData((prev) => ({
+            ...prev,
+            nutritionalGoals: {
+                ...prev.nutritionalGoals,
+                [name]: updatedValue,
+            },
         }));
     };
 
     const handleFinishClick = () => {
-        setFormData((prev) => ({
-            ...prev,
-            nutritionalGoals: nutritionGoals  // Save nutrition goals to formData
-        }));
-
         handleFinish();
     };
 
