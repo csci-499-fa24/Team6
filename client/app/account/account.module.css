@@ -25,6 +25,7 @@
 }
 
 .sidebar {
+    position: relative;
     display: flex;
     flex-direction: column;
     color: #506264;
@@ -591,10 +592,75 @@
     }
 }
 
+.addMacrosSection {
+    background: white;
+    display: flex;
+    align-items: center; /* Vertically center content inside the box */
+    justify-content: center; /* Horizontally center content inside the box */
+    position: fixed; /* Fix position relative to the viewport */
+    top: 50%; /* Move the box to the vertical center */
+    left: 50%; /* Move the box to the horizontal center */
+    transform: translate(-50%, -50%); /* Adjust for the box's dimensions */
+    width: 400px; /* Set the width of the box */
+    height: 650px; /* Set the height of the box */
+    background: white;
+    z-index: 1000; /* Ensure the box appears above all other elements */
+    border-radius: 10px; /* Optional: Add rounded corners for style */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add a shadow for a floating effect */
+    padding: 20px; /* Add internal spacing */
+    flex-direction: column; /* Ensure child elements stack vertically */
+}
+
+
+.buttonGroup {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1em;
+}
+
+.cancelButton {
+    background-color: #f44336;
+    color: white;
+    padding: 0.5em 1em; /* Adjusts internal padding */
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    flex: 1;
+    margin-left: 0.5em;
+    line-height: 1; /* Ensure no extra vertical space is added */
+    display: inline-flex; /* Align content inside the button more precisely */
+    align-items: center; /* Vertically center the text */
+    justify-content: center; /* Horizontally center the text */
+}
+
+
+.saveButton:hover {
+    background-color: #0056b3;
+}
+
+.cancelButton:hover {
+    background-color: #d32f2f;
+}
 .pageIndicator {
     color: #506264;
     font-weight: 500;
 }
+
+.toggleButton {
+    padding: 0.5em 1em;
+    font-size: 1em;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 1em;
+}
+
+.toggleButton:hover {
+    background-color: #0056b3;
+}
+
 
 @media (min-width: 2000px) and (max-width: 2560px) {
     .sidebar {
