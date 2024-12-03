@@ -7,62 +7,65 @@
 }
 
 .settingsCard {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
+    background-color: rgba(252, 251, 251, 0.9);
+    box-shadow: 2px 4px 10px 2px rgba(0, 0, 0, 0.25);
     padding: 2rem;
     border-radius: 20px;
     max-width: 600px;
     width: 100%;
     text-align: center;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15), 0 12px 40px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 620px;
 }
 
 .profilePicture {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 0 auto 1rem;
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    overflow: hidden;
-    border: 3px solid #f0c497;
+    margin: 0 auto 0;
+    width: 120px;
+    height: 120px;
 }
 
-.profilePicture img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 50%;
+.heading {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 20px;
 }
 
 .tabs {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     margin-bottom: 1.5rem;
+    padding-top: 15px;
+    width: 60%;
 }
 
 .tabButton {
     background: none;
     border: none;
-    padding: 0.5rem 1rem;
     cursor: pointer;
-    font-size: 1rem;
+    font-size: 15px;
     color: #666;
     font-weight: 500;
     transition: color 0.3s ease;
 }
 
 .activeTab {
-    color: #ff6b6b;
-    border-bottom: 2px solid #ff6b6b;
+    color: #EC4A27;
+    border-bottom: 1px solid #EC4A27;
+    padding: 0;
 }
 
 .accountInfo {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    height: 400px;
     text-align: left;
+    width: 70%;
+    margin-top: 20px;
 }
 
 .editableField {
@@ -73,15 +76,23 @@
     position: relative;
 }
 
+.editContainer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
 .label {
-    font-weight: bold;
-    margin-bottom: 0.2rem;
+    font-weight: 500;
+    margin-bottom: 10px;
+    font-size: 14px
 }
 
 .exampleText {
     color: #888;
-    font-size: 0.9rem;
-    margin-bottom: 0.5rem;
+    font-size: 13px;
+    padding: 7px 0;
 }
 
 .displayContainer {
@@ -92,18 +103,42 @@
 }
 
 .input {
-    width: 100%;
+    width: 200px;
     max-width: 400px;
     padding: 0.5rem;
     border-radius: 8px;
     border: 1px solid #ccc;
-    margin-bottom: 0.5rem;
+    font-size: 12px;
+    font-family: 'Inter', sans-serif;
+
+    &:focus {
+        outline: none;
+        border: 1px solid #EC4A27;
+    }
+}
+
+.passwordInput {
+    width: 120px;
+    max-width: 400px;
+    padding: 0.5rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 12px;
+
+    &:focus {
+        outline: none;
+        border: 1px solid #EC4A27;
+    }
 }
 
 .passwordRules {
-    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); 
     padding: 0;
-    margin-top: 0.5rem;
+    font-size: 10px;
+    color: red;
+    margin-bottom: 5px;
+    column-gap: 10px
 }
 
 .passwordRules li {
@@ -119,14 +154,14 @@
 }
 
 .bubbleButton {
-    background-color: #ff6b6b;
-    color: white;
+    background-color: transparent;
+    color: black;
     border: none;
-    padding: 0.3rem 0.8rem;
-    border-radius: 15px;
-    font-size: 0.8rem;
+    font-size: 12px;
     cursor: pointer;
+    font-family: 'Inter', sans-serif;
 }
+
 
 .separator {
     height: 1px;
@@ -136,15 +171,16 @@
 }
 
 .saveButton {
-    background: #ff6b6b;
-    color: white;
+    font-size: 15px;
+    font-weight: 600;
+    background-color: #EC4A27;
+    color: #f0f0f0;
     padding: 0.75rem 2rem;
     border: none;
-    border-radius: 25px;
-    font-size: 1rem;
+    border-radius: 10px;
     cursor: pointer;
-    margin-top: 1.5rem;
     transition: background-color 0.3s ease;
+    font-family: 'Inter', sans-serif;
 }
 
 .saveButton:hover {
@@ -156,13 +192,27 @@
     justify-content: space-between;
     align-items: center;
     margin: 0.5rem 0;
-    width: 100%; /* Ensures full width for alignment */
+    width: 400px; /* Ensures full width for alignment */
+}
+
+.privacyRow, .notification {
+    margin-top: 100px
 }
 
 .successMessage {
     color: green;
     font-size: 0.9rem;
     margin-left: 8px;
+}
+
+.checkbox {
+    cursor: pointer;
+}
+
+.passwordContainer {
+    display: flex;
+    width: 290px;
+    justify-content: space-between;
 }
 
 
@@ -179,21 +229,23 @@
     font-size: 1rem; /* Icon size */
 }
 
-.cancelButton {
-    background-color: #ccc;
-    color: #333;
-    border: none;
-    padding: 0.3rem 0.8rem;
-    border-radius: 15px;
-    font-size: 0.8rem;
+.saveBubble {
+    color: black;
+    text-decoration: none;
+    font-size: 12px;
+    border-radius: 7px;
     cursor: pointer;
-    margin-left: 0.5rem;
+}
+
+.cancelButton {
+    font-size: 12px;
+    padding-left: 5px;
+    cursor: pointer;
 }
 
 .buttonContainer {
     display: flex;
     gap: 0.5rem;
-    margin-top: 0.5rem;
 }
 
 .notificationPopup {
@@ -242,5 +294,198 @@
     }
     to {
         opacity: 0;
+    }
+}
+
+@media (min-width: 800px) and (max-width: 1000px) {
+    .settingsCard {
+        max-width: 500px;
+    }
+
+    .tabs {
+        width: 65%;
+    }
+
+    .tabButton {
+        font-size: 14px;
+    }
+
+    .passwordInput {
+        width: 100px;
+        font-size: 11px;
+    }
+
+    .input {
+        font-size: 11px;
+    }
+
+    .checkLabel {
+        font-size: 15px;
+    }
+
+    .privacyRow {
+        width: 300px;
+    }
+
+    .notificationRow {
+        width: 300px;
+    }
+
+    .heading {
+        font-size: 18px;
+    }
+
+    .passwordContainer {
+        width: 245px;
+    }
+
+    .label {
+        font-size: 13px;
+    }
+
+    .exampleText {
+        font-size: 12px;
+    }
+
+    .bubbleButton, .saveBubble, .cancelButton {
+        font-size: 11px;
+    }
+}
+
+@media (min-width: 500px) and (max-width: 800px) {
+    .settingsCard {
+        max-width: 400px;
+    }
+
+    .tabs {
+        width: 75%;
+    }
+
+    .tabButton {
+        font-size: 13px;
+    }
+
+    .passwordInput {
+        width: 90px;
+        font-size: 11px;
+    }
+
+    .checkLabel {
+        font-size: 15px;
+    }
+
+    .privacyRow {
+        width: 280px;
+    }
+
+    .notificationRow {
+        width: 280px;
+    }
+
+    .heading {
+        font-size: 18px;
+    }
+
+    .profilePicture {
+        width: 110px;
+        height: 110px;
+    }
+
+    .accountInfo {
+        width: 85%;
+    }
+
+    .passwordContainer {
+        width: 220px;
+    }
+
+    .bubbleButton, .saveBubble, .cancelButton {
+        font-size: 11px;
+    }
+
+    .exampleText {
+        font-size: 12px;
+    }
+
+    .label {
+        font-size: 13px;
+    }
+
+    .input {
+        font-size: 11px;
+    }
+}
+
+@media (min-width: 00px) and (max-width: 500px) {
+    .settingsCard {
+        max-width: 300px;
+    }
+
+    .tabs {
+        width: 90%;
+    }
+
+    .tabButton {
+        font-size: 12px;
+    }
+
+    .passwordInput {
+        width: 70px;
+        font-size: 10px;
+    }
+
+    .accountInfo {
+        width: 90%;
+    }
+
+    .checkLabel {
+        font-size: 15px;
+    }
+
+    .label {
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .privacyRow {
+        width: 280px;
+    }
+
+    .notificationRow {
+        width: 280px;
+    }
+
+    .heading {
+        font-size: 18px;
+    }
+
+    .profilePicture {
+        width: 110px;
+        height: 110px;
+    }
+
+    .passwordRules {
+        font-size: 8px;
+    }
+
+    .passwordContainer {
+        width: 185px;
+    }
+
+    .bubbleButton, .saveBubble, .cancelButton {
+        font-size: 11px;
+    }
+
+    .exampleText {
+        font-size: 11px;
+    }
+
+    .label {
+        font-size: 12px;
+    }
+
+    .input {
+        font-size: 10px;
+        width: 150px;
     }
 }
