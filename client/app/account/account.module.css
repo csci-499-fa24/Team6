@@ -65,14 +65,6 @@
     margin-bottom: 20px
 }
 
-.nutritionHeader {
-    font-size: 18px;
-    font-weight: 500;
-    width: 100%;
-    text-align: center;
-    margin-bottom: 10px
-}
-
 .addAllergy {
     display: flex;
     align-items: center;
@@ -190,26 +182,17 @@
     height: 80%;
 }
 
-.nutritionalGoalsWrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding-right: 50px;
-}
-
 .nutritionalGoals {
     display: flex;
-    flex-direction: row;
+    flex-direction: row; /* Arrange goals and tracker side by side */
     justify-content: space-between;
     align-items: flex-start;
     margin-top: 20px;
-    gap: 0em; 
-    width: 1000px;
-    margin-bottom: 50px;
+    gap: 2em; /* Add spacing between the sections */
 }
 
 .nutritionInputs {
-    margin-top: 30px;
+    margin-top: 50px;
     display: flex;
     flex-direction: column;
     width: 475px;
@@ -218,10 +201,7 @@
 
 .nutritionSection {
     width: 100%;
-    margin-bottom: 2em; 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    margin-bottom: 2em; /* Add spacing between sections */
 }
 
 .nutritionInput {
@@ -231,7 +211,7 @@
 .nutritionalItem {
     padding-bottom: 1rem;
     color: #506264;
-    font-size: 15px;
+    font-size: 1em;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -242,7 +222,8 @@
 }
 
 .addMacrosSection {
-    width: 100%; 
+    margin-top: 2em;
+    width: 100%; /* Full width beneath goals */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -339,42 +320,42 @@
     width: 250px;
 }
 
-.trackerSection {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 60px;
-    width: 100%;
-}
-
 .trackerWrapper {
-    margin-top: 30px;
+    margin-top: 50px;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(4, 1fr);
     gap: 2em;
-    column-gap: 4em;
+    margin-left: 10px;
+    column-gap: 6em;
 }
 
 .trackerItemTitle {
     color: #506264;
-    font-size: .9em;
+    font-size: .8em;
     font-weight: 500;
     margin-bottom: 1em;
 }
 
 .data {
     color: #506264;
-    font-size: .7em;
-    font-weight: 500;
+    font-size: .8em;
+    font-weight: 600;
+    margin-left: 1em;
     margin-top: 1em;
 }
 
 .trackerItem {
     display: flex;
+    align-items: center;
+    width: 250px;
+}
+
+.trackerVisual {
+    display: flex;
     flex-direction: column;
     align-items: center;
-    width: 100px;
+    width: 90px;
 }
 
 .saveButton {
@@ -710,6 +691,10 @@
         width: 600px;
     }
 
+    .nutritionSection {
+        width: 45%;
+    }
+
     .nutritionInputs {
         font-size: 20px;
         font-weight: 500;
@@ -717,7 +702,6 @@
 
     .nutritionalItem {
         padding-bottom: 1.5rem;
-        font-size: 18px;
     }
 
     .nutritionName {
@@ -733,18 +717,27 @@
     }
 
     .trackerItemTitle {
-        font-size: 1.1em;
+        font-size: 1em;
         font-weight: 500;
     }
 
     .trackerItem {
         display: flex;
         align-items: center;
-        width: 150px;
+        width: 300px;
     }
 
     .data {
-        font-size: .9em;
+        font-size: 1em;
+    }
+
+    .trackerWrapper {
+        column-gap: 10em;
+        row-gap: 4em;
+    }
+
+    .trackerVisual {
+        width: 110px;
     }
 
     .nutritionalGoals {
@@ -784,14 +777,6 @@
     .pageIndicator {
         color: #506264;
         font-weight: 500;
-    }
-
-    .nutritionHeader {
-        font-size: 24px;
-        font-weight: 600;
-        width: 100%;
-        text-align: center;
-        margin-bottom: 10px
     }
 }
 
@@ -874,6 +859,54 @@
         font-size: 20px !important;
     }
 
+    .nutritionSection {
+        width: 45%;
+    }
+
+    .nutritionInputs {
+        font-size: 16px;
+        font-weight: 500;
+    }
+
+    .nutritionalItem {
+        padding-bottom: 1.2rem;
+    }
+
+    .nutritionName {
+        width: 40%;
+    }
+
+    .nutritionInput {
+        width: 25%;
+    }
+
+
+    .trackerItemTitle {
+        font-size: .7em;
+        font-weight: 500;
+    }
+
+    .data {
+        font-size: .7em;
+    }
+
+    .trackerWrapper {
+        column-gap: 2em;
+        row-gap: 2em;
+    }
+
+    .trackerVisual {
+        width: 80px;
+    }
+
+    .nutritionalGoals {
+        padding: 0px 50px;
+    }
+
+    .trackerItem {
+        width: 180px;
+    }
+
     .recipeCard {
         width: 250px;
         height: 181px;
@@ -891,18 +924,6 @@
 
     .paginationWrapper {
         padding-top: 60px;
-    }
-
-    .nutritionalGoalsWrapper {
-        padding-right: 0px;
-    }
-
-    .nutritionInputs {
-        width: 450px;
-    }
-
-    .nutritionalGoals {
-        width: 900px;
     }
 }
 
@@ -989,6 +1010,71 @@
         font-size: 20px !important;
     }
 
+    .nutritionalGoals {
+        flex-direction: column-reverse;
+        margin-bottom: 50px;
+    }
+
+    .nutritionSection {
+        width: 100%;
+    }
+
+    .nutritionInputs {
+        font-size: 16px;
+        font-weight: 500;
+        margin-top: 20px;
+        margin-bottom: 0;
+    }
+
+    .nutritionalItem {
+        padding-bottom: 1.2rem;
+    }
+
+    .nutritionName {
+        width: 40%;
+        font-size: 15px;
+    }
+
+    .nutritionGram {
+        font-size: 15px
+    }
+
+    .nutritionInput {
+        width: 25%;
+    }
+
+    .trackerSection {
+        width: 50%; /* Tracker takes the other half */
+    }
+
+    .trackerItemTitle {
+        font-size: .7em;
+        font-weight: 500;
+    }
+
+    .data {
+        font-size: .7em;
+    }
+
+    .trackerWrapper {
+        column-gap: 2em;
+        row-gap: 2em;
+        margin-left: 0;
+        margin-top: 20px;
+    }
+
+    .trackerVisual {
+        width: 80px;
+    }
+
+    .nutritionalGoals {
+        padding: 0px 50px;
+    }
+
+    .trackerItem {
+        width: 180px;
+    }
+
     .recipeCard {
         width: 250px;
         height: 181px;
@@ -1010,42 +1096,6 @@
         grid-column-gap: 3em;
         margin-bottom: 30px;
         width: auto;
-    }
-
-    .nutritionalGoals {
-        flex-direction: column;
-    }
-
-    .trackerWrapper {
-        column-gap: 2em;
-    }
-
-    .nutritionalGoalsWrapper {
-        padding-right: 0px;
-    }
-
-    .nutritionalGoals {
-        width: 500px;
-    }
-
-    .nutritionSection {
-        margin-bottom: 70px;
-    }
-
-    .nutritionInputs {
-        margin-bottom: 10px;
-    }
-
-    .addMacrosSection { 
-        margin-bottom: 30px;
-    }
-
-    .trackerItemTitle {
-        font-size: .8em;
-    }
-
-    .data {
-        font-size: .65em;
     }
 }
 
@@ -1114,7 +1164,7 @@
         margin-bottom: 20px;
     }
 
-    .header, .nutritionHeader {
+    .header {
         font-size: 15px;
         font-weight: 500;
     }
@@ -1166,6 +1216,72 @@
         width: 10px;
     }
 
+    .nutritionalGoals {
+        flex-direction: column-reverse;
+        margin-bottom: 50px;
+        padding: 0px 35px;
+    }
+
+    .nutritionSection {
+        width: 50%; /* Nutritional goals take half the width */
+    }
+
+    .nutritionInputs {
+        font-size: 16px;
+        font-weight: 500;
+        margin-top: 20px;
+        margin-bottom: 0;
+        width: 400px;
+    }
+
+    .nutritionalItem {
+        padding-bottom: 1.2rem;
+    }
+
+    .nutritionName {
+        width: 35%;
+        font-size: 14px;
+    }
+
+    .nutritionGram {
+        font-size: 14px
+    }
+
+    .nutritionInput {
+        width: 22%;
+    }
+
+    .trackerSection {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 60px;
+    }
+
+    .trackerItemTitle {
+        font-size: .7em;
+        font-weight: 500;
+    }
+
+    .data {
+        font-size: .7em;
+    }
+
+    .trackerWrapper {
+        column-gap: 1.5em;
+        row-gap: 2em;
+        margin-left: 0;
+        margin-top: 20px;
+    }
+
+    .trackerVisual {
+        width: 80px;
+    }
+
+    .trackerItem {
+        width: 180px;
+    }
+
     .recipeCard {
         width: 250px;
         height: 181px;
@@ -1211,46 +1327,6 @@
         color: #506264;
         font-weight: 500;
         font-size: 14px;
-    }
-
-    .nutritionalGoals {
-        flex-direction: column;
-    }
-
-    .trackerItemTitle {
-        font-size: .7em;
-    }
-
-    .data {
-        font-size: .6em;
-    }
-
-    .trackerWrapper {
-        column-gap: 0em;
-    }
-
-    .nutritionalGoalsWrapper {
-        padding-right: 0px;
-    }
-
-    .nutritionalGoals {
-        width: 400px;
-    }
-
-    .nutritionSection {
-        margin-bottom: 60px;
-    }
-
-    .nutritionInputs {
-        margin-bottom: 10px;
-    }
-
-    .addMacrosSection { 
-        margin-bottom: 30px;
-    }
-
-    .nutritionalItem { 
-        font-size: 13px;
     }
 }
 
@@ -1334,7 +1410,7 @@
         margin-bottom: 18px;
     }
 
-    .header, .nutritionHeader {
+    .header {
         font-size: 13px;
         font-weight: 500;
     }
@@ -1386,6 +1462,73 @@
         width: 10px;
     }
 
+    .nutritionalGoals {
+        flex-direction: column-reverse;
+        margin-bottom: 50px;
+        padding: 0px 0px;
+        align-items: center;
+    }
+
+    .nutritionSection {
+        width: 90%;
+    }
+
+    .nutritionInputs {
+        font-size: 16px;
+        font-weight: 500;
+        margin-top: 20px;
+        margin-bottom: 0;
+        width: 400px;
+    }
+
+    .nutritionalItem {
+        padding-bottom: 1.2rem;
+    }
+
+    .nutritionName {
+        width: 35%;
+        font-size: 14px;
+    }
+
+    .nutritionGram {
+        font-size: 14px
+    }
+
+    .nutritionInput {
+        width: 22%;
+    }
+
+    .trackerSection {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 60px;
+    }
+
+    .trackerItemTitle {
+        font-size: .7em;
+        font-weight: 500;
+    }
+
+    .data {
+        font-size: .7em;
+    }
+
+    .trackerWrapper {
+        column-gap: 1em;
+        row-gap: 2em;
+        margin-left: 0;
+        margin-top: 20px;
+    }
+
+    .trackerVisual {
+        width: 80px;
+    }
+
+    .trackerItem {
+        width: 180px;
+    }
+
     .recipeCard {
         width: 250px;
         height: 181px;
@@ -1431,46 +1574,6 @@
         color: #506264;
         font-weight: 500;
         font-size: 14px;
-    }
-
-    .trackerItemTitle {
-        font-size: .7em;
-    }
-
-    .data {
-        font-size: .6em;
-    }
-
-    .trackerWrapper {
-        column-gap: 0em;
-    }
-
-    .nutritionalGoalsWrapper {
-        padding-right: 0px;
-    }
-
-    .nutritionalGoals {
-        width: 400px;
-    }
-
-    .nutritionSection {
-        margin-bottom: 60px;
-    }
-
-    .nutritionInputs {
-        margin-bottom: 10px;
-    }
-
-    .addMacrosSection { 
-        margin-bottom: 30px;
-    }
-
-    .nutritionalItem { 
-        font-size: 13px;
-    }
-
-    .nutritionalGoals {
-        flex-direction: column;
     }
 }
 
@@ -1601,6 +1704,73 @@
         width: 8px;
     }
 
+    .nutritionalGoals {
+        flex-direction: column-reverse;
+        margin-bottom: 50px;
+        padding: 0px 0px;
+        align-items: center;
+    }
+
+    .nutritionSection {
+        width: 90%;
+    }
+
+    .nutritionInputs {
+        font-size: 16px;
+        font-weight: 500;
+        margin-top: 20px;
+        margin-bottom: 0;
+        width: 400px;
+    }
+
+    .nutritionalItem {
+        padding-bottom: 1.2rem;
+    }
+
+    .nutritionName {
+        width: 30%;
+        font-size: 13px;
+    }
+
+    .nutritionGram {
+        font-size: 13px
+    }
+
+    .nutritionInput {
+        width: 20%;
+    }
+
+    .trackerSection {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 60px;
+    }
+
+    .trackerItemTitle {
+        font-size: .6em;
+        font-weight: 500;
+    }
+
+    .data {
+        font-size: .6em;
+    }
+
+    .trackerWrapper {
+        column-gap: 1em;
+        row-gap: 2em;
+        margin-left: 0;
+        margin-top: 20px;
+    }
+
+    .trackerVisual {
+        width: 70px;
+    }
+
+    .trackerItem {
+        width: 150px;
+    }
+
     .recipeCard {
         width: 232px;
         height: 168px;
@@ -1646,50 +1816,5 @@
         color: #506264;
         font-weight: 500;
         font-size: 12px;
-    }
-
-    .trackerItemTitle {
-        font-size: .7em;
-    }
-
-    .data {
-        font-size: .6em;
-    }
-
-    .trackerWrapper {
-        column-gap: 0em;
-    }
-
-    .nutritionalGoalsWrapper {
-        padding-right: 0px;
-    }
-
-    .nutritionalGoals {
-        width: 400px;
-    }
-
-    .nutritionSection {
-        margin-bottom: 60px;
-    }
-
-    .nutritionInputs {
-        margin-bottom: 10px;
-        width: 400px;
-    }
-
-    .addMacrosSection { 
-        margin-bottom: 30px;
-    }
-
-    .nutritionalItem { 
-        font-size: 13px;
-    }
-
-    .nutritionalGoals {
-        flex-direction: column;
-    }
-
-    .trackerSection {
-        margin-bottom: 40px;
     }
 }

@@ -8,7 +8,7 @@ const Settings = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('********'); // This can remain a placeholder
     const [phoneNumber, setPhoneNumber] = useState('');
-    const [isEmailSubscribed, setIsEmailSubscribed] = useState(false);
+    const [isEmailSubscribed, setIsEmailSubscribed] = useState(false); 
     const [isSmsSubscribed, setIsSmsSubscribed] = useState(false);
     const [is2FAEnabled, setIs2FAEnabled] = useState(false);
     const [notificationMessage, setNotificationMessage] = useState('');
@@ -139,7 +139,7 @@ const Settings = () => {
                 return (
                     <div className={styles.tabContent}>
                         <div className={styles.privacyRow}>
-                            <label className={styles.checkLabel}>Two-Factor Authentication</label>
+                            <label className={styles.label}>Two-Factor Authentication</label>
                             <input
                                 type="checkbox"
                                 className={styles.checkbox}
@@ -152,25 +152,23 @@ const Settings = () => {
             case 'Notifications':
                 return (
                     <div className={styles.tabContent}>
-                        <div className={styles.notification}>
-                            <div className={styles.notificationRow}>
-                                <label className={styles.checkLabel}>Email Notifications</label>
-                                <input
-                                    type="checkbox"
-                                    className={styles.checkbox}
-                                    checked={isEmailSubscribed}
-                                    onChange={handleEmailSubscriptionChange} // Updated to use new function
-                                />
-                            </div>
-                            <div className={styles.notificationRow}>
-                                <label className={styles.checkLabel}>SMS Notifications</label>
-                                <input
-                                    type="checkbox"
-                                    className={styles.checkbox}
-                                    checked={isSmsSubscribed}
-                                    onChange={() => setIsSmsSubscribed(!isSmsSubscribed)}
-                                />
-                            </div>
+                        <div className={styles.notificationRow}>
+                            <label className={styles.label}>Email Notifications</label>
+                            <input
+                                type="checkbox"
+                                className={styles.checkbox}
+                                checked={isEmailSubscribed}
+                                onChange={handleEmailSubscriptionChange} // Updated to use new function
+                            />
+                        </div>
+                        <div className={styles.notificationRow}>
+                            <label className={styles.label}>SMS Notifications</label>
+                            <input
+                                type="checkbox"
+                                className={styles.checkbox}
+                                checked={isSmsSubscribed}
+                                onChange={() => setIsSmsSubscribed(!isSmsSubscribed)}
+                            />
                         </div>
                     </div>
                 );
@@ -182,9 +180,12 @@ const Settings = () => {
     return (
         <div className={styles.settingsWrapper}>
             <div className={styles.settingsCard} style={{ position: 'relative' }}> {/* Make settingsCard relative to position the notification */}
-                <img src="/assets/logo.png" alt="Profile" className={styles.profilePicture} />
-                <div className={styles.heading}>Account Settings</div>
-
+                <div className={styles.profilePicture}>
+                    <img src="/assets/profile-image.png" alt="Profile" />
+                </div>
+                
+                <h2 className={styles.heading}>Account Settings</h2>
+    
                 {/* Tabs for Different Sections */}
                 <div className={styles.tabs}>
                     {['Account Info', 'Privacy & Security', 'Notifications'].map(tab => (
@@ -197,15 +198,15 @@ const Settings = () => {
                         </button>
                     ))}
                 </div>
-
+    
                 {/* Tab Content */}
                 {renderTabContent()}
-
+    
                 {/* Save All Changes Button */}
                 {activeTab === 'Account Info' && (
                     <button className={styles.saveButton}>Save All Changes</button>
                 )}
-
+    
                 {/* Notification Message */}
                 {showNotification && (
                     <div className={`${styles.notificationPopup} ${!showNotification ? styles.fadeOut : ''}`}>
@@ -215,7 +216,7 @@ const Settings = () => {
                 )}
             </div>
         </div>
-    );
+    );        
 };
 
 export default Settings;
