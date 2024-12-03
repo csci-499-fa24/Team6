@@ -20,7 +20,8 @@
     "jsonwebtoken": "^9.0.2",
     "node-cron": "^3.0.3",
     "nodemailer": "^6.9.15",
-    "pg": "^8.13.0"
+    "pg": "^8.13.0",
+    "react-datepicker": "^7.5.0"
   },
   "devDependencies": {
     "jest": "^29.7.0",
