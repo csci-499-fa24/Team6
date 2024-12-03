@@ -11,7 +11,6 @@ import LocalDiningIcon from '@mui/icons-material/LocalDining';
 import FavoriteButton from "@/app/components/addAndRemoveFavorites";
 import LoadingScreen from '../components/loading';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 
 const Discover = () => {
     const [loading, setLoading] = useState(true);
@@ -268,7 +267,7 @@ const Discover = () => {
 
     const toggleDropdown = () => {
         setShowDropdown((prev) => !prev);
-    };
+      };
 
     useEffect(() => {
         const savedCheckedState = JSON.parse(localStorage.getItem('checkedState')) || {};
@@ -296,98 +295,96 @@ const Discover = () => {
         <div className={styles.pageWrapper}>
             <Navbar />
             <div className={styles.title}>
-                <div className={styles.pageTitle}>
-                    Discover Random Recipes
-                    <ShoppingCartIcon
-                        onClick={toggleDropdown}
-                        className={styles.cartIcon}
-                    />
-                </div>
+            <div className={styles.pageTitle}>
+                Discover Random Recipes
+                <ShoppingCartIcon
+                    onClick={toggleDropdown}
+                    className={styles.cartIcon}
+                />
+            </div>
 
-                {showDropdown && (
-                    <div className={styles.cartDropdown}>
-                        <div className={styles.cartHeader}>
-                            <div className={styles.shoppingCartHeader}>Your Shopping Cart</div>
-                        </div>
+            {showDropdown && (
+                <div className={styles.cartDropdown}>
+                    <div className={styles.cartHeader}>
+                        <h3>Your Shopping Cart</h3>
+                    </div>
 
-                        <div className={styles.listContainer}>
-                            <div className={styles.listTitle}>Selected Recipes</div>
-                            {Object.values(checkedState).length > 0 ? (
-                                <div className={styles.listItemsContainer}>
-                                    {Object.values(checkedState).map((recipe) => (
-                                        <div key={recipe.id} className={styles.listItem}>
-                                            <img
-                                                src={recipe.image || '/assets/noImage.png'}
-                                                alt={recipe.title}
-                                                className={styles.listImage}
-                                                onError={(e) => {
-                                                    e.target.onerror = null;
-                                                    e.target.src = '/assets/noImage.png';
-                                                }}
-                                            />
-                                            <p className={styles.recipeName}>{recipe.title}</p>
-                                            <button className={styles.removeButton} onClick={() => removeItemFromList(recipe.id)}>x</button>
-                                        </div>
-                                    ))}
-                                </div>
-                            ) : (
-                                <p className={styles.noRecipes}>No recipes selected.</p>
-                            )}
-
-                            <div className={styles.buttonContainer}>
-                                <button onClick={generateShoppingList}>Shopping List</button>
-                                <button onClick={handleClear}>Clear</button>
+                    <div className={styles.listContainer}>
+                        <h3 className={styles.listTitle}>Selected Recipes</h3>
+                        {Object.values(checkedState).length > 0 ? (
+                            <div className={styles.listItemsContainer}>
+                                {Object.values(checkedState).map((recipe) => (
+                                    <div key={recipe.id} className={styles.listItem}>
+                                        <img
+                                            src={recipe.image || '/assets/noImage.png'}
+                                            alt={recipe.title}
+                                            className={styles.listImage}
+                                            onError={(e) => {
+                                                e.target.onerror = null;
+                                                e.target.src = '/assets/noImage.png';
+                                            }}
+                                        />
+                                        <p className={styles.recipeName}>{recipe.title}</p>
+                                        <button onClick={() => removeItemFromList(recipe.id)}>x</button>
+                                    </div>
+                                ))}
                             </div>
-                            {showModal && (
-                                <div className={styles.overlay}>
-                                    <div className={styles.modal}>
-                                        <div className={styles.popupHeader}>
-                                            <div className={styles.popupTitle}>Your Shopping List</div>
-                                            <button className={styles.closeButton} onClick={handleCloseModal}>×</button>
+                        ) : (
+                            <p className={styles.noRecipes}>No recipes selected.</p>
+                        )}
+
+                        <div className = {styles.buttonContainer}>
+                            <button onClick={generateShoppingList}>Shopping List</button>
+                            <button onClick={handleClear}>Clear</button>
+                        </div>
+                        {showModal && (
+                            <div className={styles.overlay}>
+                                <div className={styles.modal}>
+                                    <button className={styles.closeButton} onClick={handleCloseModal}>×</button>
+                                    <h2>Your Shopping List</h2>
+
+                                    <div className={styles.modalListContainer}>
+                                        <div className={styles.listSection}>
+                                            <h3>Ingredient List</h3>
+                                            {allIngredients.length > 0 ? (
+                                                <ul className={styles.shoppingList}>
+                                                    {allIngredients.map((item, index) => (
+                                                        <li key={index} className={styles.shoppingListItem}>
+                                                            {item.name} - {item.amount} {item.unit}
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            ) : (
+                                                <p>No original ingredients available.</p>
+                                            )}
                                         </div>
 
-                                        <div className={styles.modalListContainer}>
-                                            <div className={styles.listSection}>
-                                                <div className={styles.popupSectionHeader}>Ingredient List</div>
-                                                {allIngredients.length > 0 ? (
-                                                    <div className={styles.shoppingList}>
-                                                        {allIngredients.map((item, index) => (
-                                                            <li key={index} className={styles.shoppingListItem}>
-                                                                ⬜ {item.name} - {item.amount} {item.unit}
-                                                            </li>
-                                                        ))}
-                                                    </div>
-                                                ) : (
-                                                    <p>No original ingredients available.</p>
-                                                )}
-                                            </div>
-
-                                            <div className={styles.listSection}>
-                                            <div className={styles.popupSectionHeader}>Adjusted Ingredients List</div>
-                                                {shoppingList.length > 0 ? (
-                                                    <div className={styles.shoppingList}>
-                                                        {shoppingList.map((item, index) => (
-                                                            <li key={index} className={styles.shoppingListItem}>
-                                                                ⬜ {item.name} - {item.amount} {item.unit}
-                                                            </li>
-                                                        ))}
-                                                    </div>
-                                                ) : (
-                                                    <p>No items in the shopping list.</p>
-                                                )}
-                                            </div>
+                                        <div className={styles.listSection}>
+                                            <h3>Adjusted Ingredients List</h3>
+                                            {shoppingList.length > 0 ? (
+                                                <ul className={styles.shoppingList}>
+                                                    {shoppingList.map((item, index) => (
+                                                        <li key={index} className={styles.shoppingListItem}>
+                                                            {item.name} - {item.amount} {item.unit}
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            ) : (
+                                                <p>No items in the shopping list.</p>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
-                            )}
-                        </div>
+                            </div>
+                        )}
                     </div>
-                )}
-
-                <div className={styles.pageDescription}>
-                    Explore new dishes
                 </div>
+            )}
+
+            <div className={styles.pageDescription}>
+                Explore new dishes
             </div>
+        </div>
 
             {/* Filter Section */}
             <div className={styles.filtersContainer}>
@@ -504,23 +501,19 @@ const Discover = () => {
                                             recipeId={recipe.id}
                                             isFavorite={isFavorite(recipe.id)}
                                             onToggleFavorite={fetchFavorites}
-                                            className={styles.heartIcon}
-                                            sx={{
-                                                fontSize: '5rem !important', // Adjust icon size
-                                                padding: '8px', // Add padding if needed
-                                            }}
                                         />
-                                        <AddShoppingCartIcon
+                                    </div>
+                                    <div className={styles.cartIconContainer}>
+                                        <ShoppingCartIcon
                                             onClick={(e) => {
                                                 e.preventDefault();
                                                 e.stopPropagation();
                                                 handleCheck(recipe.id, recipe);
                                             }}
                                             className={styles.cartIcon}
-                                            style={{ color: checkedState[recipe.id] ? 'green' : '#506264' }}
-                                            sx={{ fontSize: '1.2rem !important' }}
+                                            style={{ color: checkedState[recipe.id] ? 'green' : 'grey' }}
                                         />
-                                    </div>
+                                </div>
                                 </div>
                                 <div className={styles.recipeInfoWrapper}>
                                     <div className={styles.recipeTime}>

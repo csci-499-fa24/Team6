@@ -2,7 +2,6 @@ import React from 'react';
 import axios from 'axios';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
-import styles from '../discover/DiscoverPage.module.css'
 
 const FavoriteButton = ({ recipeId, isFavorite, onToggleFavorite }) => {
     const addAndRemoveFavorites = async (recipeId, e) => {
@@ -28,16 +27,11 @@ const FavoriteButton = ({ recipeId, isFavorite, onToggleFavorite }) => {
     };
 
     return (
-        <div onClick={(e) => addAndRemoveFavorites(recipeId, e)} className={styles.favoriteButtonContainer}>
+        <div onClick={(e) => addAndRemoveFavorites(recipeId, e)}>
             {isFavorite ? (
-                <FavoriteIcon 
-                    style={{ color: '#ff78ae'}} 
-                    sx={{ fontSize: '1.3rem !important' }}
-                />
+                <FavoriteIcon style={{ color: 'red' }} />
             ) : (
-                <FavoriteBorderIcon 
-                    sx={{ fontSize: '1.3rem !important', color: '#506264'}}
-                />
+                <FavoriteBorderIcon />
             )}
         </div>
     );
