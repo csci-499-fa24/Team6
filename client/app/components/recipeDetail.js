@@ -17,6 +17,7 @@ import LoadingScreen from './loading';
 import { AddCircle, ConnectingAirportsOutlined } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
 import ErrorScreen from './error';
+import FavoriteButton from "@/app/components/FavoriteButton";
 
 // Recipe Image component
 const RecipeImage = ({ recipe }) => (
@@ -100,7 +101,11 @@ const IngredientsList = ({ usedIngredients = [], missedIngredients = [], onIngre
 
     const handleAddIngredient = async (ingredient) => {
         if (!ingredient) return;
-
+        if (ingredient.unit === '') {
+            if (ingredient.possibleUnits.length > 0) {
+                ingredient.unit = ingredient.possibleUnits[0];
+            }
+        }
         const payload = {
             ingredient_name: ingredient.name,
             amount: parseFloat(ingredient.amount),
@@ -145,21 +150,64 @@ const IngredientsList = ({ usedIngredients = [], missedIngredients = [], onIngre
         }
     };
 
-    const handleAddAllMissedIngredients = () => {
+    const handleAddAllMissedIngredients = async () => {
         const missedIngredients = mergedIngredients.filter((ingredient) => ingredient.status === 'missed');
         if (missedIngredients.length === 0) return;
+    
+        try {
+            // Make API calls for all missed ingredients to fetch possible units
+            const updatedIngredients = await Promise.all(
+                missedIngredients.map(async (ingredient) => {
+                    try {
+                        const url = `https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/food/ingredients/${ingredient.id}/information`;
+                        const options = {
+                            method: 'GET',
+                            headers: {
+                                'x-rapidapi-key': process.env.NEXT_PUBLIC_SPOONACULAR_API_KEY,
+                                'x-rapidapi-host': 'spoonacular-recipe-food-nutrition-v1.p.rapidapi.com',
+                            },
+                        };
+    
+                        const response = await fetch(url, options);
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        }
+                        const data = await response.json();
+                        const possibleUnits = data.possibleUnits || [ingredient.unit];
+                        const updatedPossibleUnits = possibleUnits.includes(ingredient.unit)
+                            ? possibleUnits
+                            : [...possibleUnits, ingredient.unit];
+                        if (ingredient.unit === '') {
+                            if (possibleUnits.length > 0) {
+                                ingredient.unit = possibleUnits[0];
+                            }
+                        }
+                        // Return ingredient with updated possibleUnits
+                        return { ...ingredient, possibleUnits: updatedPossibleUnits };
+                    } catch (error) {
+                        console.error(`Error fetching data for ingredient ${ingredient.name}:`, error);
+    
+                        // Fallback to default units if API call fails
+                        return { ...ingredient, possibleUnits: [ingredient.unit] };
+                    }
+                })
+            );
 
-        // Initialize the review list
-        const initializedIngredients = missedIngredients.map((ingredient) => ({
-            ...ingredient,
-            modifiedAmount: ingredient.amount || '',
-            modifiedUnit: ingredient.unit || '',
-        }));
-
-        setReviewIngredients(initializedIngredients);
-        setModifiedReviewIngredients(initializedIngredients);
-        setShowReviewPopup(true); // Show the review popup
+            // Initialize the review list with updated ingredients
+            const initializedIngredients = updatedIngredients.map((ingredient) => ({
+                ...ingredient,
+                modifiedAmount: ingredient.amount || '',
+                modifiedUnit: ingredient.unit || '',
+            }));
+    
+            setReviewIngredients(initializedIngredients);
+            setModifiedReviewIngredients(initializedIngredients);
+            setShowReviewPopup(true); // Show the review popup
+        } catch (error) {
+            console.error('Error processing missed ingredients:', error);
+        }
     };
+    
 
     const handleReviewChange = (index, key, value) => {
         setModifiedReviewIngredients((prev) =>
@@ -228,9 +276,12 @@ const IngredientsList = ({ usedIngredients = [], missedIngredients = [], onIngre
     // Called when exact amount is chosen
     const handleExactAmount = async () => {
         if (selectedIngredient) {
+            const updatedPossibleUnits = selectedIngredient.possibleUnits.includes(selectedIngredient.unit)
+            ? selectedIngredient.possibleUnits
+            : [...selectedIngredient.possibleUnits, selectedIngredient.unit];
             const updatedIngredient = {
                 ...selectedIngredient,
-                possibleUnits: selectedIngredient.possibleUnits // Create an array with the unit as its only element
+                possibleUnits: updatedPossibleUnits // Create an array with the unit as its only element
             };
             setShowOptions(false);
             setShowCustomInput(false);
@@ -369,6 +420,11 @@ const IngredientsList = ({ usedIngredients = [], missedIngredients = [], onIngre
                                                             handleReviewChange(index, 'modifiedUnit', e.target.value)
                                                         }
                                                     >
+                                                        {modifiedReviewIngredients[index].possibleUnits.map((unit) => (
+                                                            <MenuItem key={unit} value={unit} sx={{ '&.MuiMenuItem-root': { fontFamily: 'Inter' } }}>
+                                                                {unit}
+                                                            </MenuItem>
+                                                        ))}
                                                     </CustomDropdown>
                                                 </div>
                                             </div>
@@ -413,8 +469,7 @@ const InstructionsList = ({instructions}) => {
 };
 
 // Nutrient Tracker component
-const NutrientTracker = ({ recipe }) => {
-
+const NutrientTracker =  ({ recipe }) => {
     const [goals, setGoals] = useState({
         protein: '',
         carbohydrates: '',
@@ -425,26 +480,26 @@ const NutrientTracker = ({ recipe }) => {
         sugar: '',
         calories: '',
     });
+    const [consumed, setConsumed] = useState(null);
 
-    useEffect(() => {
-        const fetchNutritionData = async () => {
-            const token = localStorage.getItem('token');
-            try {
-                const response = await fetch(process.env.NEXT_PUBLIC_SERVER_URL + '/api/nutrition-get', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const data = await response.json();
-                const { goals, consumed } = data;
-                const filteredGoals = { ...goals };
-                delete filteredGoals.user_id;
-                setGoals(filteredGoals);
-            } catch (error) {
-                console.error("Error fetching nutrition data", error);
-            }
-        };
-        fetchNutritionData();
-    }, []);
-
+    const fetchNutriGoals = async () => {
+        const token = localStorage.getItem('token');
+        try {
+            const response = await fetch(process.env.NEXT_PUBLIC_SERVER_URL + '/api/nutrition-get', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const data = await response.json();
+            const { goals, consumed } = data;
+            const filteredGoals = { ...goals };
+            delete filteredGoals.user_id;
+            const filteredConsumed = { ...consumed };
+            delete filteredConsumed.user_id;
+            setGoals(filteredGoals);
+            setConsumed(filteredConsumed);
+        } catch (error) {
+            console.error("Error fetching nutrition data", error);
+        }
+    }
 
     const nutrients = [
         { name: "Calories", color: "#74DE72", backgroundColor: "#C3F5C2" },
@@ -465,6 +520,19 @@ const NutrientTracker = ({ recipe }) => {
         return nutrient ? `${Math.round(nutrient.amount)} ${nutrient.unit}` : 0;
     };
 
+    const calculatePercentage = (nutrientName) => {
+        const amount = parseFloat(getRoundedNutrientAmount(nutrientName));
+        const goalAmount = parseFloat(goals[nutrientName.toLowerCase()]);
+        if(!goalAmount) {
+            return 0;
+        }
+        return Math.min((amount / goalAmount) * 100, 100);
+    };
+
+    useEffect(() => {
+        fetchNutriGoals(); // Fetch nutrition goals on component mount
+    }, []);
+
     return (
         <div className={styles.trackerWrapper}>
             {nutrients.map((nutrient, index) => (
@@ -472,7 +540,7 @@ const NutrientTracker = ({ recipe }) => {
                     <div className={styles.trackerVisual}>
                         <div className={styles.trackerItemTitle}>{nutrient.name}</div>
                         <CustomCircularProgress
-                            value={75} 
+                            value={calculatePercentage(nutrient.name)} // Assuming a static value for progress, you can adjust this as needed
                             progressColor={nutrient.color}
                             backgroundColor={nutrient.backgroundColor}
                             size={50}
@@ -480,7 +548,9 @@ const NutrientTracker = ({ recipe }) => {
                     </div>
                     <div className={styles.data}>
                         {getRoundedNutrientAmount(nutrient.name)}{" "}
-                        <span style={{ color: nutrient.color }}>(30%)</span>
+                        <span style={{ color: nutrient.color }}>
+                            ({Math.round(calculatePercentage(nutrient.name))}%)
+                        </span>
                     </div>
                 </div>
             ))}
@@ -615,7 +685,6 @@ const RecipeDetails = ({ params }) => {
     const fetchRecipeDetails = async (recipeIds) => {
         const storedRecipe = JSON.parse(localStorage.getItem('selectedRecipe'));
  
-        console.log("call api")
         try {
             setLoading(true);
             const recipeDetails = await axios.get(`https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/informationBulk`, {
@@ -673,7 +742,6 @@ const RecipeDetails = ({ params }) => {
         if (storedRecipe) {
             setRecipe(storedRecipe);
             if (!storedRecipe.instructions || !storedRecipe.nutrition?.nutrients) {
-                console.log("no instruction or nutrients")
                 fetchRecipeDetails(storedRecipe.id);
             } else {
                 setLoading(false);
@@ -703,7 +771,10 @@ const RecipeDetails = ({ params }) => {
                 <div className={styles.errorWrapper}><ErrorScreen error={error}/></div>
             ) : recipe ? (
                 <div className={styles.recipeWrapper}>
-                    <div className={styles.recipeTitle}>{recipe.title}</div>
+                    <div className={styles.TitleWrapper}>
+                        <div className={styles.recipeTitle}>{recipe.title}</div>
+                        <FavoriteButton recipeId={recipe.id} />
+                    </div>
                     <div className={styles.recipeContent}>
                         <div className={styles.recipeLeft}>
                             <RecipeImage recipe={recipe} />
