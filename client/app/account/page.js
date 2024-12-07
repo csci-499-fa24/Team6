@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import Navbar from "../components/navbar";
 import IngredientInput from './IngredientInput';
 import NutritionInput from "./NutritionInput";
+import NutritionHistory from "./NutritionHistory";
 import AllergenInput from "./AllergenInput";
 import RecipeHistory from './RecipeHistory';
 import Settings from './Settings';
@@ -11,6 +12,7 @@ import Settings from './Settings';
 import React, { useState, useEffect } from "react";
 import styles from './account.module.css';
 import LoadingScreen from '../components/loading';
+
 
 const Pantry = () => {
   const router = useRouter();
@@ -73,46 +75,53 @@ const Pantry = () => {
       <div className={styles.pantryContent}>
         <div className={styles.sidebar}>
           <div
-            onClick={() => handleSectionClick('Pantry')}
-            className={activeSection === 'Pantry' ? styles.active : styles.notActive}
+              onClick={() => handleSectionClick('Pantry')}
+              className={activeSection === 'Pantry' ? styles.active : styles.notActive}
           >
             Pantry
           </div>
           <div
-            onClick={() => handleSectionClick('Allergens')}
-            className={activeSection === 'Allergens' ? styles.active : styles.notActive}
+              onClick={() => handleSectionClick('Allergens')}
+              className={activeSection === 'Allergens' ? styles.active : styles.notActive}
           >
             Allergens
           </div>
           <div
-            onClick={() => handleSectionClick('Nutrition')}
-            className={activeSection === 'Nutrition' ? styles.active : styles.notActive}
+              onClick={() => handleSectionClick('Nutrition')}
+              className={activeSection === 'Nutrition' ? styles.active : styles.notActive}
           >
             Nutrition
           </div>
           <div
-            onClick={() => handleSectionClick('History')}
-            className={activeSection === 'History' ? styles.active : styles.notActive}
+              onClick={() => handleSectionClick('nutritionHistory')}
+              className={activeSection === 'nutritionHistory' ? styles.active : styles.notActive}
+          >
+            Nutrition History
+          </div>
+          <div
+              onClick={() => handleSectionClick('History')}
+              className={activeSection === 'History' ? styles.active : styles.notActive}
           >
             Recipe History
           </div>
           <div
-            onClick={() => handleSectionClick('Settings')}
-            className={activeSection === 'Settings' ? styles.active : styles.notActive}
+              onClick={() => handleSectionClick('Settings')}
+              className={activeSection === 'Settings' ? styles.active : styles.notActive}
           >
             Settings
           </div>
         </div>
         <div className={styles.pantrySection}>
           {activeSection === 'Pantry' && (
-            <>
-              <IngredientInput />
-            </>
+              <>
+                <IngredientInput/>
+              </>
           )}
           {activeSection === 'Allergens' && <AllergenInput />}
           {activeSection === 'Nutrition' && <NutritionInput />}
           {activeSection === 'History' && <RecipeHistory />}
           {activeSection === 'Settings' && <Settings />}
+          {activeSection === 'nutritionHistory' && <NutritionHistory />}
         </div>
       </div>
     </div>

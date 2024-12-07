@@ -1,0 +1,391 @@
+/* Container */
+.nutritionHistory {
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Title */
+.title {
+    text-align: left;
+    color: black;
+    margin-bottom: 20px;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+/* Date Picker Section */
+.datePickerSection {
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.datePickerSection label {
+    margin-right: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #555;
+}
+
+.datePickerSection .react-datepicker-wrapper {
+    display: inline-block;
+}
+
+/* Period Filter Section */
+.filterOptions {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+/* Nutrient Picker Container */
+.nutritionPicker {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 items per row */
+    gap: 15px; /* Space between items */
+    margin-bottom: 20px; /* Bottom margin for spacing */
+}
+
+/* Label Style for Each Nutrient */
+.nutritionPicker label {
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+    color: #555;
+    font-weight: normal;
+}
+
+.nutritionPicker input[type="checkbox"] {
+    margin-right: 10px; /* Space between checkbox and label text */
+}
+
+/* Responsive Design: For smaller screens, stack the items in 2 columns */
+@media (max-width: 768px) {
+    .nutritionPicker {
+        grid-template-columns: repeat(2, 1fr); /* 2 items per row for small screens */
+    }
+}
+
+/* For very small screens, display one item per row */
+@media (max-width: 480px) {
+    .nutritionPicker {
+        grid-template-columns: 1fr; /* 1 item per row */
+    }
+}
+
+.filterOptions button {
+    margin: 0 10px;
+    padding: 10px 20px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #f8f9fa;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.filterOptions .activeButton {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+.filterOptions button:hover {
+    background-color: #0044aa;
+    border-color: #0044aa;
+}
+
+/* History Period Selection */
+.historyPeriodSelection {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+.historyPeriodSelection label {
+    font-size: 16px;
+    font-weight: bold;
+    color: #555;
+    margin-bottom: 5px;
+}
+
+.historyPeriodSelection select {
+    padding: 8px 12px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 150px;
+}
+
+/* Bar and Line Charts */
+.chartSection {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.chartSection h3 {
+    text-align: left;
+    margin-bottom: 15px;
+    font-size: 20px;
+    color: black;
+}
+
+/* History Graph Section */
+.historySection {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.historySection h3 {
+    text-align: left;
+    margin-bottom: 15px;
+    font-size: 20px;
+    color: #007bff;
+}
+
+/* Chart Responsiveness */
+.chartContainer {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .nutritionHistory {
+        padding: 15px;
+    }
+
+    .title {
+        font-size: 24px;
+    }
+
+    .chartSection h3,
+    .historySection h3 {
+        font-size: 18px;
+    }
+
+    .filterOptions {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .filterOptions button {
+        margin: 5px 0;
+    }
+
+    .historyPeriodSelection select {
+        width: 100%;
+    }
+}
+
+/* Date Picker Input */
+.datePickerSection .react-datepicker-wrapper {
+    display: inline-block;
+}
+
+.datePickerSection .react-datepicker__input-container {
+    display: inline-block;
+}
+
+.datePickerSection input {
+    padding: 8px 12px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 200px;
+    margin-right: 10px; /* Space between the label and the input */
+    transition: border-color 0.3s ease;
+}
+
+.datePickerSection input:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+/* Date Picker Calendar Dropdown */
+.react-datepicker__triangle {
+    display: none; /* Hide the triangle next to the calendar */
+}
+
+.react-datepicker__header {
+    background-color: #007bff;
+    color: white;
+    font-weight: bold;
+    border-radius: 4px 4px 0 0;
+}
+
+.react-datepicker__month {
+    background-color: #f8f9fa;
+}
+
+.react-datepicker__day {
+    font-size: 14px;
+    color: #555;
+}
+
+.react-datepicker__day:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+.react-datepicker__day--selected {
+    background-color: #007bff;
+    color: white;
+}
+
+.react-datepicker__day--disabled {
+    color: #ccc;
+}
+
+/* Adjustments for Date Picker Responsiveness */
+@media (max-width: 768px) {
+    .datePickerSection input {
+        width: 100%;
+        margin-right: 0;
+    }
+
+    .datePickerSection {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+/* Period Filter Container */
+.periodFilterSection {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+/* Styling for each individual label in the period filter */
+.periodFilterSection label {
+    font-size: 16px;
+    font-weight: bold;
+    color: #555;
+    margin-bottom: 5px;
+    display: block;
+}
+
+/* Styling for the select dropdowns (Year, Month) */
+.periodFilterSection select {
+    padding: 8px 12px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 180px;
+    margin-bottom: 10px;
+    transition: border-color 0.3s ease;
+}
+
+/* Focused state for select elements */
+.periodFilterSection select:focus {
+    border-color: black;
+    outline: none;
+}
+
+/* Styling for the Date Picker input */
+.periodFilterSection .react-datepicker-wrapper {
+    display: inline-block;
+    width: 180px;
+}
+
+.periodFilterSection input {
+    padding: 8px 12px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 180px;
+    transition: border-color 0.3s ease;
+}
+
+/* Focused state for the Date Picker input */
+.periodFilterSection input:focus {
+    border-color: black;
+    outline: none;
+}
+
+/* Date Picker Specific Styles */
+.react-datepicker__triangle {
+    display: none; /* Hide the triangle */
+}
+
+.react-datepicker__header {
+    background-color: #007bff;
+    color: white;
+    font-weight: bold;
+    border-radius: 4px 4px 0 0;
+}
+
+.react-datepicker__month {
+    background-color: #f8f9fa;
+}
+
+.react-datepicker__day {
+    font-size: 14px;
+    color: #555;
+}
+
+.react-datepicker__day:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+.react-datepicker__day--selected {
+    background-color: #007bff;
+    color: white;
+}
+
+.react-datepicker__day--disabled {
+    color: #ccc;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .periodFilterSection {
+        align-items: flex-start;
+    }
+
+    .periodFilterSection select,
+    .periodFilterSection input {
+        width: 100%; /* Makes dropdowns and date picker input full width on small screens */
+    }
+
+    .periodFilterSection label {
+        margin-bottom: 8px;
+    }
+}
+
+/* Period Filter Section */
+.periodFilterSection {
+    margin-bottom: 20px;
+}
+
+/* Month Filter Section */
+.monthFilterSection {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px; /* Add space between year and month select boxes */
+}
+
+.monthFilterSection label {
+    font-size: 16px;
+    font-weight: bold;
+    color: #555;
+}
+
+.monthFilterSection select {
+    padding: 8px 12px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 150px;
+}
