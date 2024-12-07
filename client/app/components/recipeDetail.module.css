@@ -158,7 +158,6 @@
 .title {
     font-size: 1.3em;
     font-weight: 600;
-    margin-bottom: 1em;
 }
 
 .recipeInstructionWrapper {
@@ -288,25 +287,14 @@
     margin-top: 0.5em;
 }
 
-.addAllButton {
-    background-color: rgba(143, 195, 255, .73);
-    color: #506264;
-    font-size: 1em;
-    font-weight: 600;
-    text-align: center;
-    padding: 0.6em 1.2em;
-    border-radius: 7px;
-    margin-top: 1em;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.addAllButton:hover {
-    background-color: rgba(143, 195, 255, 1);
-}
-
 .addAllButtonText {
-    display: inline-block;
+    cursor: pointer;
+    font-size: 14px;
+    color: black;
+
+    &:hover {
+        color:#EC4A27
+    }
 }
 
 
@@ -429,11 +417,15 @@
 .titleWrapper {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     width: 100%;
+    padding-bottom: 10px;
 }
 
 .titleButtons {
     color: #EC4A27;
+    display: flex;
+    align-items: center;
 }
 
 .titleButtons:hover {
@@ -456,34 +448,6 @@
     flex: 1;
     align-items: center;
     justify-content: center;
-}
-
-.addAllButton {
-    display: inline-block;
-    padding: 12px 24px;
-    margin: 20px auto;
-    background-color: #4caf50;
-    color: #ffffff;
-    font-size: 16px;
-    font-weight: bold;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    text-align: center;
-    transition: background-color 0.3s;
-}
-
-.addAllButton:hover {
-    background-color: #45a049;
-}
-
-.addAllButton:active {
-    background-color: #3e8e41;
-    transform: scale(0.98);
-}
-
-.addAllButtonText {
-    display: block;
 }
 
 /* The background overlay when the popup is open */
