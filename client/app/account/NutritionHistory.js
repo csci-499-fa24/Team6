@@ -33,68 +33,72 @@ const NutritionHistory = () => {
         calories: true,
     });
 
-    const fetchNutritionData = async (date) => {
-        const data = {
-            protein: 50,
-            carbohydrates: 150,
-            total_fat: 60,
-            saturated_fat: 25,
-            fiber: 30,
-            sodium: 2000,
-            sugar: 45,
-            calories: 2000,
-        };
-        setNutritionData(data);
-    };
+    // Fetch daily nutrition data for the selected date
+    const fetchDailyNutritionData = async (date) => {
+        const token = localStorage.getItem('token');
+        const formattedDate = new Date(date).toISOString().split('T')[0];
 
-    const fetchHistoryData = async () => {
-        let data = [];
-        if (historyPeriod === 'weekly') {
-            // Weekly data for each day of the week
-            data = [
-                { label: 'Mon', protein: 45, carbohydrates: 120, total_fat: 50, saturated_fat: 20, fiber: 10, sodium: 1500, sugar: 40, calories: 2000 },
-                { label: 'Tue', protein: 50, carbohydrates: 150, total_fat: 60, saturated_fat: 25, fiber: 12, sodium: 1600, sugar: 45, calories: 2100 },
-                { label: 'Wed', protein: 60, carbohydrates: 140, total_fat: 70, saturated_fat: 30, fiber: 15, sodium: 1700, sugar: 50, calories: 2200 },
-                { label: 'Thu', protein: 55, carbohydrates: 130, total_fat: 65, saturated_fat: 28, fiber: 11, sodium: 1800, sugar: 42, calories: 2050 },
-                { label: 'Fri', protein: 65, carbohydrates: 160, total_fat: 75, saturated_fat: 35, fiber: 16, sodium: 1900, sugar: 55, calories: 2300 },
-                { label: 'Sat', protein: 70, carbohydrates: 170, total_fat: 80, saturated_fat: 40, fiber: 20, sodium: 2000, sugar: 60, calories: 2400 },
-                { label: 'Sun', protein: 50, carbohydrates: 150, total_fat: 60, saturated_fat: 22, fiber: 13, sodium: 1600, sugar: 48, calories: 2100 },
-            ];
-        } else if (historyPeriod === 'monthly') {
-            // Monthly data for each day of the month
-            data = Array.from({ length: 30 }, (_, i) => ({
-                label: `Day ${i + 1}`,
-                protein: Math.random() * 80 + 40, // Protein between 40 and 120
-                carbohydrates: Math.random() * 200 + 100, // Carbs between 100 and 300
-                total_fat: Math.random() * 100 + 40, // Fat between 40 and 140
-                saturated_fat: Math.random() * 50 + 10, // Saturated Fat between 10 and 60
-                fiber: Math.random() * 30 + 5, // Fiber between 5 and 35
-                sodium: Math.random() * 2500 + 1000, // Sodium between 1000 and 3500
-                sugar: Math.random() * 100 + 30, // Sugar between 30 and 130
-                calories: Math.random() * 2500 + 1500, // Calories between 1500 and 4000
-            }));
-        } else if (historyPeriod === 'yearly') {
-            // Yearly data for each month of the year
-            data = Array.from({ length: 12 }, (_, i) => ({
-                label: `Month ${i + 1}`,
-                protein: Math.random() * 2000 + 500, // Protein between 500 and 2500
-                carbohydrates: Math.random() * 5000 + 2000, // Carbs between 2000 and 7000
-                total_fat: Math.random() * 3000 + 1000, // Fat between 1000 and 4000
-                saturated_fat: Math.random() * 1500 + 500, // Saturated Fat between 500 and 2000
-                fiber: Math.random() * 300 + 50, // Fiber between 50 and 350
-                sodium: Math.random() * 30000 + 10000, // Sodium between 10000 and 40000
-                sugar: Math.random() * 1200 + 400, // Sugar between 400 and 1600
-                calories: Math.random() * 30000 + 10000, // Calories between 10000 and 40000
-            }));
+        console.log('Formatted date:', formattedDate);  // Debugging the formatted date
+
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/nutrition-get/daily?date=${formattedDate}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const data = await response.json();
+            setNutritionData(data || { protein: 0, carbohydrates: 0, total_fat: 0, saturated_fat: 0, fiber: 0, sodium: 0, sugar: 0, calories: 0 });
+        } catch (error) {
+            console.error("Error fetching daily nutrition data", error);
         }
-        setHistoryData(data);
     };
 
+    // Fetch history data based on selected history period, year, and month
+    const fetchHistoryData = async (date, historyPeriod, year, month) => {
+        const token = localStorage.getItem('token');
+        const formattedDate = new Date(date).toISOString().split('T')[0];
+        try {
+            const url = new URL(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/nutrition-get/history`);
+            url.searchParams.append('historyPeriod', historyPeriod);
+            if (date) {
+                url.searchParams.append('date', formattedDate);
+            }
+            if (year) {
+                url.searchParams.append('year', year);
+            }
+            if (date) {
+                url.searchParams.append('month', month);
+            }
 
+            const response = await fetch(url, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`Failed to fetch history data: ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            if (Array.isArray(data) && data.length > 0) {
+                setHistoryData(data);
+            } else {
+                setHistoryData([]); // Set empty data if no results are returned
+            }
+        } catch (error) {
+            console.error("Error fetching historical nutrition data:", error);
+        }
+    };
+
+    // Effect for daily nutrition data (for selected date)
     useEffect(() => {
-        fetchNutritionData(selectedDate);
-        fetchHistoryData();
-    }, [selectedDate, historyPeriod, year, month]);
+        fetchDailyNutritionData(selectedDate);
+    }, [selectedDate]);
+
+    // Effect for historical nutrition data (for selected period, year, month, or week)
+    useEffect(() => {
+        fetchHistoryData(selectedWeekDate, historyPeriod, year, month);
+    }, [historyPeriod, selectedWeekDate, year, month]);
 
     const barChartData = {
         labels: ['Protein', 'Carbs', 'Fat', 'Saturated Fat', 'Fiber', 'Sodium', 'Sugar', 'Calories'],
@@ -135,12 +139,14 @@ const NutritionHistory = () => {
             },
         ],
     };
+
     const handleNutrientToggle = (nutrient) => {
         setSelectedNutrients((prev) => ({
             ...prev,
             [nutrient]: !prev[nutrient],
         }));
     };
+
     const getColorForNutrient = (nutrient, alpha = 1) => {
         const colors = {
             protein: '#B6D9FC',
@@ -154,13 +160,14 @@ const NutritionHistory = () => {
         };
         return colors[nutrient] || 'rgba(0, 0, 0, ' + alpha + ')';
     };
+
     const lineChartData = {
         labels: historyData.map((data) => data.label),
         datasets: Object.keys(selectedNutrients)
             .filter((nutrient) => selectedNutrients[nutrient])
             .map((nutrient) => ({
                 label: nutrient
-                    .replace(/_/g, ' ') 
+                    .replace(/_/g, ' ')
                     .charAt(0).toUpperCase() + nutrient.slice(1),
                 data: historyData.map((data) => data[nutrient]),
                 borderColor: getColorForNutrient(nutrient),
@@ -168,8 +175,6 @@ const NutritionHistory = () => {
                 tension: 0.3,
             })),
     };
-
-
 
     return (
         <div className={styles.nutritionHistory}>
@@ -234,7 +239,6 @@ const NutritionHistory = () => {
                     {historyPeriod === 'monthly' && (
                         <div className={styles.periodFilterSection}>
                             <div className={styles.monthFilterSection}>
-
                                 <div>
                                     <div className={styles.nutrientSubheader}>Year:</div>
                                     <select
@@ -242,9 +246,9 @@ const NutritionHistory = () => {
                                         onChange={(e) => setYear(e.target.value)}
                                         classname={styles.selectStyling}
                                     >
-                                        {[...Array(10)].map((_, i) => (
-                                            <option key={i} value={new Date().getFullYear() - i}>
-                                                {new Date().getFullYear() - i}
+                                        {[...Array(20)].map((_, i) => (
+                                            <option key={i} value={new Date().getFullYear() - 10 + i}>
+                                                {new Date().getFullYear() - 10 + i}
                                             </option>
                                         ))}
                                     </select>
@@ -267,7 +271,6 @@ const NutritionHistory = () => {
                                     </select>
                                 </div>
                             </div>
-
                         </div>
                     )}
 
@@ -278,9 +281,9 @@ const NutritionHistory = () => {
                                 value={year}
                                 onChange={(e) => setYear(e.target.value)}
                             >
-                                {[...Array(10)].map((_, i) => (
-                                    <option key={i} value={new Date().getFullYear() - i}>
-                                        {new Date().getFullYear() - i}
+                                {[...Array(20)].map((_, i) => (
+                                    <option key={i} value={new Date().getFullYear() - 10 + i}>
+                                        {new Date().getFullYear() - 10 + i}
                                     </option>
                                 ))}
                             </select>
@@ -298,7 +301,6 @@ const NutritionHistory = () => {
                         </div>
                     )}
                 </div>
-
 
                 <div className={styles.historySection}>
                     <Line data={lineChartData} />
