@@ -1,19 +1,19 @@
 /* Container */
 .nutritionHistory {
     max-width: 900px;
-    margin: 20px auto;
-    padding: 20px;
+    margin: 0px auto;
+    padding: 0px 20px;
     border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-/* Title */
-.title {
-    text-align: left;
-    color: black;
-    margin-bottom: 20px;
-    font-size: 28px;
-    font-weight: bold;
+.chartHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
 }
 
 /* Date Picker Section */
@@ -21,14 +21,13 @@
     display: flex;
     justify-content: left;
     align-items: center;
-    margin-bottom: 20px;
 }
 
-.datePickerSection label {
+.datePickerLabel {
     margin-right: 10px;
-    font-size: 16px;
-    font-weight: bold;
-    color: #555;
+    font-size: 14px;
+    font-weight: 400;
+    color: #506264
 }
 
 .datePickerSection .react-datepicker-wrapper {
@@ -41,12 +40,16 @@
     justify-content: center;
     margin-bottom: 20px;
 }
+
 /* Nutrient Picker Container */
 .nutritionPicker {
     display: grid;
-    grid-template-columns: repeat(4, 1fr); /* 4 items per row */
-    gap: 15px; /* Space between items */
-    margin-bottom: 20px; /* Bottom margin for spacing */
+    grid-template-columns: repeat(4, 1fr);
+    /* 4 items per row */
+    gap: 15px;
+    /* Space between items */
+    margin-bottom: 20px;
+    /* Bottom margin for spacing */
 }
 
 /* Label Style for Each Nutrient */
@@ -59,42 +62,68 @@
 }
 
 .nutritionPicker input[type="checkbox"] {
-    margin-right: 10px; /* Space between checkbox and label text */
+    margin-right: 10px;
+    /* Space between checkbox and label text */
 }
 
 /* Responsive Design: For smaller screens, stack the items in 2 columns */
 @media (max-width: 768px) {
     .nutritionPicker {
-        grid-template-columns: repeat(2, 1fr); /* 2 items per row for small screens */
+        grid-template-columns: repeat(2, 1fr);
+        /* 2 items per row for small screens */
     }
 }
 
 /* For very small screens, display one item per row */
 @media (max-width: 480px) {
     .nutritionPicker {
-        grid-template-columns: 1fr; /* 1 item per row */
+        grid-template-columns: 1fr;
+        /* 1 item per row */
     }
 }
 
 .filterOptions button {
     margin: 0 10px;
-    padding: 10px 20px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    padding: 8px 25px;
+    border: 2px solid #ddd;
+    border-radius: 10px;
     background-color: #f8f9fa;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 13px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
 }
 
 .filterOptions .activeButton {
-    background-color: #007bff;
+    background-color: #EC4A27;
     color: white;
-    border-color: #007bff;
+    border-color: #EC4A27;
 }
 
 .filterOptions button:hover {
-    background-color: #0044aa;
-    border-color: #0044aa;
+    border-color: #EC4A27;
+}
+
+.nutrientSubheader {
+    margin-right: 10px;
+    margin-bottom: 10px;
+    font-size: 15px;
+    font-weight: 500;
+    color: #506264;
+}
+
+.nutrientLabel {
+    font-size: 14px !important;
+}
+
+.nutrientFilter {
+    width: 60%;
+}
+
+.lineGraphFilter {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
 }
 
 /* History Period Selection */
@@ -122,10 +151,8 @@
 
 /* Bar and Line Charts */
 .chartSection {
-    margin-top: 20px;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    margin-bottom: 100px;
 }
 
 .chartSection h3 {
@@ -140,7 +167,8 @@
     margin-top: 20px;
     padding: 15px;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    margin-bottom: 100px
 }
 
 .historySection h3 {
@@ -152,8 +180,25 @@
 
 /* Chart Responsiveness */
 .chartContainer {
-    max-width: 100%;
+    width: 100%;
     height: auto;
+}
+
+.lineGraphContainer {
+    width: 100%;
+    height: auto;
+}
+
+.lineGraphHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.nutritionHistoryTitle {
+    font-size: 18px;
+    font-weight: 500;
 }
 
 /* Responsive Design */
@@ -186,32 +231,38 @@
 }
 
 /* Date Picker Input */
-.datePickerSection .react-datepicker-wrapper {
+.react-datepicker-wrapper {
     display: inline-block;
 }
 
-.datePickerSection .react-datepicker__input-container {
+.react-datepicker__input-container {
     display: inline-block;
 }
 
-.datePickerSection input {
-    padding: 8px 12px;
-    font-size: 14px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    width: 200px;
-    margin-right: 10px; /* Space between the label and the input */
-    transition: border-color 0.3s ease;
+.datePickerSection input,
+.periodFilterSection input {
+    padding: 8px 12px !important;
+    font-size: 13px !important;
+    border: 2px solid #E0E0E0 !important;
+    border-radius: 10px !important;
+    width: 200px !important;
+    margin-right: 10px !important;
+    transition: border-color 0.3s ease !important;
+    font-family: 'Inter', sans-serif !important;
 }
 
-.datePickerSection input:focus {
-    border-color: #007bff;
-    outline: none;
+.datePickerSection input:focus,
+.periodFilterSection input:focus {
+    border-color: #EC4A27 !important;
+    outline: none !important;
 }
 
 /* Date Picker Calendar Dropdown */
+
+
 .react-datepicker__triangle {
-    display: none; /* Hide the triangle next to the calendar */
+    display: none;
+    /* Hide the triangle next to the calendar */
 }
 
 .react-datepicker__header {
@@ -219,6 +270,11 @@
     color: white;
     font-weight: bold;
     border-radius: 4px 4px 0 0;
+    background-color: pink;
+}
+
+.react-datepicker__current-month {
+    font-size: 12px !important;
 }
 
 .react-datepicker__month {
@@ -277,18 +333,16 @@
 /* Styling for the select dropdowns (Year, Month) */
 .periodFilterSection select {
     padding: 8px 12px;
-    font-size: 14px;
     border: 1px solid #ddd;
-    border-radius: 4px;
-    width: 180px;
-    margin-bottom: 10px;
-    transition: border-color 0.3s ease;
-}
+    width: 150px;
+    border: 2px solid #E0E0E0;
+    font-size: 13px;
+    border-radius: 10px !important;
+    font-family: 'Inter', sans-serif !important;
 
-/* Focused state for select elements */
-.periodFilterSection select:focus {
-    border-color: black;
-    outline: none;
+    &:focus {
+        border: 2px solid #EC4A27;
+    }
 }
 
 /* Styling for the Date Picker input */
@@ -314,7 +368,8 @@
 
 /* Date Picker Specific Styles */
 .react-datepicker__triangle {
-    display: none; /* Hide the triangle */
+    display: none;
+    /* Hide the triangle */
 }
 
 .react-datepicker__header {
@@ -355,7 +410,8 @@
 
     .periodFilterSection select,
     .periodFilterSection input {
-        width: 100%; /* Makes dropdowns and date picker input full width on small screens */
+        width: 100%;
+        /* Makes dropdowns and date picker input full width on small screens */
     }
 
     .periodFilterSection label {
@@ -373,7 +429,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 20px; /* Add space between year and month select boxes */
+    gap: 20px;
 }
 
 .monthFilterSection label {
@@ -382,10 +438,99 @@
     color: #555;
 }
 
-.monthFilterSection select {
+.monthFilterSection select,
+.selectStyling select {
     padding: 8px 12px;
-    font-size: 14px;
     border: 1px solid #ddd;
-    border-radius: 4px;
     width: 150px;
+    border: 2px solid #E0E0E0;
+    font-size: 13px;
+    border-radius: 10px !important;
+    font-family: 'Inter', sans-serif !important;
+
+    &:focus {
+        border: 2px solid #EC4A27;
+    }
+}
+
+@media (min-width: 1200px) and (max-width: 1300px) {
+    .nutritionHistory {
+        max-width: 800px;
+    }
+
+    .nutrientLabel {
+        font-size: 13px !important;
+    }
+
+    .nutrientFilter {
+        width: 65%;
+    }
+}
+
+@media (min-width: 1100px) and (max-width: 1200px) {
+    .nutritionHistory {
+        max-width: 700px;
+    }
+
+    .nutrientLabel {
+        font-size: 12px !important;
+    }
+
+    .nutrientFilter {
+        width: 64%;
+    }
+
+    .nutritionPicker {
+        gap: 10px;
+    }
+}
+
+@media (min-width: 0px) and (max-width: 1100px) {
+    .nutritionHistory {
+        max-width: 400px;
+    }
+
+    .nutrientLabel {
+        font-size: 12px !important;
+    }
+
+    .nutrientFilter {
+        width: 100%;
+        margin-bottom: 15px;
+    }
+
+    .nutritionPicker {
+        gap: 10px;
+    }
+
+    .chartHeader, .lineGraphFilter {
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+    }
+
+    .nutritionHistoryTitle {
+        margin-bottom: 20px;
+        font-size: 15px;
+    }
+
+    .filterOptions {
+        flex-direction: row;
+    }
+
+    .filterOptions button {
+        margin: 0 7px;
+        padding: 7px 20px;
+        cursor: pointer;
+        font-size: 11px;
+    }
+
+    .lineGraphHeader {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .filterOptions {
+        margin-left: -7px;
+    }
 }

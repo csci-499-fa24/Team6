@@ -112,24 +112,24 @@ const NutritionHistory = () => {
                     nutritionData.calories,
                 ],
                 backgroundColor: [
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(153, 102, 255, 0.2)',
-                    'rgba(255, 159, 64, 0.2)',
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(100, 181, 246, 0.2)',
-                    'rgba(220, 120, 220, 0.2)',
+                    '#B6D9FC',
+                    '#FFCF96',
+                    '#F5AD9D',
+                    '#F5C5CE',
+                    '#C1CBB9',
+                    '#CBA6DD',
+                    '#C9C8FF',
+                    '#C3F5C2',
                 ],
                 borderColor: [
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(153, 102, 255, 1)',
-                    'rgba(255, 159, 64, 1)',
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(100, 181, 246, 1)',
-                    'rgba(220, 120, 220, 1)',
+                    '#B6D9FC',
+                    '#FFCF96',
+                    '#F5AD9D',
+                    '#F5C5CE',
+                    '#C1CBB9',
+                    '#CBA6DD',
+                    '#C9C8FF',
+                    '#C3F5C2',
                 ],
                 borderWidth: 1,
             },
@@ -143,14 +143,14 @@ const NutritionHistory = () => {
     };
     const getColorForNutrient = (nutrient, alpha = 1) => {
         const colors = {
-            protein: 'rgba(75, 192, 192, ' + alpha + ')',
-            carbohydrates: 'rgba(54, 162, 235, ' + alpha + ')',
-            total_fat: 'rgba(255, 206, 86, ' + alpha + ')',
-            saturated_fat: 'rgba(153, 102, 255, ' + alpha + ')',
-            fiber: 'rgba(255, 159, 64, ' + alpha + ')',
-            sodium: 'rgba(255, 99, 132, ' + alpha + ')',
-            sugar: 'rgba(100, 181, 246, ' + alpha + ')',
-            calories: 'rgba(220, 120, 220, ' + alpha + ')',
+            protein: '#B6D9FC',
+            carbohydrates: '#FFCF96',
+            total_fat: '#F5AD9D',
+            saturated_fat: '#F5C5CE',
+            fiber: '#C1CBB9',
+            sodium: '#CBA6DD',
+            sugar: '#C9C8FF',
+            calories: '#C3F5C2',
         };
         return colors[nutrient] || 'rgba(0, 0, 0, ' + alpha + ')';
     };
@@ -159,7 +159,9 @@ const NutritionHistory = () => {
         datasets: Object.keys(selectedNutrients)
             .filter((nutrient) => selectedNutrients[nutrient])
             .map((nutrient) => ({
-                label: nutrient.charAt(0).toUpperCase() + nutrient.slice(1),
+                label: nutrient
+                    .replace(/_/g, ' ') 
+                    .charAt(0).toUpperCase() + nutrient.slice(1),
                 data: historyData.map((data) => data[nutrient]),
                 borderColor: getColorForNutrient(nutrient),
                 backgroundColor: getColorForNutrient(nutrient, 0.2),
@@ -171,72 +173,107 @@ const NutritionHistory = () => {
 
     return (
         <div className={styles.nutritionHistory}>
-            <h2 className={styles.title}>Nutrition History</h2>
-
-            {/* Date Picker Section */}
-            <div className={styles.datePickerSection}>
-                <label>Select a date:</label>
-                <DatePicker
-                    selected={selectedDate}
-                    onChange={setSelectedDate}
-                    dateFormat="MMMM d, yyyy"
-                />
-            </div>
-
             {/* Single Day Bar Chart */}
             <div className={styles.chartSection}>
-                <h3>Nutrition Data for {selectedDate.toLocaleDateString()}</h3>
-                <Bar data={barChartData}/>
-            </div>
-
-            {/* History Graph */}
-            <h3>Nutrition History Data</h3>
-            {/* Period Selection */}
-            <div className={styles.filterOptions}>
-                <button
-                    className={historyPeriod === 'weekly' ? styles.activeButton : ''}
-                    onClick={() => setHistoryPeriod('weekly')}
-                >
-                    Weekly
-                </button>
-                <button
-                    className={historyPeriod === 'monthly' ? styles.activeButton : ''}
-                    onClick={() => setHistoryPeriod('monthly')}
-                >
-                    Monthly
-                </button>
-                <button
-                    className={historyPeriod === 'yearly' ? styles.activeButton : ''}
-                    onClick={() => setHistoryPeriod('yearly')}
-                >
-                    Yearly
-                </button>
-            </div>
-            {/* Nutrient Filter */}
-            <div className={styles.nutrientFilter}>
-                <h4>Select Nutrients to Display on Line Graph</h4>
-                <div className={styles.nutritionPicker}>
-                    {Object.keys(selectedNutrients).map((nutrient) => (
-                        <div key={nutrient}>
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    checked={selectedNutrients[nutrient]}
-                                    onChange={() => handleNutrientToggle(nutrient)}
-                                />
-                                {nutrient.charAt(0).toUpperCase() + nutrient.slice(1)}
-                            </label>
-                        </div>
-                    ))}
+                <div className={styles.chartHeader}>
+                    <div className={styles.nutritionHistoryTitle}>Nutrition Data for {selectedDate.toLocaleDateString()}</div>
+                    <div className={styles.datePickerSection}>
+                        <div className={styles.datePickerLabel}>Select a date:</div>
+                        <DatePicker
+                            selected={selectedDate}
+                            onChange={setSelectedDate}
+                            dateFormat="MMMM d, yyyy"
+                        />
+                    </div>
                 </div>
+                <Bar data={barChartData} />
             </div>
-            {/* Period-specific Filters */}
-            {historyPeriod === 'monthly' && (
-                <div className={styles.periodFilterSection}>
-                    <div className={styles.monthFilterSection}>
+            <div className={styles.lineGraphContainer}>
+                <div className={styles.lineGraphHeader}>
+                    <div className={styles.nutritionHistoryTitle}>Nutrition History Data</div>
+                    <div className={styles.filterOptions}>
+                        <button
+                            className={historyPeriod === 'weekly' ? styles.activeButton : ''}
+                            onClick={() => setHistoryPeriod('weekly')}
+                        >
+                            Weekly
+                        </button>
+                        <button
+                            className={historyPeriod === 'monthly' ? styles.activeButton : ''}
+                            onClick={() => setHistoryPeriod('monthly')}
+                        >
+                            Monthly
+                        </button>
+                        <button
+                            className={historyPeriod === 'yearly' ? styles.activeButton : ''}
+                            onClick={() => setHistoryPeriod('yearly')}
+                        >
+                            Yearly
+                        </button>
+                    </div>
+                </div>
+                <div className={styles.lineGraphFilter}>
+                    <div className={styles.nutrientFilter}>
+                        <div className={styles.nutrientSubheader}>Select Nutrients to Display</div>
+                        <div className={styles.nutritionPicker}>
+                            {Object.keys(selectedNutrients).map((nutrient) => (
+                                <div key={nutrient}>
+                                    <label className={styles.nutrientLabel}>
+                                        <input
+                                            type="checkbox"
+                                            checked={selectedNutrients[nutrient]}
+                                            onChange={() => handleNutrientToggle(nutrient)}
+                                        />
+                                        {nutrient.replace(/_/g, ' ').charAt(0).toUpperCase() + nutrient.replace(/_/g, ' ').slice(1)}
+                                    </label>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
 
-                        <div>
-                            <label>Year:</label>
+                    {historyPeriod === 'monthly' && (
+                        <div className={styles.periodFilterSection}>
+                            <div className={styles.monthFilterSection}>
+
+                                <div>
+                                    <div className={styles.nutrientSubheader}>Year:</div>
+                                    <select
+                                        value={year}
+                                        onChange={(e) => setYear(e.target.value)}
+                                        classname={styles.selectStyling}
+                                    >
+                                        {[...Array(10)].map((_, i) => (
+                                            <option key={i} value={new Date().getFullYear() - i}>
+                                                {new Date().getFullYear() - i}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <div className={styles.nutrientSubheader}>Month:</div>
+                                    <select
+                                        value={month}
+                                        onChange={(e) => setMonth(e.target.value)}
+                                        classname={styles.selectStyling}
+                                    >
+                                        {Array.from({ length: 12 }, (_, i) => (
+                                            <option key={i} value={i + 1}>
+                                                {new Date(0, i).toLocaleString('en-US', {
+                                                    month: 'long',
+                                                })}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </div>
+
+                        </div>
+                    )}
+
+                    {historyPeriod === 'yearly' && (
+                        <div className={styles.periodFilterSection}>
+                            <div className={styles.nutrientSubheader}>Year:</div>
                             <select
                                 value={year}
                                 onChange={(e) => setYear(e.target.value)}
@@ -248,58 +285,24 @@ const NutritionHistory = () => {
                                 ))}
                             </select>
                         </div>
+                    )}
 
-                        <div>
-                            <label>Month:</label>
-                            <select
-                                value={month}
-                                onChange={(e) => setMonth(e.target.value)}
-                            >
-                                {Array.from({length: 12}, (_, i) => (
-                                    <option key={i} value={i + 1}>
-                                        {new Date(0, i).toLocaleString('en-US', {
-                                            month: 'long',
-                                        })}
-                                    </option>
-                                ))}
-                            </select>
+                    {historyPeriod === 'weekly' && (
+                        <div className={styles.periodFilterSection}>
+                            <div className={styles.nutrientSubheader}>Select a date for the week:</div>
+                            <DatePicker
+                                selected={selectedWeekDate}
+                                onChange={setSelectedWeekDate}
+                                dateFormat="MMMM d, yyyy"
+                            />
                         </div>
-                    </div>
-
+                    )}
                 </div>
-            )}
 
-            {historyPeriod === 'yearly' && (
-                <div className={styles.periodFilterSection}>
-                    <label>Year:</label>
-                    <select
-                        value={year}
-                        onChange={(e) => setYear(e.target.value)}
-                    >
-                        {[...Array(10)].map((_, i) => (
-                            <option key={i} value={new Date().getFullYear() - i}>
-                                {new Date().getFullYear() - i}
-                            </option>
-                        ))}
-                    </select>
+
+                <div className={styles.historySection}>
+                    <Line data={lineChartData} />
                 </div>
-            )}
-
-            {historyPeriod === 'weekly' && (
-                <div className={styles.periodFilterSection}>
-                    <label>Select a date for the week:</label>
-                    <DatePicker
-                        selected={selectedWeekDate}
-                        onChange={setSelectedWeekDate}
-                        dateFormat="MMMM d, yyyy"
-                        className={styles.datePickerInput} // For styling the input field of the date picker
-                    />
-                </div>
-            )}
-
-
-            <div className={styles.historySection}>
-                <Line data={lineChartData}/>
             </div>
         </div>
     );

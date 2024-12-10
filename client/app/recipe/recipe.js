@@ -44,7 +44,7 @@ const Filters = ({ filters, setFilters, setPage }) => {
                 onChange={handleFilterChange}
                 className={styles.filterSelect}
             >
-                <option value="">Select Meal Type</option>
+                <option value="">Select Meal</option>
                 <option value="breakfast">Breakfast</option>
                 <option value="lunch">Lunch</option>
                 <option value="dinner">Dinner</option>

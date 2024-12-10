@@ -92,8 +92,8 @@
     font-size: 14px;
 }
 
-.filterSelect:hover {
-    border: 1px solid #EC4A27;
+.filterSelect:hover, .filterSelect:focus-visible, .filterSelect:focus {
+    border: 1px solid #EC4A27 !important;
 }
 
 .recipesContainer {
