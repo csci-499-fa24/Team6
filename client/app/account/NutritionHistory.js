@@ -32,34 +32,19 @@ const NutritionHistory = () => {
         sugar: true,
         calories: true,
     });
-    const fetchNutritionData = async (date) => {
+    const fetchDailyNutritionData = async (date) => {
+        const token = localStorage.getItem('token');
         try {
-            const response = await fetch(`/api/nutrition/daily?date=${date}`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`, // Assuming token is stored in localStorage
-                },
+            const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/nutrition-get/daily?date=${date}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
             });
-
-            if (!response.ok) {
-                throw new Error('Failed to fetch daily nutrition data');
-            }
-
             const data = await response.json();
-            setNutritionData(data || {
-                protein: 0,
-                carbohydrates: 0,
-                total_fat: 0,
-                saturated_fat: 0,
-                fiber: 0,
-                sodium: 0,
-                sugar: 0,
-                calories: 0,
-            }); // Set default values if no data is returned
+            setNutritionData(data || { protein: 0, carbohydrates: 0, total_fat: 0, saturated_fat: 0, fiber: 0, sodium: 0, sugar: 0, calories: 0 });
         } catch (error) {
-            console.error('Error fetching daily nutrition data:', error);
+            console.error("Error fetching daily nutrition data", error);
         }
     };
+
 
     const fetchHistoryData = async () => {
         let data = [];
@@ -106,7 +91,7 @@ const NutritionHistory = () => {
 
 
     useEffect(() => {
-        fetchNutritionData(selectedDate);
+        fetchDailyNutritionData(selectedDate);
         fetchHistoryData();
     }, [selectedDate, historyPeriod, year, month]);
 
