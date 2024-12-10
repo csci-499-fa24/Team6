@@ -11,96 +11,6 @@ import FavoriteButton from "@/app/components/addAndRemoveFavorites";
 import LoadingScreen from '../components/loading';
 import ErrorScreen from '../components/error';
 
-const Filters = ({ filters, setFilters, setPage }) => {
-    const handleFilterChange = (e) => {
-        setFilters(prevFilters => ({
-            ...prevFilters,
-            [e.target.name]: e.target.value
-        }));
-    };
-
-    const handleSearchChange = (e) => {
-        setFilters(prevFilters => ({
-            ...prevFilters,
-            searchQuery: e.target.value
-        }));
-    };
-
-    const handleSearchClick = () => {
-        setPage(1); // Reset to the first page when search is triggered
-    };
-    return (
-        <div className={styles.filtersContainer}>
-            <input
-                type="text"
-                placeholder="Search for recipes..."
-                value={filters.searchQuery}
-                onChange={handleSearchChange}
-                className={styles.searchBar}
-            />
-            <select
-                name="type"
-                value={filters.type}
-                onChange={handleFilterChange}
-                className={styles.filterSelect}
-            >
-                <option value="">Select Meal</option>
-                <option value="breakfast">Breakfast</option>
-                <option value="lunch">Lunch</option>
-                <option value="dinner">Dinner</option>
-                <option value="snack">Snack</option>
-            </select>
-
-            <select
-                name="cuisine"
-                value={filters.cuisine}
-                onChange={handleFilterChange}
-                className={styles.filterSelect}
-            >
-                <option value="">Select Cuisine</option>
-                <option value="american">American</option>
-                <option value="british">British</option>
-                <option value="caribbean">Caribbean</option>
-                <option value="chinese">Chinese</option>
-                <option value="french">French</option>
-                <option value="greek">Greek</option>
-                <option value="indian">Indian</option>
-                <option value="italian">Italian</option>
-                <option value="japanese">Japanese</option>
-                <option value="korean">Korean</option>
-                <option value="mediterranean">Mediterranean</option>
-                <option value="mexican">Mexican</option>
-                <option value="spanish">Spanish</option>
-                <option value="thai">Thai</option>
-                <option value="vietnamese">Vietnamese</option>
-            </select>
-
-            <select
-                name="diet"
-                value={filters.diet}
-                onChange={handleFilterChange}
-                className={styles.filterSelect}
-            >
-                <option value="">Select Diet</option>
-                <option value="gluten free">Gluten Free</option>
-                <option value="ketogenic">Ketogenic</option>
-                <option value="vegetarian">Vegetarian</option>
-                <option value="vegan">Vegan</option>
-                <option value="pescetarian">Pescetarian</option>
-                <option value="paleo">Paleo</option>
-                <option value="primal">Primal</option>
-                <option value="whole30">Whole30</option>
-            </select>
-            <div
-                className={styles.searchButton}
-                onClick={handleSearchClick}
-            >
-                <div>Search</div>
-            </div>
-        </div>
-    );
-};
-
 const RecipeCard = ({ recipe, favoriteRecipes, onToggleFavorite }) => {
     const isFavorite = favoriteRecipes.includes(recipe.id);
     return (
@@ -175,12 +85,6 @@ const RecipePage = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [userIngredients, setUserIngredients] = useState([]);
-    const [filters, setFilters] = useState({
-        type: '',
-        cuisine: '',
-        diet: '',
-        searchQuery: ''
-    });
     const [page, setPage] = useState(1);
     const [recipesPerPage, setRecipesPerPage] = useState(8);
     const [favoriteRecipes, setFavoriteRecipes] = useState([]);
@@ -237,25 +141,12 @@ const RecipePage = () => {
                     ignorePantry: false,
                     number: recipesPerPage,
                     offset: (page - 1) * recipesPerPage,
-                    type: filters.type || '',
-                    cuisine: filters.cuisine || '',
-                    diet: filters.diet || '',
-                    query: filters.searchQuery || '',
                 },
                 headers
             });
 
             const basicRecipes = response.data;
-
-            const filteredRecipes = filters.searchQuery
-                ? basicRecipes.filter(recipe =>
-                    recipe.title.toLowerCase().includes(filters.searchQuery.toLowerCase())
-                )
-                : basicRecipes;
-
-            setRecipes(filteredRecipes);
-
-            const recipeIds = filteredRecipes.map(recipe => recipe.id).join(',');
+            const recipeIds = basicRecipes.map(recipe => recipe.id).join(',');
 
             const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
             await delay(1000);
@@ -268,7 +159,7 @@ const RecipePage = () => {
                 headers
             });
 
-            const combinedRecipes = filteredRecipes.map(basicRecipe => {
+            const combinedRecipes = basicRecipes.map(basicRecipe => {
                 const detailedRecipe = recipeDetails.data.find(detailed => detailed.id === basicRecipe.id);
                 return {
                     ...basicRecipe,
@@ -309,7 +200,7 @@ const RecipePage = () => {
         if (userIngredients.length > 0) {
             fetchRecipes();
         }
-    }, [userIngredients, filters, page, recipesPerPage]);
+    }, [userIngredients, page, recipesPerPage]);
 
     useEffect(() => {
         fetchFavoriteRecipes();
@@ -320,7 +211,6 @@ const RecipePage = () => {
             <Navbar />
             <div className={styles.recipePageWrapper}>
                 <HeadLine />
-                <Filters filters={filters} setFilters={setFilters} setPage={setPage} />
                 {loading ? (
                     <LoadingScreen title='Recipes'/>
                 ) : error ? (
