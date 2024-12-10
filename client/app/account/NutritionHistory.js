@@ -32,19 +32,33 @@ const NutritionHistory = () => {
         sugar: true,
         calories: true,
     });
-
     const fetchNutritionData = async (date) => {
-        const data = {
-            protein: 50,
-            carbohydrates: 150,
-            total_fat: 60,
-            saturated_fat: 25,
-            fiber: 30,
-            sodium: 2000,
-            sugar: 45,
-            calories: 2000,
-        };
-        setNutritionData(data);
+        try {
+            const response = await fetch(`/api/nutrition/daily?date=${date}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`, // Assuming token is stored in localStorage
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch daily nutrition data');
+            }
+
+            const data = await response.json();
+            setNutritionData(data || {
+                protein: 0,
+                carbohydrates: 0,
+                total_fat: 0,
+                saturated_fat: 0,
+                fiber: 0,
+                sodium: 0,
+                sugar: 0,
+                calories: 0,
+            }); // Set default values if no data is returned
+        } catch (error) {
+            console.error('Error fetching daily nutrition data:', error);
+        }
     };
 
     const fetchHistoryData = async () => {
