@@ -210,6 +210,14 @@ router.get('/history', authenticateToken, async (req, res) => {
 
             case 'yearly':
                 console.log("[DEBUG] Preparing yearly query");
+
+                // Check if a year is provided, otherwise default to the current year
+                const currentYear = year || new Date().getFullYear(); // Default to current year if no year is provided
+
+                // Generate start and end dates for the year dynamically
+                const startOfYear = `${currentYear}-01-01`;
+                const endOfYear = `${currentYear }-12-31`; // January 1st of the following year
+
                 query = `
                     SELECT
                         to_char(date, 'Mon') AS label,  -- Display the month as a label (e.g., Jan, Feb, etc.)
@@ -223,13 +231,17 @@ router.get('/history', authenticateToken, async (req, res) => {
                         SUM(calories) AS calories  -- Sum of calories for the month
                     FROM nutrition_data
                     WHERE user_id = $1
-                      AND date >= '2025-01-01'
-                      AND date < '2025-12-31'
+                      AND date >= $2
+                      AND date < $3
                     GROUP BY date_part('month', date), to_char(date, 'Mon')  -- Group by both the numeric month part (1 to 12) and the month label
                     ORDER BY date_part('month', date);  -- Order by the numeric month part (1 to 12)
                 `;
+
+                // Add the start and end dates to the query parameters
+                params.push(startOfYear, endOfYear);
                 break;
-                
+
+
             default:
                 console.error("[ERROR] Invalid historyPeriod value");
                 return res.status(400).json({ error: "Invalid history period" });
